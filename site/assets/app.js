@@ -64,7 +64,7 @@ function context() {
 function figures(c) {
   const a = c.a;
   return {
-    headline: LEVELS[a.level].head, alert_level: a.level,
+    headline: a.dataWarning ? "Data warning: check the newest week before acting" : LEVELS[a.level].head, alert_level: a.level,
     newest_data_week: wk(a.last), newest_positivity_percent: +f1(a.pLast),
     positivity_two_weeks_earlier_percent: +f1(a.p2),
     weeks_data_is_behind_today: c.lag,
@@ -100,7 +100,8 @@ async function renderSummary(c) {
 }
 
 function renderAlert(c) {
-  const a = c.a, L = LEVELS[a.level], th = c.th;
+  const a = c.a, th = c.th;
+  const L = a.dataWarning ? { head: "Data warning: check the newest week before acting", sub: `Rule result on this data: ${LEVELS[a.level].head}` } : LEVELS[a.level];
   const why = [];
   why.push(`Newest data (${wk(a.last)}): ${f1(a.pLast)}% of sentinel samples positive, ${a.phase} from ${f1(a.p2)}% two weeks earlier.`);
   why.push(c.lag > 0 ? `That data is ${c.lag} week${c.lag > 1 ? "s" : ""} behind today, so today's level is projected, not observed.` : `Data is current to this week, so the level is observed.`);
