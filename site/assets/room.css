@@ -15,10 +15,10 @@
   --rail:calc(var(--pad) + 82px);
   transition:--acc .9s var(--ease);
 }
-[data-state=early]{--acc:#ffe08a}
-[data-state=yellow]{--acc:var(--yellow)}
-[data-state=orange]{--acc:var(--orange)}
-[data-state=red]{--acc:var(--red)}
+[data-state=watch]{--acc:var(--yellow)}
+[data-state=warning]{--acc:var(--orange)}
+[data-state=outbreak]{--acc:var(--red)}
+[data-state=unconfirmed]{--acc:#b8c2d2}
 
 *{box-sizing:border-box}[hidden]{display:none!important}
 html,body{height:100%}
@@ -224,15 +224,38 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
 .score p i.miss{background:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}.score p i.false{background:none;box-shadow:inset 0 0 0 2px var(--orange);border-radius:3px}
 
 /* long explanations become drawers; nothing is removed, and each drawer's title says what is inside */
-details.fold{border-top:1px solid var(--line)}details.fold:last-child{border-bottom:1px solid var(--line)}
-details.fold>summary{display:flex;align-items:center;gap:10px;padding:14px 2px;cursor:pointer;list-style:none;font-weight:700;font-size:15.5px}
-details.fold>summary::-webkit-details-marker{display:none}
-details.fold>summary::after{content:"+";margin-left:auto;font-weight:400;font-size:24px;line-height:1;color:var(--mute);transition:transform .3s var(--ease)}
-details.fold[open]>summary::after{transform:rotate(45deg)}
-details.fold>summary:hover{color:var(--brand)}
-.foldbody{padding:0 2px 16px;animation:page .35s var(--ease)}
+details.drawer{border-top:1px solid var(--line)}details.drawer:last-child{border-bottom:1px solid var(--line)}
+details.drawer>summary{display:flex;align-items:center;gap:10px;padding:14px 2px;cursor:pointer;list-style:none;font-weight:700;font-size:15.5px}
+details.drawer>summary::-webkit-details-marker{display:none}
+details.drawer>summary::after{content:"+";margin-left:auto;font-weight:400;font-size:24px;line-height:1;color:var(--mute);transition:transform .3s var(--ease)}
+details.drawer[open]>summary::after{transform:rotate(45deg)}
+details.drawer>summary:hover{color:var(--brand)}
+.drawerbody{padding:0 2px 16px;animation:page .35s var(--ease)}
 .strip .small{font-size:13px;opacity:.82;margin-top:2px}
 
 /* nothing half-filled is ever shown: the first screen fades in once the reading is known */
 #p-now .read,#p-now .top{transition:opacity .5s var(--ease)}
 html:not([data-ready]) #p-now .read,html:not([data-ready]) #p-now .top{opacity:0}
+
+/* ---------- the app's final pieces (11 Oct): the step ladder, the plan box, its own folds under More ---------- */
+.lvl::before{background:var(--acc)!important}
+.big.word{font-size:clamp(64px,min(21vh,12.5vw),200px);letter-spacing:-.045em;line-height:.95;margin:clamp(2px,.8vh,8px) 0 clamp(8px,1.6vh,16px) -.03em}
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0 10px}
+.ladder .step{border:1px solid var(--line);border-radius:12px;padding:8px 8px;font-size:13px;text-align:center;color:var(--mute);background:#fff}
+.ladder .step b{display:block;font-size:14.5px}.ladder .step small{font-size:11.5px;line-height:1.3;display:block}
+.ladder .step.on{color:var(--ink);border-width:2px;font-weight:600}
+.ladder .step.on.clear{border-color:var(--green-ink);background:#e9f7f0}.ladder .step.on.watch{border-color:var(--yellow-ink);background:#fff8dc}
+.ladder .step.on.warning{border-color:var(--orange-ink);background:#fff0e0}.ladder .step.on.outbreak{border-color:var(--red-ink);background:#fde9e7}
+.ladder .step.on.unconfirmed{border-style:dashed;border-color:#7d8a96;background:#f1f4f8}
+.level.clear .dot{background:var(--green-ink)}.level.watch .dot{background:var(--yellow-ink)}.level.warning .dot{background:var(--orange-ink)}.level.outbreak .dot{background:var(--red-ink)}.level.unconfirmed .dot{background:#9aa7b3}
+.planbox{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:14px;background:#fff}.planbox button{margin-right:6px}
+.evchart{height:clamp(240px,38vh,340px)}.nb{color:var(--mute);font-weight:700}
+details.fold{padding:0}
+details.fold>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:clamp(14px,2vw,20px) clamp(16px,2.4vw,26px)}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"+";font-weight:700;color:var(--brand);width:12px}
+details.fold[open]>summary::before{content:"\2212"}
+details.fold>summary h2{margin:0;font-size:17px}details.fold>summary .note{margin:0}
+details.fold[open]>summary{border-bottom:1px solid var(--line)}
+details.fold>:not(summary){margin-left:clamp(16px,2.4vw,26px);margin-right:clamp(16px,2.4vw,26px)}
+details.fold[open]{padding-bottom:18px}details.fold[open]>summary{margin-bottom:14px}

@@ -1,17 +1,18 @@
 // DOM control room: the shell around the team's app.
 // This file only decides what is shown where: the pages, the rail, and the first screen. It computes no result of its own.
-// Every figure it shows is read from app.js (context(), LEVELS, ACTIONS, D, STATE) and model.js, which are loaded unchanged.
-// The replay button feeds the team's own replay file through the team's own validate() and saveUpload(), one week per press.
+// Everything it shows is read from app.js (context(), stepOf(), headOf(), actionsOf(), evStats(), STEP, D, STATE) and
+// model.js, which are loaded unchanged. The replay button feeds the team's own replay file through the team's own
+// validate() and saveUpload(), one week per press.
 (function () {
-  const root = document.documentElement, clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const root = document.documentElement;
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
   const date = (iso) => new Date(iso + "T00:00:00Z"), dm = (iso) => date(iso).getUTCDate() + " " + MONTHS[date(iso).getUTCMonth()], dmy = (iso) => dm(iso) + " " + date(iso).getUTCFullYear();
   const plus = (iso, days) => { const d = date(iso); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10); };
   const css = (v) => getComputedStyle(root).getPropertyValue(v).trim();
   const STILL = matchMedia("(prefers-reduced-motion:reduce)").matches;
-  const COL = { green: "--green", yellow: "--yellow", orange: "--orange", red: "--red" };
   const REPLAY_FILE = "templates/demo_real_replay_2025_W38_W41.csv", BARS = 44;
   let replayRows = null, fresh = 0, lastCount = -1;
+  const resize = () => requestAnimationFrame(() => { if (typeof map !== "undefined" && map) map.invalidateSize(); dispatchEvent(new Event("resize")); });
 
   // ---------- pages ----------
   const pages = [...document.querySelectorAll(".page")].map((p) => p.dataset.page);
@@ -20,64 +21,50 @@
     document.querySelectorAll(".page").forEach((p) => p.classList.toggle("on", p.dataset.page === id));
     document.querySelectorAll(".rail a[data-go]").forEach((a) => a.classList.toggle("on", a.dataset.go === id));
     root.dataset.page = id; scrollTo(0, 0); $("sheet").hidden = true;
-    // charts and the map were laid out off screen; let them take their real size now
-    requestAnimationFrame(() => { if (typeof map !== "undefined" && map) map.invalidateSize(); dispatchEvent(new Event("resize")); });
+    resize();   // charts and the map were laid out off screen; let them take their real size now
   }
-  // routes are written "#/forecast", so the browser never jumps to the app's own sections of the same name;
-  // a plain "#proof" link inside the app's text still opens the right page
-  const route = () => { const id = location.hash.replace(/^#\/?/, ""); if (location.hash && !location.hash.startsWith("#/")) history.replaceState(null, "", location.pathname + location.search + "#/" + id); show(id); };
+  // Routes are written "#/trust", so the browser never jumps to the app's own sections of the same name.
+  // A plain link inside the app's text (for example "#proof", which the app folds under More) opens the right page and fold.
+  const route = () => {
+    const id = location.hash.replace(/^#\/?/, "");
+    if (location.hash && !location.hash.startsWith("#/")) history.replaceState(null, "", location.pathname + location.search + "#/" + id);
+    if (id && !pages.includes(id)) { const el = document.getElementById(id), pg = el && el.closest(".page");
+      if (pg) { show(pg.dataset.page); if (el.tagName === "DETAILS") el.open = true; requestAnimationFrame(() => el.scrollIntoView({ block: "start" })); return; } }
+    show(id);
+  };
   addEventListener("hashchange", route);
   $("atlasTabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return;
     $("atlasTabs").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
     document.querySelectorAll("#p-atlas .sub").forEach((s) => s.classList.toggle("on", s.dataset.sub === b.dataset.sub));
-    requestAnimationFrame(() => { if (typeof map !== "undefined" && map) map.invalidateSize(); dispatchEvent(new Event("resize")); }); });
+    resize(); });
 
-  // ---------- the first screen ----------
-  const FRACTIONS = [[1, 10], [1, 8], [1, 6], [1, 5], [1, 4], [1, 3], [2, 5], [1, 2], [3, 5], [2, 3], [3, 4], [4, 5], [9, 10]];
-  const inWords = (p) => { const f = FRACTIONS.reduce((b, x) => (Math.abs(x[0] / x[1] - p) < Math.abs(b[0] / b[1] - p) ? x : b)); return `About ${f[0]} in ${f[1]}`; };
-  function roll(el, to) {
-    const from = +el.textContent || 0, t0 = performance.now(); if (STILL || from === to || !el._seen) { el.textContent = to; el._seen = true; return; }   // the first number appears at once; later changes count up or down
-    clearTimeout(el._t); el._t = setTimeout(() => (el.textContent = to), 1200);
-    (function f(t) { const k = clamp((t - t0) / 1000, 0, 1), e = 1 - Math.pow(1 - k, 4); el.textContent = Math.round(from + (to - from) * e); if (k < 1) requestAnimationFrame(f); })(t0);
-  }
   // the Monday each week of the series starts on: public weeks carry it, newer weeks follow on
   function starts(series) { const out = []; series.forEach((s, i) => out.push(s.start || (i ? plus(out[i - 1], 7) : null))); return out; }
 
+  // ---------- the first screen: the app's own early-warning step (Clear, Watch, Warning, Outbreak), never a percentage ----------
   function update() {
-    const c = context(), a = c.a, iso = starts(c.series), lastIso = iso[iso.length - 1], early = !a.dataWarning && a.level === "green" && c.rise.yes;
-    root.dataset.state = early ? "early" : a.level; root.dataset.ready = "1";
-    $("lvl").textContent = "Alert level: " + a.level[0].toUpperCase() + a.level.slice(1); $("lvl").style.setProperty("--c", css(COL[a.level]));
+    const c = context(), a = c.a, st = stepOf(c), H = headOf(c), iso = starts(c.series), lastIso = iso[iso.length - 1];
+    const ES = typeof evStats === "function" ? evStats() : null, band = ES && st.band && !H.byRule ? ES.bands[st.band] : null;
+    root.dataset.state = a.dataWarning ? "unconfirmed" : st.key; root.dataset.ready = "1";
+    $("lvl").textContent = c.rise.off ? "Classifier off for your own series" : `Classifier: ${STEP[c.rise.band].name} · Alert rule: ${RULE_WORDS[a.level]}`;
     $("flag").hidden = !(c.sim || c.own || c.uploaded);
     $("flag").textContent = c.sim ? `Simulation on: the newest ${c.nSim} week${c.nSim > 1 ? "s are" : " is"} invented` : c.own ? "Your own uploaded series, not verified" : REPLAY ? "Replay of real weeks" : "Includes uploaded weeks, not verified";
-    $("head").textContent = a.dataWarning ? "Check the newest data first." : early ? "Early sign of a rapid rise." : LEVELS[a.level].head + ".";
-    $("label").textContent = "Chance that flu positives rise by half within four weeks, " + (c.own ? "your own lab network" : "Malaysia");
-    roll($("pct"), Math.round(c.rise.prob * 100));
+    $("head").textContent = (a.dataWarning ? "Data warning: check the newest week before acting" : H.head) + ".";
+    $("label").textContent = "Early-warning step, " + (c.own ? "your own lab network" : "Malaysia");
+    $("pct").textContent = a.dataWarning ? "Check" : STEP[st.key].name;
     const when = lastIso ? `<b>${dmy(lastIso)}</b>` : `<b>${wk(a.last)}</b>`;
-    $("basis").innerHTML = `${inWords(c.rise.prob)}. ` + (c.sim ? `A what-if scenario, not a reading: it runs to ${when}.`
-      : REPLAY ? `Replay: an estimate from real national data to ${when}.`
-      : `An estimate from ${c.own ? "your uploaded series" : "national data"} to ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
-    $("first").textContent = ACTIONS[a.level][0][0] + ".";
+    $("basis").innerHTML = (band ? `In six past years a rapid rise followed ${band.rises} of ${band.weeks} ${STEP[st.band].name} weeks. ` : H.byRule && !a.dataWarning ? "Set by the alert rule on the data. " : "") +
+      (c.sim ? `A what-if drill, not a reading: it runs to ${when}.` : REPLAY ? `Replay on real national data to ${when}.` : `${c.own ? "Your uploaded series" : "National data"} to ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
+    $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls
     const n = STATE.lab.length, total = replayRows ? replayRows.length : 4;
     $("rpGo").textContent = REPLAY ? (n < total ? "Add the next real week" : "Replay finished") : "Replay October 2025"; $("rpGo").disabled = REPLAY && n >= total;
     $("rpAgain").hidden = !(REPLAY && n > 0); $("rpLeave").hidden = !REPLAY;
     $("strip").hidden = !REPLAY;
     if (REPLAY) { fresh = lastCount >= 0 && n > lastCount ? n - lastCount : 0; lastCount = n; bars(c, iso); }
-    icons(c); answers();
+    icons(c);
     // the data-status line matters on the first screen only when something unusual is on (uploads or a simulation)
     $("stamp").classList.toggle("quiet", !(c.sim || STATE.stamp));
-  }
-
-  // ---------- the answer sentence at the top of a page, built only from the app's own figures ----------
-  let answered = false;
-  function answers() {
-    if (answered) return; answered = true;
-    const W = D.rise.walk, G = (W ? W.pooled : D.rise.test.models).gradient_boosted, S = (W ? W.pooled : D.rise.test.models).already_in_outbreak_now, n = G.tp + G.fn, v = D.validation.per_horizon, passed = v.filter((x) => x.passed).length;
-    $("ans-proof").textContent = `In ${W ? "year-by-year " : ""}tests it caught ${G.tp} of ${n} rapid rises, with ${G.fp} false alarms.`;
-    $("sub-proof").textContent = `Modest evidence: a simple rule caught ${S.tp}. Forecasting the flu level itself failed its test (${passed} of ${v.length}), so DOM gives a chance of a rise instead of a level.`;
-    const dot = (cls, k) => `<i class="${cls}" style="--n:${k}"></i>`;
-    $("score").innerHTML = `<div class="dots" role="img" aria-label="${G.tp} caught, ${G.fn} missed, ${G.fp} false alarms">${Array.from({ length: n }, (_, k) => dot(k < G.tp ? "" : "miss", k)).join("")}${Array.from({ length: G.fp }, (_, k) => dot("false", n + k)).join("")}</div>
-      <p><span><i></i><b>${G.tp}</b> rises caught</span><span><i class="miss"></i><b>${G.fn}</b> missed</span><span><i class="false"></i><b>${G.fp}</b> false alarms</span><span>${W ? W.n_test : D.rise.test.n_test} weeks it had never seen</span></p>`;
   }
 
   // ---------- long explanations become drawers: each heading with what follows it; nothing is removed ----------
@@ -85,26 +72,28 @@
     if (!box || !box.querySelector(":scope > h3")) return;
     let cur = null;
     for (const el of [...box.children]) {
-      if (el.tagName === "H3") { cur = document.createElement("details"); cur.className = "fold"; const s = document.createElement("summary"); s.innerHTML = el.innerHTML; const body = document.createElement("div"); body.className = "foldbody"; cur.append(s, body); box.insertBefore(cur, el); el.remove(); }
+      if (el.tagName === "H3") { cur = document.createElement("details"); cur.className = "drawer"; const s = document.createElement("summary"); s.innerHTML = el.innerHTML; const body = document.createElement("div"); body.className = "drawerbody"; cur.append(s, body); cur.addEventListener("toggle", resize); box.insertBefore(cur, el); el.remove(); }
       else if (cur) cur.lastChild.appendChild(el);
     }
   }
   for (const id of ["proofBody"]) { const box = $(id); new MutationObserver(() => fold(box)).observe(box, { childList: true }); fold(box); }
 
-  // In the replay: the week the classifier first said "likely", and the weeks the alert level first reached Yellow and Orange.
+  // In the replay: the data week each step of the app's own ladder was first reached (same rule as stepOf, same frozen cut-offs).
   function milestones() {
-    const base = D.series.slice(0, D.replay_cut_index + 1), m = {};
-    for (let k = 0; k <= STATE.lab.length; k++) { const ser = base.concat(STATE.lab.slice(0, k)), lag = Math.max(0, D.pub_lag - k), a = M.assess(ser, D.models.replay, D, D.thresholds, lag), iso = plus(base[base.length - 1].start, 7 * k);
-      if (!m.signal && M.riseSignal(ser, D.rise.replay).yes) m.signal = iso; if (!m.yellow && a.level !== "green") m.yellow = iso; if (!m.orange && (a.level === "orange" || a.level === "red")) m.orange = iso; }
+    const base = D.series.slice(0, D.replay_cut_index + 1), t = D.rise.current.tiers || { watch: 0.5, warning: 0.5 }, m = {};
+    for (let k = 0; k <= STATE.lab.length; k++) { const ser = base.concat(STATE.lab.slice(0, k)), lag = Math.max(0, D.pub_lag - k), a = M.assess(ser, D.models.replay, D, D.thresholds, lag), p = M.riseSignal(ser, D.rise.replay).prob;
+      const step = Math.max(p >= t.warning ? 2 : p >= t.watch ? 1 : 0, RULE_RANK[a.level]), iso = plus(base[base.length - 1].start, 7 * k);
+      STEPS.forEach((s, i) => { if (i && !m[s] && step >= i) m[s] = iso; }); }
     return m;
   }
   function bars(c, iso) {
-    const ser = c.series.slice(-BARS), d = iso.slice(-BARS), vals = ser.map(M.pct), top = Math.max(c.th.orange * 1.25, ...vals), h = (v) => (100 * v) / top, ms = c.own ? {} : milestones(), days = (x, y) => Math.round((date(y) - date(x)) / 864e5);
-    $("bars").innerHTML = vals.map((v, i) => `<i class="${v >= c.th.orange ? "o" : v >= c.th.yellow ? "y" : ""}${i === vals.length - 1 ? " now" : ""}${i >= vals.length - fresh ? " new" : ""}${d[i] === ms.signal ? " sig" : ""}" style="height:${h(v)}%" title="Week of ${d[i] ? dmy(d[i]) : wk(ser[i])}: ${f1(v)}%"></i>`).join("") +
+    const ser = c.series.slice(-BARS), d = iso.slice(-BARS), vals = ser.map(M.pct), top = Math.max(c.th.orange * 1.25, ...vals), h = (v) => (100 * v) / top, days = (x, y) => Math.round((date(y) - date(x)) / 864e5);
+    const ms = c.own ? {} : milestones(), first = ms.watch || ms.warning || ms.outbreak, firstName = !first ? "" : ms.watch !== ms.warning ? "Watch" : ms.warning !== ms.outbreak ? "Warning" : "Outbreak";
+    $("bars").innerHTML = vals.map((v, i) => `<i class="${v >= c.th.orange ? "o" : v >= c.th.yellow ? "y" : ""}${i === vals.length - 1 ? " now" : ""}${i >= vals.length - fresh ? " new" : ""}${first && d[i] === first ? " sig" : ""}" style="height:${h(v)}%" title="Week of ${d[i] ? dmy(d[i]) : wk(ser[i])}: ${f1(v)}%"></i>`).join("") +
       `<u style="bottom:${h(c.th.orange)}%;--k:${css("--orange")}"><b>Alert line ${f1(c.th.orange)}%</b></u><u style="bottom:${h(c.th.yellow)}%;--k:${css("--yellow")}"><b>Watch line ${f1(c.th.yellow)}%</b></u>`;
     $("bars").setAttribute("aria-label", `Weekly flu positivity, last ${vals.length} weeks; newest ${f1(vals[vals.length - 1])}%`);
-    $("stripNote").innerHTML = ms.signal ? `<b>First signal: ${dm(ms.signal)}.</b>` + (ms.yellow && ms.yellow > ms.signal ? ` Level Yellow on ${dm(ms.yellow)}: the signal came <b>${days(ms.signal, ms.yellow)} days earlier</b>.` : " The alert level is still Green.") + (ms.orange ? ` Orange on ${dm(ms.orange)}.` : "") : "Each bar is one real week: the share of flu tests that came back positive.";
-    $("stripNote").innerHTML += `<span class="small"><br>Seen with each week's own lab counts in hand. Public data alone arrives about ${D.pub_lag} weeks later.</span>`;
+    $("stripNote").innerHTML = (first ? `<b>${firstName} first shown on data to ${dm(first)}.</b>` + (ms.outbreak && ms.outbreak > first ? ` Outbreak on data to ${dm(ms.outbreak)}: <b>${days(first, ms.outbreak)} days of data earlier</b>.` : ms.outbreak ? "" : " The alert rule has not called Outbreak yet.") : "Each bar is one real week: the share of flu tests that came back positive.") +
+      `<span class="small"><br>This is what a planner sees with each week's own lab counts in hand. Public data alone arrives about ${D.pub_lag} weeks later.</span>`;
   }
 
   async function replayFile() {
@@ -114,9 +103,9 @@
   $("rpGo").onclick = async () => {
     if (!REPLAY) { location.href = "dashboard.html?replay=1#/now"; return; }
     const rows = await replayFile(), k = STATE.lab.length; if (k >= rows.length) return;
-    const { errs, out } = validate("lab", [rows[k]]);
+    const { errs, out } = validate("lab", [rows[k]], false);
     if (errs.length) { $("stripNote").textContent = errs.join(" "); return; }
-    const msg = await saveUpload("lab", out); render(); if (msg) $("stripNote").textContent = msg + " Enter a passcode on the Data page.";
+    const msg = await saveUpload("lab", out); render(); if (msg) $("stripNote").textContent = msg + " Enter a passcode under More, Uploads, roles and history.";
   };
   $("rpAgain").onclick = () => resetState();
   $("rpLeave").onclick = () => { location.href = "dashboard.html#/now"; };
@@ -124,24 +113,25 @@
   addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && REPLAY && root.dataset.page === "now" && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
 
   // ---------- the rail: each page is a small live picture ----------
-  let myPath = "", dgPath = "";
+  let myPath = "";
   const spark = (v, x0, x1, y0, y1) => { const mx = Math.max(...v), mn = Math.min(...v); return v.map((y, i) => (i ? "L" : "M") + (x0 + (i * (x1 - x0)) / (v.length - 1)).toFixed(1) + " " + (y1 - ((y - mn) / (mx - mn || 1)) * (y1 - y0)).toFixed(1)).join(""); };
   function icons(c) {
-    const C = 2 * Math.PI * 15, p = clamp(c.rise.prob, 0, 1), sun = css("--sun"), set = (id, h) => { const el = $("ic-" + id); if (el && el._h !== h) { el.innerHTML = h; el._h = h; } };
-    set("now", `<circle cx="22" cy="22" r="15" opacity=".3"/><circle cx="22" cy="22" r="15" stroke="${sun}" stroke-width="3.2" stroke-dasharray="${C * p} ${C}" transform="rotate(-90 22 22)"/><text x="22" y="26.5" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" stroke="none">${Math.round(p * 100)}</text>`);
+    const sun = css("--sun"), acc = css("--acc"), set = (id, h) => { const el = $("ic-" + id); if (el && el._h !== h) { el.innerHTML = h; el._h = h; } };
+    // Now: the ladder, with the current step lit
+    const si = STEPS.indexOf(stepOf(c).key);
+    set("now", STEPS.map((s, k) => `<rect x="${6 + k * 8.5}" y="${28 - k * 6}" width="6.5" height="${8 + k * 6}" rx="2" stroke="none" fill="${k === si ? acc : "rgba(255,255,255," + (k < si ? ".6" : ".26") + ")"}"/>`).join(""));
     const v = c.series.slice(-26).map(M.pct), mx = Math.max(...v), mn = Math.min(...v);
     set("forecast", `<path d="${spark(v, 5, 39, 12, 34)}"/><circle cx="39" cy="${(34 - ((v[v.length - 1] - mn) / (mx - mn || 1)) * 22).toFixed(1)}" r="2.6" fill="${sun}" stroke="none"/>`);
-    set("sim", `<path d="M8 13h28M8 22h28M8 31h28" opacity=".45"/><circle cx="${SIM.on ? 28 : 16}" cy="13" r="3.6" fill="${SIM.on ? sun : "#fff"}" stroke="none"/><circle cx="27" cy="22" r="3.6" fill="#fff" stroke="none"/><circle cx="19" cy="31" r="3.6" fill="#fff" stroke="none"/>`);
+    // Trust: of the weeks that were followed by a rise, the share already at Watch or higher (the app's own six-year count)
+    const ES = typeof evStats === "function" ? evStats() : null, cells = 40, lit = ES && ES.R ? Math.round((cells * ES.watch.tp) / ES.R) : 0;
+    set("trust", Array.from({ length: cells }, (_, i) => `<circle cx="${6 + (i % 8) * 4.6}" cy="${11 + Math.floor(i / 8) * 5.4}" r="1.7" stroke="none" fill="${i < lit ? sun : "rgba(255,255,255,.35)"}"/>`).join(""));
     if (!myPath && typeof STGEO !== "undefined" && STGEO) { const x0 = 99.5, x1 = 119.5, y0 = 0.7, y1 = 7.6;
       myPath = STGEO.features.map((f) => (f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates).map((poly) => { const r = poly[0]; if (r.length < 30) return ""; const st = Math.max(1, Math.floor(r.length / 60));
         return "M" + r.filter((_, i) => i % st === 0).map(([x, y]) => (2 + ((x - x0) / (x1 - x0)) * 40).toFixed(1) + " " + (14 + ((y1 - y) / (y1 - y0)) * 15).toFixed(1)).join("L") + "Z"; }).join("")).join(""); }
     set("atlas", `<path d="${myPath}" stroke="none" fill="#fff"/><circle cx="6.5" cy="24.5" r="2.2" fill="${css("--mark")}" stroke="none"/>`);
-    if (!dgPath && typeof DENGUE !== "undefined" && DENGUE) dgPath = spark(DENGUE.series.slice(-104).filter((_, i) => i % 4 === 0).map((r) => r[1]), 5, 39, 12, 34);
-    set("dengue", `<path d="${dgPath}" stroke-dasharray="1 4.2" stroke-width="2.6"/>`);
-    const T = D.rise.test.models.gradient_boosted, n = T.tp + T.fn;
-    set("proof", Array.from({ length: n }, (_, i) => `<circle cx="${6 + (i % 8) * 4.6}" cy="${10 + Math.floor(i / 8) * 5.4}" r="1.7" stroke="none" fill="${i < T.tp ? sun : "rgba(255,255,255,.35)"}"/>`).join(""));
-    set("history", `<path d="M22 28V11M15 17l7-7 7 7M9 30v5h26v-5"/>${STATE.lab.length ? `<circle cx="35" cy="11" r="4" fill="${sun}" stroke="none"/>` : ""}`);
+    set("track", `<circle cx="22" cy="22" r="13"/><path d="M22 14v8l5 4"/>`);
     set("stakes", `<circle cx="22" cy="15" r="6"/><path d="M10 36c1-8 6-11 12-11s11 3 12 11"/>`);
+    set("more", `<rect x="9" y="10" width="26" height="6" rx="3"/><rect x="9" y="19" width="26" height="6" rx="3"/><rect x="9" y="28" width="26" height="6" rx="3"/>`);
   }
 
   // ---------- the logo's O: the same small Earth as on the landing page (data/dots.json) ----------
@@ -171,7 +161,7 @@
 
   // ---------- join the team's render loop: after every render of theirs, refresh the first screen ----------
   const theirs = window.render;
-  window.render = function () { const r = theirs.apply(this, arguments); try { update(); } catch (e) { console.error(e); } return r; };
+  window.render = function () { const r = theirs.apply(this, arguments); try { update(); } catch (e) { console.error("room", e); } return r; };
   if (REPLAY) replayFile();
   route();
 })();
