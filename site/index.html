@@ -11,7 +11,7 @@
 <body>
 <header class="top">
   <div class="brand">FluSentinel <span>influenza early warning for Selangor planners</span></div>
-  <nav><a href="#stakes">Why</a><a href="#now">Now</a><a href="#history">History</a><a href="#sim">What-if</a><a href="#forecast">Forecast</a><a href="#selangor">Selangor</a><a href="#states">All states</a><a href="#dengue">Dengue</a><a href="#proof">Proof</a></nav>
+  <nav><a href="#stakes">Why</a><a href="#now">Now</a><a href="#history">History</a><a href="#sim">What-if</a><a href="#forecast">Forecast</a><a href="#atlas">Map</a><a href="#dengue">Dengue</a><a href="#proof">Proof</a></nav>
   <button id="uploadBtn" class="primary">Upload newest data</button>
 </header>
 <div id="stamp" class="stamp"></div>
@@ -75,22 +75,36 @@
   <div id="signals" class="signals"></div>
 </section>
 
-<section id="selangor" class="card">
-  <h2>Selangor <span class="chip exp" id="mapChip">Exploratory</span></h2>
+<section id="atlas" class="card">
+  <h2>Map: Malaysia and Selangor <span class="chip real">State figures: real data</span> <span class="chip exp" id="mapChip">Exploratory</span></h2>
+  <p class="note" id="stSrc"></p>
   <p class="note" id="mapNote"></p>
+  <div class="histctl" id="stCtl">
+    <label>Disease <select id="stDisease"><option value="flu">Influenza</option><option value="dengue">Dengue</option></select></label>
+    <label>Shade states by <select id="stMeasure"></select></label>
+    <label id="stYearRow">Year: <b id="stYearV"></b> <input type="range" id="stYear" min="0" max="10" step="1" value="10"></label>
+    <button type="button" id="stPlay">Play years</button>
+  </div>
+  <div class="histctl">
+    <label id="mapModeRow">Selangor districts show <select id="mapMode"><option value="hot">Hotspots: where cases and clusters are</option><option value="pop">Population (exposure proxy)</option><option value="pupils">School pupils (exposure proxy)</option></select></label>
+    <span class="viewbtns"><button type="button" id="viewAll">Whole Malaysia</button> <button type="button" id="viewSel">Zoom to Selangor</button></span>
+  </div>
+  <div class="toggles" id="layerToggles">
+    <label class="tog"><input type="checkbox" id="ly_state" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#fdd0a2,#8c2d04)"></i>State shading</label>
+    <label class="tog"><input type="checkbox" id="ly_shade" checked><span class="sw"></span>District shading</label>
+    <label class="tog"><input type="checkbox" id="ly_heat" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#ffe08a,#e31a1c)"></i>Cluster heat</label>
+    <label class="tog"><input type="checkbox" id="ly_hot" checked><span class="sw"></span><i class="dot" style="background:#e0393f"></i>Hotspot circles</label>
+    <label class="tog"><input type="checkbox" id="ly_government" checked><span class="sw"></span><i class="dot" style="background:#0b6e6e"></i><span>Public hospitals (<span id="n_government"></span>)</span></label>
+    <label class="tog"><input type="checkbox" id="ly_private" checked><span class="sw"></span><i class="dot" style="background:#b5179e"></i><span>Private hospitals (<span id="n_private"></span>)</span></label>
+    <label class="tog"><input type="checkbox" id="ly_clinic" checked><span class="sw"></span><i class="dot" style="background:#e07a00"></i><span>Health clinics (<span id="n_clinic"></span>)</span></label>
+    <button type="button" id="lyAll">All on</button><button type="button" id="lyNone">All off</button>
+  </div>
+  <p class="note" id="mapHint"></p>
+  <div id="map"></div>
+  <p class="legend" id="stLegend"></p>
   <div class="grid2">
     <div>
-      <label>Map shows <select id="mapMode"><option value="hot">Hotspots: where cases and clusters are</option><option value="pop">Population (exposure proxy)</option><option value="pupils">School pupils (exposure proxy)</option></select></label>
-      <div class="toggles" id="layerToggles">
-        <label class="tog"><input type="checkbox" id="ly_shade" checked><span class="sw"></span>District shading</label>
-        <label class="tog"><input type="checkbox" id="ly_heat" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#ffe08a,#e31a1c)"></i>Cluster heat</label>
-        <label class="tog"><input type="checkbox" id="ly_hot" checked><span class="sw"></span><i class="dot" style="background:#e0393f"></i>Hotspot circles</label>
-        <label class="tog"><input type="checkbox" id="ly_government" checked><span class="sw"></span><i class="dot" style="background:#0b6e6e"></i><span>Government hospitals (<span id="n_government"></span>)</span></label>
-        <label class="tog"><input type="checkbox" id="ly_private" checked><span class="sw"></span><i class="dot" style="background:#b5179e"></i><span>Private hospitals (<span id="n_private"></span>)</span></label>
-        <label class="tog"><input type="checkbox" id="ly_clinic" checked><span class="sw"></span><i class="dot" style="background:#e07a00"></i><span>Health clinics (<span id="n_clinic"></span>)</span></label>
-        <button type="button" id="lyAll">All on</button><button type="button" id="lyNone">All off</button>
-      </div>
-      <div id="map"></div>
+      <h3>Selangor districts: influenza</h3>
       <div id="hotRank"></div>
     </div>
     <div>
@@ -102,6 +116,16 @@
       <p class="note" id="planNote"></p>
       <div id="plan"></div>
     </div>
+  </div>
+  <div id="trendBox">
+    <h3>Trend by state <span class="chip est">Projections estimated</span></h3>
+    <p class="note" id="stNote"></p>
+    <div class="histctl">
+      <label id="stViewRow">View <select id="stView"><option value="weekly">Weekly by state, 2010 to 2015 and 2020 to 2024</option><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 1999 to 2023</option></select></label>
+    </div>
+    <div class="toggles" id="stToggles"></div>
+    <div class="chartbox"><canvas id="stChart"></canvas></div>
+    <div id="stBody"></div>
   </div>
 </section>
 
@@ -147,27 +171,6 @@
   </ul>
 </section>
 
-<section id="states" class="card">
-  <h2>All states <span class="chip real">Real data</span> <span class="chip est">Projections estimated</span></h2>
-  <p class="note" id="stNote"></p>
-  <div class="histctl">
-    <label>Disease <select id="stDisease"><option value="dengue">Dengue</option><option value="flu">Influenza</option></select></label>
-    <label id="stViewRow">View <select id="stView"><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 2009 to 2023</option></select></label>
-  </div>
-  <h3>Heat map by state</h3>
-  <div id="stMap"></div>
-  <div class="histctl">
-    <label id="stYearRow">Year: <b id="stYearV"></b> <input type="range" id="stYear" min="0" max="10" step="1" value="10"></label>
-    <button type="button" id="stPlay">Play years</button>
-    <label>Shade by <select id="stMeasure"></select></label>
-  </div>
-  <p class="legend" id="stLegend"></p>
-  <h3>Trend by state</h3>
-  <div class="toggles" id="stToggles"></div>
-  <div class="chartbox"><canvas id="stChart"></canvas></div>
-  <div id="stBody"></div>
-</section>
-
 <section id="dengue" class="card">
   <h2>Dengue: second-disease experiment, rebuilt to August 2026 <span class="chip real">Real data</span> <span class="chip est">Some weeks estimated</span></h2>
   <p class="note" id="dengueNote"></p>
@@ -181,7 +184,7 @@
 </section>
 </main>
 
-<footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
+<footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, WHO dengue situation updates, Ministry of Health Malaysia open data and facility registry, OpenDengue, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
 
 <dialog id="dlg">
   <form method="dialog" id="dlgForm">

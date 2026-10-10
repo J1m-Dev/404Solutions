@@ -14,10 +14,12 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 .stamp b.unv { color:var(--orange); }
 .stamp button { padding:2px 8px; font-size:12px; margin-left:8px; }
 .replay { padding:8px 24px; background:#fff7e0; border-bottom:1px solid #ecd58a; font-size:13px; }
-main { max-width:1180px; margin:0 auto; padding:20px 16px 40px; display:grid; gap:18px; }
+[hidden] { display:none !important; }
+main { max-width:1180px; margin:0 auto; padding:20px 16px 40px; display:grid; grid-template-columns:minmax(0,1fr); gap:18px; }
 .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 @media (max-width:860px) { .grid2 { grid-template-columns:1fr; } nav { display:none; } }
-.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; min-width:0; overflow-x:auto; }
+.grid2 > * { min-width:0; } select { max-width:100%; }
 section.grid2 > .card { margin:0; }
 h2 { margin:0 0 6px; font-size:18px; } h3 { margin:14px 0 6px; font-size:15px; }
 .note { color:var(--mute); font-size:13px; margin:4px 0 10px; }
@@ -37,7 +39,7 @@ h2 { margin:0 0 6px; font-size:18px; } h3 { margin:14px 0 6px; font-size:15px; }
 table { border-collapse:collapse; width:100%; font-size:13px; } th,td { text-align:left; padding:5px 8px; border-bottom:1px solid var(--line); }
 th { color:var(--mute); font-weight:600; } td.num, th.num { text-align:right; }
 .pass { color:var(--green); font-weight:700; } .fail { color:var(--red); font-weight:700; }
-.chartbox { height:340px; } #map { height:420px; border-radius:8px; border:1px solid var(--line); }
+.chartbox { height:340px; } #map { height:500px; border-radius:8px; border:1px solid var(--line); background:#eef3f7; isolation:isolate; }
 label { display:block; margin:8px 0; font-size:14px; } input[type=range] { width:100%; }
 .signals { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; }
 .signal { border:1px solid var(--line); border-radius:8px; padding:8px 12px; font-size:13px; }
@@ -79,7 +81,7 @@ label.row { display:flex; align-items:center; gap:8px; }
 tr.undone td { color:var(--mute); text-decoration:line-through; } tr.undone td:last-child, tr.undone td:nth-last-child(2) { text-decoration:none; }
 #histBody button { padding:2px 10px; font-size:12px; }
 #stDisease, #stView { font:inherit; padding:4px 6px; }
-#stMap { height:340px; border-radius:8px; border:1px solid var(--line); background:#eef3f7; }
+.tog.idle { opacity:.45; } .leaflet-heatmap-layer { pointer-events:none; } .viewbtns button { padding:4px 10px; font-size:13px; } #mapHint { margin:0 0 8px; }
 #stMeasure { font:inherit; padding:4px 6px; } #stYear { width:220px; vertical-align:middle; }
 .legend { font-size:13px; margin:6px 0 14px; } .lgbar { display:inline-flex; vertical-align:middle; border:1px solid var(--line); }
 .lgbar i { width:22px; height:12px; display:inline-block; } .lgna { margin-left:14px; } .lgna i { display:inline-block; width:14px; height:12px; background:#d5dbe1; border:1px solid var(--line); vertical-align:middle; }

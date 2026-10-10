@@ -37,7 +37,7 @@ Real data / Estimated / Exploratory / Simulated / Uploaded, not verified. Bed nu
 - **Drag and drop upload**: drop files or a folder anywhere on the page; the data type is recognised from the columns. `site/templates/sample_SIMULATED_500_weeks_*.csv` are invented test files (`pipeline/make_sample.py`).
 - **Dengue (second disease)**: `pipeline/dengue.py`, on OpenDengue national weekly counts 2011-2022. Needs scikit-learn.
 - **Influenza case counts and rapid-rise classifier**: `pipeline/flu_cases.py`; the classifier is exported by `pipeline/export.py` and run in the browser.
-- **Facilities map**: `pipeline/facilities.py` looks up the team's hospital and clinic list in OpenStreetMap.
+- **Facilities map**: `pipeline/facilities.py` looked up the team's hospital and clinic list in OpenStreetMap. Replaced by the Ministry registry; see the last section.
 - Rebuild order: `evaluate.py test`, `gbm.py test`, `dengue.py`, `flu_cases.py`, `export.py`, `parity.py`.
 - Not in the repo (too large): the 500 MB OpenDengue temporal extract. The Malaysia rows used are in `data/raw/opendengue/mys_weekly_national.csv`.
 
@@ -66,3 +66,11 @@ py who_dengue.py build   # weekly series with a status per week -> data/raw/who_
 py who_dengue.py model   # joins it to 2011-2022 and reruns the model comparison -> site/data/dengue.json
 ```
 Each week is **reported** (stated in a report), **derived** (exact from the running totals), **estimated** (several weeks share one published total, spread between neighbours) or missing. Of 187 rebuilt weeks: 108 reported, 14 derived, 65 estimated. Forecast accuracy is scored on reported and derived weeks only. Needs `pdftotext` on the path.
+
+## One map, more state data, and the Ministry's facility registry
+- **One map** (`#atlas`): the Selangor map and the all-states map are now a single map. It opens on the whole country with every state shaded. A Disease switch controls it: influenza shades states by Ministry of Health cluster counts from the 2025 surge; dengue shades them by year (1999 to 2023) with a slider and a play button. Zooming in (zoom 7 or more, or the "Zoom to Selangor" button, or a click on a state) adds hospitals and clinics for every state, and Selangor's district shading, cluster heat and hotspot circles. Every layer has its own switch. The capacity heuristic and the state trend chart sit under the map in the same section.
+- **Facilities** (`pipeline/moh_facilities.py`): hospitals and walk-in health clinics come from the Ministry of Health's own registry (`facilities_master.csv`, github.com/MoH-Malaysia/data-resources-public, "as registered on 31 December 2025"), at the Ministry's coordinates. Rows whose coordinates fall more than 25 km outside their state are looked up by name on OpenStreetMap, or left off and listed on the site. Rural clinics, dental clinics and private GP clinics are not plotted. This replaces the team's hand-made Selangor list (`pipeline/facilities.py`, kept for reference).
+- **Private hospitals** (`pipeline/private_hospitals.py`): from the Ministry's list of hospitals licensed under Act 586, when it could be retrieved; see the note on the site for how many could be placed.
+- **State dengue data** (`pipeline/states.py`): yearly by state 1999 to 2023 (Mendeley Data, Ministry of Health open data, OpenDengue), weekly by state February 2010 to April 2015 and December 2019 to December 2024, and the same four-method comparison run per state on the weekly series. The weekly files were shared online with no stated source or licence, so they are not committed; `py -3.13 states.py fetch` downloads them again. They are used because their yearly sums agree with official totals, and the site says so.
+- **Influenza by state**: only Ministry cluster counts exist (all states for weeks 43 to 45 of 2025, five states for week 40). They are shown on the map and in the trend chart; no state model is possible.
+- Rebuild order for these: `states.py`, then `moh_facilities.py` (it reads the state outlines that `states.py` writes).

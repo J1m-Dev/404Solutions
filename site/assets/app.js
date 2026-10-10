@@ -50,7 +50,7 @@ function simRows(real) {
   return rows;
 }
 // Which map layers are switched on (the switches sit above the map).
-const LAYERS = { shade: true, heat: true, hot: true, government: true, private: true, clinic: true };
+const LAYERS = { state: true, shade: true, heat: true, hot: true, government: true, private: true, clinic: true };
 let heatLayer;
 const FACG = {};
 let SERVER = true; // false on static hosting: uploads then stay in this browser only
@@ -270,46 +270,113 @@ function hotspotData() {
   return { kind: "published", unit: "cases", chip: ["real", "Real data"], ds, points: [],
     note: "Reported influenza cases to week 42 of 2025, from the Selangor State Assembly answer. Only four districts were published; the other five are grey, which means not published, not zero. These are case totals, not cluster locations: no public source gives where clusters were." };
 }
+// ---------- one map: every state, then Selangor's districts and every registered facility when zoomed in ----------
+const DETAIL_ZOOM = 7; // from this zoom level the map also draws districts, hotspots, hospitals and clinics
+const ST = { disease: "flu", view: "weekly", on: {}, national: true, year: null, measure: "sum", playing: null };
+const HEATSTEPS = ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#8c2d04"];
+// Influenza measures for state shading: how to read the value from a state's row, its unit, its period and the menu text.
+const FLU_MEASURE = {
+  sum: [(r) => (r.w43 == null ? null : r.w43 + r.w44 + r.w45), "clusters", "weeks 43 to 45 of 2025", "Clusters, weeks 43 to 45 of 2025 together"],
+  w45: [(r) => r.w45, "clusters", "week 45 of 2025", "Clusters in week 45 of 2025"],
+  w44: [(r) => r.w44, "clusters", "week 44 of 2025", "Clusters in week 44 of 2025"],
+  w43: [(r) => r.w43, "clusters", "week 43 of 2025", "Clusters in week 43 of 2025"],
+  cum: [(r) => r.cumulative_w45, "clusters", "running total to week 45 of 2025", "Clusters, running total to week 45 of 2025"],
+  w40: [(r) => r.w40, "clusters", "week 40 of 2025", "Clusters in week 40 of 2025 (five states named)"],
+  ili: [(r) => r.ili_w40, "% ILI consultation rate", "week 40 of 2025", "ILI consultation rate, week 40 of 2025 (five states named)"] };
+let detail = false, stateLayer, STGEO, FACMETA;
+const boundsOf = (g) => L.geoJSON(g).getBounds();
+const zoomTo = (b) => map.setView(b.getCenter(), Math.min(11, Math.max(DETAIL_ZOOM, map.getBoundsZoom(b))));
+const viewAll = () => (STGEO ? map.fitBounds(boundsOf(STGEO), { padding: [4, 4] }) : map.setView([3.2, 101.45], 9));
+// One value per state shape for the chosen disease, measure and year; null means no published figure.
+function stateValues() {
+  const out = {}, tip = {}, named = {};
+  if (ST.disease === "flu") { const [get, unit, when] = FLU_MEASURE[ST.measure];
+    for (const nm in STATES.flu.states) { const v = get(STATES.flu.states[nm]); named[nm] = v;
+      nm.split(" and ").forEach((part) => { out[part] = v; if (part !== nm) tip[part] = `Counted together as ${nm}`; }); }
+    return { out, tip, named, unit, when, max: Math.max(...Object.values(out).filter((v) => v != null), 1) }; }
+  const Y = STATES.dengue.yearly, val = (nm, i) => { const cs = Y.states[nm][i], pp = Y.population_thousand[nm][i]; return cs == null ? null : ST.measure === "cases" ? cs : pp ? (cs / (pp * 1000)) * 1e5 : null; };
+  let max = 1; for (const nm in Y.states) Y.labels.forEach((_, i) => { const v = val(nm, i); if (v != null && v > max) max = v; });
+  for (const nm in Y.states) named[nm] = out[nm] = val(nm, ST.year);
+  out.Putrajaya = out["Kuala Lumpur"]; tip.Putrajaya = tip["Kuala Lumpur"] = "Kuala Lumpur and Putrajaya are counted together";
+  return { out, tip, named, max, unit: ST.measure === "cases" ? "cases" : "cases per 100,000 people", when: String(Y.labels[ST.year]) };
+}
+// State shading only. It has its own pane, so the year slider can redraw it without touching the other layers.
+function drawStates() {
+  if (stateLayer) { stateLayer.remove(); stateLayer = null; }
+  if (!STGEO || !STATES) { $("stLegend").textContent = ""; $("stSrc").textContent = ""; return; }
+  const flu = ST.disease === "flu", Y = STATES.dengue.yearly;
+  if (ST.year == null) ST.year = Y.labels.length - 1;
+  $("stYearRow").hidden = $("stPlay").hidden = flu; $("mapModeRow").hidden = !flu;
+  $("stYear").max = Y.labels.length - 1; $("stYear").value = ST.year; $("stYearV").textContent = Y.labels[ST.year];
+  $("stSrc").textContent = flu ? `States: influenza clusters from Ministry of Health statements. ${STATES.flu.note}` : `States: reported dengue cases for the chosen year. ${Y.note}`;
+  const V = stateValues(), fmt = (v) => (v >= 100 ? Math.round(v).toLocaleString() : Number.isInteger(v) ? String(v) : f1(v));
+  const colour = (v) => (v == null ? "#d5dbe1" : HEATSTEPS[Math.min(HEATSTEPS.length - 1, Math.floor(Math.sqrt(Math.max(0, v) / V.max) * HEATSTEPS.length))]);
+  // Zoomed in on influenza, Selangor's own districts carry the shading, so the state fill steps aside.
+  const hollow = (nm) => nm === "Selangor" && detail && flu && LAYERS.shade;
+  if (LAYERS.state) stateLayer = L.geoJSON(STGEO, { pane: "states", style: (f) => ({ color: "#555", weight: 1, fillColor: colour(V.out[f.properties.name]), fillOpacity: hollow(f.properties.name) ? 0 : detail ? 0.55 : 0.85 }),
+    onEachFeature: (f, layer) => { const nm = f.properties.name, v = V.out[nm];
+      layer.bindTooltip(`<b>${nm}</b><br>${v == null ? "No figure published" : fmt(v) + " " + (v === 1 ? V.unit.replace(/s$/, "") : V.unit)}<br>${V.when}` + (V.tip[nm] ? `<br><i>${V.tip[nm]}</i>` : "") + (detail ? "" : "<br><i>Click to zoom in</i>"), { sticky: true });
+      layer.on("click", () => { if (!detail) zoomTo(boundsOf(f)); }); } }).addTo(map);
+  const ranked = Object.entries(V.named).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]), last = ranked[ranked.length - 1];
+  $("stLegend").innerHTML = `<b>State shading:</b> <span class="lgbar">${HEATSTEPS.map((c) => `<i style="background:${c}"></i>`).join("")}</span> <span>0 to ${fmt(V.max)} ${V.unit}</span> <span class="lgna"><i></i> no figure published</span>` +
+    (ranked.length ? `<br><b>Highest, ${V.when}:</b> ${ranked.slice(0, 3).map(([nm, v]) => `${nm} (${fmt(v)})`).join(", ")}.` + (flu ? "" : ` <b>Lowest:</b> ${last[0]} (${fmt(last[1])}).`) : "") +
+    (flu ? "" : ` <span class="note">Colours use one fixed scale across all years, so years can be compared.</span>`);
+}
 function renderMap(c) {
-  if (!map) { map = L.map("map", { scrollWheelZoom: false }).setView([3.2, 101.45], 9);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap contributors" }).addTo(map); }
+  if (!map) { map = L.map("map", { scrollWheelZoom: false, zoomSnap: 0.25 });
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap contributors" }).addTo(map);
+    map.attributionControl.addAttribution("State boundaries: geoBoundaries");
+    // Fixed drawing order, bottom to top. The cluster heat layer sits between districts and hotspot circles (Leaflet's own overlay pane, 400).
+    [["states", 350], ["districts", 360], ["hot", 410], ["fac_clinic", 420], ["fac_private", 430], ["fac_government", 440]].forEach(([p, z]) => (map.createPane(p).style.zIndex = z));
+    viewAll(); detail = map.getZoom() >= DETAIL_ZOOM;
+    map.on("zoomend", () => { const d = map.getZoom() >= DETAIL_ZOOM; if (d !== detail) { detail = d; renderMap(context()); } });
+    map.on("resize", () => { if (!detail) viewAll(); }); } // keep the whole country in frame when the window changes size
   if (geoLayer) geoLayer.remove(); if (hospLayer) hospLayer.remove(); if (heatLayer) { heatLayer.remove(); heatLayer = null; }
+  drawStates();
+  const flu = ST.disease === "flu", sel = detail && flu; // Selangor's influenza layers are drawn only when zoomed in on influenza
   const hot = $("mapMode").value === "hot", H = hotspotData(), ds = H.ds;
+  for (const k of ["shade", "heat", "hot"]) $("ly_" + k).closest("label").classList.toggle("idle", !sel);
+  for (const k of ["government", "private", "clinic"]) $("ly_" + k).closest("label").classList.toggle("idle", !detail);
+  $("mapHint").textContent = !detail ? "Zoomed out: state shading only. Click a state, or press Zoom to Selangor, to see hospitals and clinics" + (flu ? ", and Selangor's districts and cluster hotspots." : ".")
+    : flu ? "Zoomed in: hospitals and clinics are drawn for every state. District shading, cluster heat and hotspot circles exist for Selangor only."
+    : "Zoomed in: hospitals and clinics are drawn for every state. Selangor's district shading and hotspots are influenza figures, so they are hidden while the map shows dengue.";
   const near3 = (d) => HOSP.map((h) => ({ h, km: hav(d.c, [h.lat, h.lon]) })).sort((a, b) => a.km - b.km).slice(0, 3).map((x) => `${x.h.name}: ${Math.round(x.km)} km`).join("<br>");
   const school = (d) => `Government schools: ${d.schools}; pupils: ${d.pupils.toLocaleString()} <i>Real data, 2025</i>`;
   if (!hot) {
     const byPupils = $("mapMode").value === "pupils", val = (d) => (byPupils ? d.pupils : d.pop), mx = Math.max(...ds.map(val)), tot = ds.reduce((a, d) => a + val(d), 0);
-    $("mapChip").className = "chip exp"; $("mapChip").textContent = "Exploratory";
-    $("mapNote").textContent = byPupils
-      ? "Shading shows each district's share of Selangor's government-school pupils (Ministry of Education records, 30 June 2025). Most clusters in the 2025 surge were in schools, so this is a second exposure proxy. It is real data about schools, not a forecast of district cases."
-      : "Shading shows each district's share of Selangor's population: an exposure proxy, not a forecast of district cases. No public district-level influenza series exists.";
-    geoLayer = L.geoJSON(GEO, { style: (f) => ({ color: "#555", weight: 1, fillColor: byPupils ? "#1d6fa5" : "#6d3a9c", fillOpacity: LAYERS.shade ? 0.08 + 0.55 * (val(ds.find((x) => x.name === f.properties.name)) / mx) : 0 }),
+    $("mapChip").className = "chip exp"; $("mapChip").textContent = "Selangor districts: exploratory";
+    $("mapNote").textContent = "Selangor districts: " + (byPupils
+      ? "shading shows each district's share of Selangor's government-school pupils (Ministry of Education records, 30 June 2025). Most clusters in the 2025 surge were in schools, so this is a second exposure proxy. It is real data about schools, not a forecast of district cases."
+      : "shading shows each district's share of Selangor's population: an exposure proxy, not a forecast of district cases. No public district-level influenza series exists.");
+    geoLayer = L.geoJSON(GEO, { pane: "districts", style: (f) => ({ color: "#555", weight: 1, fillColor: byPupils ? "#1d6fa5" : "#6d3a9c", fillOpacity: LAYERS.shade ? 0.08 + 0.55 * (val(ds.find((x) => x.name === f.properties.name)) / mx) : 0 }),
       onEachFeature: (f, layer) => { const d = ds.find((x) => x.name === f.properties.name);
-        layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand (${Math.round(d.share * 100)}% of Selangor) <i>Real data</i><br>${school(d)}<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } }).addTo(map);
+        layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand (${Math.round(d.share * 100)}% of Selangor) <i>Real data</i><br>${school(d)}<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } });
+    if (sel) geoLayer.addTo(map);
     const rank = [...ds].sort((a, b) => val(b) - val(a));
     $("hotRank").innerHTML = `<h3>Districts by ${byPupils ? "pupils" : "population"} <span class="chip real">Real data</span></h3><table><tr><th>District</th><th class="num">Population (thousand)</th><th class="num">Schools</th><th class="num">Pupils</th><th class="num">Share</th></tr>${rank.map((d) => `<tr><td>${d.name}</td><td class="num">${Math.round(d.pop)}</td><td class="num">${d.schools}</td><td class="num">${d.pupils.toLocaleString()}</td><td class="num">${Math.round((100 * val(d)) / tot)}%</td></tr>`).join("")}</table>`;
     return facilityLayers();
   }
   const have = ds.filter((d) => d.has), mxRate = Math.max(...have.map((d) => d.rate), 1e-9), mxVal = Math.max(...have.map((d) => d.value), 1);
-  $("mapChip").className = "chip " + H.chip[0]; $("mapChip").textContent = H.chip[1]; $("mapNote").textContent = H.note;
-  geoLayer = L.geoJSON(GEO, { style: (f) => { const d = ds.find((x) => x.name === f.properties.name);
+  $("mapChip").className = "chip " + H.chip[0]; $("mapChip").textContent = "Selangor districts: " + H.chip[1].toLowerCase(); $("mapNote").textContent = "Selangor districts: " + H.note;
+  geoLayer = L.geoJSON(GEO, { pane: "districts", style: (f) => { const d = ds.find((x) => x.name === f.properties.name);
       if (!LAYERS.shade) return { color: "#555", weight: 1, fillOpacity: 0 };
       return d.has ? { color: "#555", weight: 1, fillColor: "#c0282d", fillOpacity: (0.06 + 0.6 * (d.rate / mxRate)) * (H.kind === "list" && LAYERS.heat ? 0.4 : 1) } : { color: "#777", weight: 1, dashArray: "4", fillColor: "#9aa7b3", fillOpacity: 0.25 }; },
     onEachFeature: (f, layer) => { const d = ds.find((x) => x.name === f.properties.name);
-      layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand<br>${school(d)}<br>` + (d.has ? `${d.value} ${H.unit}${H.kind === "list" ? `, ${d.cases} cases` : ""}; <b>${f1(d.rate)} per 100,000 people</b>` : "No figure published for this district") + `<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } }).addTo(map);
+      layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand<br>${school(d)}<br>` + (d.has ? `${d.value} ${H.unit}${H.kind === "list" ? `, ${d.cases} cases` : ""}; <b>${f1(d.rate)} per 100,000 people</b>` : "No figure published for this district") + `<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } });
+  if (sel) geoLayer.addTo(map);
   const marks = [], pts = H.points.filter((r) => r.lat != null && r.lon != null).sort((a, b) => b.cases - a.cases);
   if (H.kind === "list") {
-    pts.forEach((r, i) => { const m = L.circleMarker([r.lat, r.lon], { radius: 4 + 2.2 * Math.sqrt(r.cases), color: i === 0 ? "#111" : "#8f1d21", weight: i === 0 ? 3 : 1, fillColor: "#e0393f", fillOpacity: LAYERS.heat ? 0.1 : 0.55 })
+    pts.forEach((r, i) => { const m = L.circleMarker([r.lat, r.lon], { pane: "hot", radius: 4 + 2.2 * Math.sqrt(r.cases), color: i === 0 ? "#111" : "#8f1d21", weight: i === 0 ? 3 : 1, fillColor: "#e0393f", fillOpacity: LAYERS.heat ? 0.1 : 0.55 })
       .bindPopup(`<b>${r.name}</b><br>${r.district}${r.setting ? ", " + r.setting : ""}<br><b>${r.cases} cases</b><br><i>Uploaded, not verified</i>`);
       if (i === 0) m.bindTooltip(`Largest: ${r.name} (${r.cases})`, { permanent: true, direction: "top" }); marks.push(m); });
   } else {
-    have.forEach((d) => marks.push(L.circleMarker(d.c, { radius: 6 + 26 * Math.sqrt(d.value / mxVal), color: "#8f1d21", weight: 1, fillColor: "#e0393f", fillOpacity: 0.5 })
+    have.forEach((d) => marks.push(L.circleMarker(d.c, { pane: "hot", radius: 6 + 26 * Math.sqrt(d.value / mxVal), color: "#8f1d21", weight: 1, fillColor: "#e0393f", fillOpacity: 0.5 })
       .bindTooltip(`${d.name}: ${d.value}`, { permanent: true, direction: "center", className: "hotlabel" })));
   }
   // Heat layer: glows where clusters are large and close together. Only drawn from real cluster positions.
-  if (H.kind === "list" && pts.length && LAYERS.heat) { const top = Math.max(...pts.map((r) => r.cases));
+  if (sel && H.kind === "list" && pts.length && LAYERS.heat) { const top = Math.max(...pts.map((r) => r.cases));
     heatLayer = L.heatLayer(pts.map((r) => [r.lat, r.lon, Math.max(0.2, r.cases / top)]), { radius: 34, blur: 26, minOpacity: 0.35, maxZoom: 11, gradient: { 0.3: "#ffe08a", 0.55: "#fd8d3c", 0.8: "#e31a1c", 1: "#7a0010" } }).addTo(map); }
-  hospLayer = L.layerGroup(marks); if (LAYERS.hot) hospLayer.addTo(map);
+  hospLayer = L.layerGroup(marks); if (sel && LAYERS.hot) hospLayer.addTo(map);
   const byRate = [...have].sort((a, b) => b.rate - a.rate), byVal = [...have].sort((a, b) => b.value - a.value);
   const noCoord = H.points.length - pts.length;
   $("hotRank").innerHTML = (have.length ? `<p><b>Most ${H.unit}:</b> ${byVal[0].name} (${byVal[0].value}). <b>Highest density:</b> ${byRate[0].name} (${f1(byRate[0].rate)} per 100,000 people).</p>` : "") +
@@ -319,16 +386,23 @@ function renderMap(c) {
     (noCoord ? `<p class="note">${noCoord} listed cluster(s) had no coordinates, so they count toward their district but are not drawn.</p>` : "");
   facilityLayers();
 }
+// Hospitals and clinics for every state. Built once; shown only when zoomed in, each kind in its own pane so hospitals stay on top.
 function facilityLayers() {
-  const KIND = { government: ["Government and teaching hospitals", "#0b6e6e", 7], private: ["Private hospitals", "#b5179e", 6], clinic: ["Government health clinics (Klinik Kesihatan)", "#e07a00", 4] };
+  const KIND = { clinic: ["Government health clinic", "#e07a00", 3.5, 1], private: ["Licensed private hospital", "#b5179e", 5.5, 2], government: ["Public hospital", "#0b6e6e", 6.5, 2] };
+  const where = (f) => (f.approximate ? "Approximate position: placed at its town, not the building" : f.osm ? "Position from OpenStreetMap: the registry's coordinates for this facility were wrong" : f.pos || (FACMETA ? "Position from the Ministry of Health registry" : "Position from OpenStreetMap"));
   if (!facDone) { facDone = true;
-    for (const k in KIND) { const [label, col, rad] = KIND[k];
-      FACG[k] = L.layerGroup(FAC.filter((f) => f.kind === k).map((f) => L.circleMarker([f.lat, f.lon], { radius: rad, color: col, weight: 2, fillColor: col, fillOpacity: f.approximate ? 0.15 : 0.9, dashArray: f.approximate ? "3" : null })
-        .bindPopup(`<b>${f.name}</b><br>${label}<br>${f.address || ""}<br><i>${f.approximate ? "Approximate position: placed at its town, not the building" : "Position from OpenStreetMap"}</i>`)));
-      $("n_" + k).textContent = FAC.filter((f) => f.kind === k).length; }
-    const ap = FAC.filter((f) => f.approximate).length;
-    $("facNote").innerHTML = `${FAC.length} facilities from the team's list are plotted in three colours; use the switches above the map to turn each group on or off. ${ap} could not be matched by name and are placed at their town (hollow, dashed markers). The capacity planner uses government hospitals only.`; }
-  for (const k in KIND) { if (LAYERS[k]) FACG[k].addTo(map); else FACG[k].remove(); }
+    for (const k in KIND) { const [label, col, rad, wt] = KIND[k], list = FAC.filter((f) => f.kind === k);
+      FACG[k] = L.layerGroup(list.map((f) => L.circleMarker([f.lat, f.lon], { pane: "fac_" + k, radius: rad, color: f.approximate ? col : "#fff", weight: f.approximate ? 2 : wt * 0.5, fillColor: col, fillOpacity: f.approximate ? 0.15 : 0.9, dashArray: f.approximate ? "3" : null })
+        .bindPopup(() => `<b>${f.name}</b><br>${f.type || label}<br>${[f.district, f.state].filter(Boolean).join(", ")}${f.address ? "<br>" + f.address : ""}<br><i>${where(f)}</i>`)));
+      $("n_" + k).textContent = list.length.toLocaleString(); }
+    const n = (k) => FAC.filter((f) => f.kind === k).length, M = FACMETA, P = M && M.private, moved = M ? M.registry_coordinates_wrong_repositioned : [], off = M ? M.registry_coordinates_wrong_left_off : [];
+    $("facNote").innerHTML = !M ? `${FAC.length} facilities are plotted.` :
+      `<b>${FAC.length.toLocaleString()}</b> facilities across Malaysia are plotted; zoom in on any state to see them. <b>${n("government")}</b> public hospitals and <b>${n("clinic").toLocaleString()}</b> government health clinics come from the Ministry of Health's own facility registry, as registered on ${M.as_at}, at the Ministry's coordinates. ` +
+      (P && P.listed ? `<b>${n("private")}</b> private hospitals come from ${P.source}; their positions were matched by name on OpenStreetMap, so ${P.approximate} are placed at their town only (hollow, dashed markers) and ${P.not_located} of the ${P.listed} listed could not be placed and are left off. ` : "Private hospitals are not plotted: we have not obtained the Ministry's list of hospitals licensed under Act 586 in a usable form. ") +
+      `Rural clinics (Klinik Desa), dental clinics and private GP clinics are not plotted.` +
+      (moved.length || off.length ? ` ${moved.length + off.length} registry rows had coordinates far outside their state: ${moved.length} were placed by name from OpenStreetMap instead${off.length ? `, and ${off.length} could not be placed and are left off (${off.join("; ")})` : ""}.` : "") +
+      ` The capacity heuristic above uses twelve Selangor government hospitals only.`; }
+  for (const k in KIND) { const want = LAYERS[k] && detail; if (want !== map.hasLayer(FACG[k])) want ? FACG[k].addTo(map) : FACG[k].remove(); }
 }
 function setupLayers() {
   const sync = () => { for (const k in LAYERS) $("ly_" + k).checked = LAYERS[k]; renderMap(context()); };
@@ -420,96 +494,87 @@ function renderProof() {
   <ul class="why"><li>District-level influenza activity. No public data exists for it.</li><li>Whether the thresholds fit your own data. They were learned from the national sentinel series; an uploaded series from another lab network is uncalibrated.</li><li>Real hospital capacity, unless a planner uploads it.</li><li>Case counts. Positivity is a share of tested samples.</li><li>Whether uploaded figures are correct. They are marked unverified.</li></ul>`;
 }
 
-// ---------- all states: one switchable line per state, plus a national layer ----------
-const ST = { disease: "dengue", view: "monthly", on: {}, national: true, year: null, measure: "rate", playing: null };
-const HEATSTEPS = ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#8c2d04"];
-let stMap, stGeoLayer, STGEO;
-// One value per state for the chosen disease, year and measure; null means no published figure.
-function stateValues() {
-  const out = {};
-  if (ST.disease === "flu") { const k = ST.measure === "ili" ? "ili_rate_percent_week_40_2025" : "clusters_week_40_2025";
-    STATES.flu.snapshots.forEach((r) => r.state.split(" and ").forEach((nm) => (out[nm] = r[k])));
-    return { out, max: Math.max(...Object.values(out).filter((v) => v != null), 1), unit: ST.measure === "ili" ? "% ILI consultation rate" : "clusters", when: "week 40 of 2025" }; }
-  const Y = STATES.dengue.yearly, val = (nm, i) => { const cs = Y.states[nm][i], pp = Y.population_thousand[nm][i]; return cs == null ? null : ST.measure === "cases" ? cs : pp ? (cs / (pp * 1000)) * 1e5 : null; };
-  let max = 1; for (const nm in Y.states) Y.labels.forEach((_, i) => { const v = val(nm, i); if (v != null && v > max) max = v; });
-  for (const nm in Y.states) out[nm] = val(nm, ST.year);
-  return { out, max, unit: ST.measure === "cases" ? "cases" : "cases per 100,000 people", when: String(Y.labels[ST.year]) };
-}
-function renderStateMap() {
-  if (!STGEO || !STATES) return;
-  const flu = ST.disease === "flu", Y = STATES.dengue.yearly;
-  if (ST.year == null) ST.year = Y.labels.length - 1;
-  if (!stMap) { stMap = L.map("stMap", { scrollWheelZoom: false, zoomSnap: 0.25, attributionControl: true }); stMap.attributionControl.setPrefix(""); stMap.attributionControl.addAttribution("Boundaries: geoBoundaries");
-    stMap.fitBounds(L.geoJSON(STGEO).getBounds(), { padding: [6, 6] }); }
-  $("stYearRow").hidden = flu; $("stPlay").hidden = flu;
-  $("stYear").max = Y.labels.length - 1; $("stYear").value = ST.year; $("stYearV").textContent = Y.labels[ST.year];
-  const V = stateValues(), fmt = (v) => (v >= 100 ? Math.round(v).toLocaleString() : Number.isInteger(v) ? String(v) : f1(v));
-  const colour = (v) => (v == null ? "#d5dbe1" : HEATSTEPS[Math.min(HEATSTEPS.length - 1, Math.floor(Math.sqrt(Math.max(0, v) / V.max) * HEATSTEPS.length))]);
-  if (stGeoLayer) stGeoLayer.remove();
-  stGeoLayer = L.geoJSON(STGEO, { style: (f) => ({ color: "#555", weight: 1, fillColor: colour(V.out[f.properties.name]), fillOpacity: 0.92 }),
-    onEachFeature: (f, layer) => { const v = V.out[f.properties.name];
-      layer.bindTooltip(`<b>${f.properties.name}</b><br>${v == null ? "No figure published" : fmt(v) + " " + V.unit}<br>${V.when}`, { sticky: true }); } }).addTo(stMap);
-  const ranked = Object.entries(V.out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]);
-  $("stLegend").innerHTML = `<span class="lgbar">${HEATSTEPS.map((c) => `<i style="background:${c}"></i>`).join("")}</span> <span>0 to ${fmt(V.max)} ${V.unit}</span> <span class="lgna"><i></i> no figure published</span>` +
-    (ranked.length ? `<br><b>Highest in ${V.when}:</b> ${ranked.slice(0, 3).map(([nm, v]) => `${nm} (${fmt(v)})`).join(", ")}. <b>Lowest:</b> ${ranked[ranked.length - 1][0]} (${fmt(ranked[ranked.length - 1][1])}).` : "") +
-    (flu ? "" : ` <span class="note">Colours use one fixed scale across all years, so years can be compared. State figures for 2019 to 2022 are not in the source.</span>`);
-}
-function setupStateMap() {
-  const stop = () => { clearInterval(ST.playing); ST.playing = null; $("stPlay").textContent = "Play years"; };
-  $("stYear").oninput = (e) => { ST.year = +e.target.value; renderStateMap(); };
-  $("stMeasure").onchange = (e) => { ST.measure = e.target.value; renderStateMap(); };
-  $("stPlay").onclick = () => { if (ST.playing) return stop(); const n = STATES.dengue.yearly.labels.length; if (ST.year >= n - 1) ST.year = -1;
-    $("stPlay").textContent = "Pause"; ST.playing = setInterval(() => { ST.year++; renderStateMap(); if (ST.year >= n - 1) stop(); }, 900); };
-}
+// ---------- trend chart: one switchable line per state, plus a national layer ----------
 function stMeasureOptions() {
-  $("stMeasure").innerHTML = ST.disease === "flu" ? '<option value="clusters">Clusters in week 40 of 2025</option><option value="ili">ILI consultation rate, week 40 of 2025</option>'
+  $("stMeasure").innerHTML = ST.disease === "flu" ? Object.entries(FLU_MEASURE).map(([k, m]) => `<option value="${k}">${m[3]}</option>`).join("")
     : '<option value="rate">Cases per 100,000 people</option><option value="cases">Total cases</option>';
   ST.measure = $("stMeasure").value;
 }
 const ST_COL = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#ad494a", "#637939", "#7b4173", "#3182bd", "#e6550d"];
 let stChart;
+// What the chart draws for the chosen disease and view: labels, one series per state, the national layer and the axis titles.
+function stSeries() {
+  const S = STATES;
+  if (ST.disease === "flu") { const N = S.flu.clusters_national || {}, wks = [39, 40, 41, 42, 43, 44, 45];
+    return { kind: "flu", labels: wks.map((w) => `Week ${w}, 2025`), states: Object.fromEntries(Object.entries(S.flu.states).map(([nm, r]) => [nm, wks.map((w) => r["w" + w] ?? null)])),
+      national: wks.map((w) => N["w" + w] ?? null), natLabel: "Malaysia (all clusters reported that week)", yTitle: "Influenza clusters reported that week", dots: 3,
+      note: `Source: ${S.flu.source}. ${S.flu.note} Weeks 41 and 42 are blank: no state breakdown was found for them.` }; }
+  const src = S.dengue[ST.view], per = { weekly: "week", monthly: "month", yearly: "year" }[ST.view];
+  let labels = src.labels.map(String), states = src.states, national = src.national;
+  if (ST.view === "weekly") { // leave a visible break where the weekly files stop in 2015 and start again in 2019
+    const at = labels.findIndex((d, i) => i && new Date(d) - new Date(labels[i - 1]) > 30 * 864e5), gap = Array(14).fill(null), ins = (a) => (at < 0 ? a : a.slice(0, at).concat(gap, a.slice(at)));
+    states = Object.fromEntries(Object.entries(states).map(([k, a]) => [k, ins(a)])); national = ins(national);
+    if (at >= 0) labels = labels.slice(0, at).concat(gap.map((_, i) => (i === 7 ? "no weekly data" : "")), labels.slice(at)); }
+  return { kind: ST.view, labels, states, national, natLabel: src.national_label, yTitle: `Reported dengue cases per ${per}`, dots: ST.view === "yearly" ? 3 : 0,
+    note: `Source: ${S.dengue.source}. ${src.note}` };
+}
 function renderStates() {
-  const S = STATES; if (!S) { $("states").hidden = true; return; }
-  const flu = ST.disease === "flu", src = flu ? S.flu.weekly : S.dengue[ST.view], monthly = !flu && ST.view === "monthly";
-  const names = flu ? [] : Object.keys(src.states);
+  const S = STATES; if (!S) { $("trendBox").hidden = true; return; }
+  const flu = ST.disease === "flu", G = stSeries(), monthly = G.kind === "monthly", names = Object.keys(G.states);
   names.forEach((n) => { if (!(n in ST.on)) ST.on[n] = true; });
-  $("stViewRow").hidden = flu;
-  $("stNote").textContent = flu ? `Source: ${S.flu.source}. ${S.flu.note}` : `Source: ${S.dengue.source}. ${src.note}`;
+  $("stViewRow").hidden = flu; $("stNote").textContent = G.note;
   $("stToggles").innerHTML = names.map((n, i) => `<label class="tog"><input type="checkbox" data-st="${n}" ${ST.on[n] ? "checked" : ""}><span class="sw"></span><i class="dot" style="background:${ST_COL[i % ST_COL.length]}"></i><span>${n}</span></label>`).join("") +
-    `<label class="tog"><input type="checkbox" data-st="__nat" ${ST.national ? "checked" : ""}><span class="sw"></span><i class="dot" style="background:#111"></i><span><b>${src.national_label}</b></span></label>` +
-    (names.length ? `<button type="button" data-all="1">All states on</button><button type="button" data-all="0">All states off</button>` : "");
+    `<label class="tog"><input type="checkbox" data-st="__nat" ${ST.national ? "checked" : ""}><span class="sw"></span><i class="dot" style="background:#111"></i><span><b>${G.natLabel}</b></span></label>` +
+    `<button type="button" data-all="1">All states on</button><button type="button" data-all="0">All states off</button>`;
   const models = monthly ? Object.fromEntries(S.dengue.models.map((m) => [m.state, m])) : {};
   const extra = monthly ? ["2011-01", "2011-02", "2011-03"] : [];
-  const labels = src.labels.map(String).concat(extra), n = src.labels.length, pad = (a) => a.concat(extra.map(() => null));
+  const labels = G.labels.concat(extra), n = G.labels.length, pad = (a) => a.concat(extra.map(() => null));
   const ds = [];
   names.forEach((nm, i) => { if (!ST.on[nm]) return; const col = ST_COL[i % ST_COL.length];
-    ds.push({ label: nm, data: pad(src.states[nm]), borderColor: col, backgroundColor: col, borderWidth: 1.5, pointRadius: monthly ? 0 : 3, yAxisID: "y", spanGaps: false });
-    if (models[nm]) ds.push({ label: "", data: Array(n - 1).fill(null).concat([src.states[nm][n - 1]], models[nm].projection), borderColor: col, borderDash: [4, 3], borderWidth: 1.5, pointRadius: 2, yAxisID: "y" }); });
-  if (ST.national) { ds.push({ label: src.national_label, data: pad(src.national), borderColor: "#111", backgroundColor: "#111", borderWidth: 2.5, pointRadius: flu || monthly ? 0 : 3, yAxisID: flu ? "y" : "y2", spanGaps: false });
-    const all = models["All ten states together"]; if (all) ds.push({ label: "", data: Array(n - 1).fill(null).concat([src.national[n - 1]], all.projection), borderColor: "#111", borderDash: [4, 3], borderWidth: 2, pointRadius: 2, yAxisID: "y2" }); }
+    ds.push({ label: nm, data: pad(G.states[nm]), borderColor: col, backgroundColor: col, borderWidth: 1.5, pointRadius: G.dots, yAxisID: "y", spanGaps: false });
+    if (models[nm]) ds.push({ label: "", data: Array(n - 1).fill(null).concat([G.states[nm][n - 1]], models[nm].projection), borderColor: col, borderDash: [4, 3], borderWidth: 1.5, pointRadius: 2, yAxisID: "y" }); });
+  if (ST.national) { ds.push({ label: G.natLabel, data: pad(G.national), borderColor: "#111", backgroundColor: "#111", borderWidth: 2.5, pointRadius: G.dots, yAxisID: "y", spanGaps: false });
+    const all = models["All ten states together"]; if (all) ds.push({ label: "", data: Array(n - 1).fill(null).concat([G.national[n - 1]], all.projection), borderColor: "#111", borderDash: [4, 3], borderWidth: 2, pointRadius: 2, yAxisID: "y" }); }
   if (stChart) stChart.destroy();
-  const scales = { x: { ticks: { maxTicksLimit: 14 } }, y: { beginAtZero: true, title: { display: true, text: flu ? "% of sentinel samples positive" : `Reported dengue cases per ${monthly ? "month" : "year"}, each state` } } };
-  if (!flu) scales.y2 = { position: "right", beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: monthly ? "All reporting states together" : "National total" }, display: ST.national };
-  stChart = new Chart($("stChart"), { type: "line", data: { labels, datasets: ds }, options: { maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales } });
+  const scales = { x: { ticks: { maxTicksLimit: 14 } }, y: { beginAtZero: true, title: { display: true, text: G.yTitle } } }; // states and the national line share one axis
+  stChart = new Chart($("stChart"), { type: "line", data: { labels, datasets: ds }, options: { maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { filter: (t) => t.dataset.label !== "" } }, scales } });
 
-  if (flu) { $("stBody").innerHTML = `<h3>Published state snapshots <span class="chip real">Real data</span></h3>
-    <p class="note">Week 40 of 2025, from a Ministry of Health statement reported by Bernama on 9 Oct 2025. The statement named only the five highest states for each measure, so a blank means "not among the five named", not zero.</p>
-    <table><tr><th>State</th><th class="num">Clusters in week 40</th><th class="num">ILI consultation rate</th></tr>${S.flu.snapshots.map((r) => `<tr><td>${r.state}</td><td class="num">${r.clusters_week_40_2025 ?? ""}</td><td class="num">${r.ili_rate_percent_week_40_2025 == null ? "" : r.ili_rate_percent_week_40_2025 + "%"}</td></tr>`).join("")}</table>
-    <p class="note">With no state series, no state model can be trained or tested for influenza. The national model and its results are in the Proof section.</p>`; return; }
-  if (!monthly) { $("stBody").innerHTML = `<p class="note">Yearly figures are too few to model (eleven points per state). Switch to the monthly view for the state models. Dashed lines there are projections.</p>`; return; }
-  const cell = (r) => (r.best === "last_value" ? `<td class="fail">No model beat last month</td>` : `<td class="pass">${r.best.replace(/_/g, " ")}, ${r.gain_vs_last_value_pct}% lower error</td>`);
-  const wins = (k) => S.dengue.models.filter((m) => m.state !== "All ten states together" && m.results[k].best !== "last_value").length, tot = S.dengue.models.length - 1;
+  if (flu) { const N = S.flu.clusters_national || {}, tot = Object.values(S.flu.states).reduce((a, r) => a + (r.cumulative_w45 || 0), 0);
+    $("stBody").innerHTML = `<h3>Influenza clusters by state, 2025 surge <span class="chip real">Real data</span></h3>
+    <p class="note">From Ministry of Health statements of 9 October, 7 November and 14 November 2025. Weeks 43 to 45 list every state, and the state counts add up to the national totals the Ministry gave (${N.w43}, ${N.w44} and ${N.w45}). For week 40 the statement named only the five highest states for each measure, so a blank there means "not among the five named", not zero. The running total is as the Ministry stated it; we could not confirm which week it counts from.</p>
+    <table><tr><th>State</th><th class="num">Week 40</th><th class="num">Week 43</th><th class="num">Week 44</th><th class="num">Week 45</th><th class="num">Running total to week 45</th><th class="num">ILI consultation rate, week 40</th></tr>
+    ${Object.entries(S.flu.states).map(([nm, r]) => `<tr><td>${nm}</td>${["w40", "w43", "w44", "w45", "cumulative_w45"].map((k) => `<td class="num">${r[k] ?? ""}</td>`).join("")}<td class="num">${r.ili_w40 == null ? "" : r.ili_w40 + "%"}</td></tr>`).join("")}
+    <tr><th>Malaysia</th>${["w40", "w43", "w44", "w45"].map((k) => `<th class="num">${N[k] ?? ""}</th>`).join("")}<th class="num">${tot}</th><th></th></tr></table>
+    <p class="note">A handful of scattered weeks cannot train or test a state model for influenza. The national model and its results are in the Proof section.</p>`; return; }
+  if (G.kind === "yearly") { $("stBody").innerHTML = `<p class="note">Yearly figures are too few to model (${G.labels.length} points per state). Switch to the weekly or monthly view for the state models.</p>`; return; }
+  const gain = (r, unit) => (r.best === "last_value" ? `<td class="fail">No model beat last ${unit}</td>` : `<td class="pass">${r.best.replace(/_/g, " ")}, ${r.gain_vs_last_value_pct}% lower error</td>`);
+  const none = (list) => { const z = list.filter((m) => m.results.every((r) => r.best === "last_value")).map((m) => m.state); return z.length ? ` No model beat it at any horizon in ${z.join(", ")}.` : ""; };
+  if (G.kind === "weekly") { const W = S.dengue.weekly_models, done = W.filter((m) => m.results), wins = (k) => done.filter((m) => m.results[k].best !== "last_value").length;
+    $("stBody").innerHTML = `<h3>The same weekly models, state by state <span class="chip real">Measured</span></h3>
+    <p class="note">For each state the earliest 70% of weeks train the four methods used for the national dengue model and the latest 30% test them, split by date, with the same fixed settings; nothing was tuned per state. Each cell names the method with the lowest average error and how far it beat "same as last week".</p>
+    <table><tr><th>State</th><th class="num">Weeks</th><th>Test period</th><th>1 week ahead</th><th>2 weeks ahead</th><th>3 weeks ahead</th><th>4 weeks ahead</th></tr>
+    ${W.map((m) => (m.results ? `<tr><td>${m.state}</td><td class="num">${m.weeks}</td><td>${m.test_start} to ${m.test_end}</td>${m.results.map((r) => gain(r, "week")).join("")}</tr>` : `<tr><td>${m.state}</td><td class="num">${m.weeks}</td><td colspan="5">Not modelled: ${m.skipped}</td></tr>`)).join("")}</table>
+    <p class="note">A model beat "same as last week" in ${wins(0)} of ${done.length} states one week ahead, ${wins(1)} two weeks ahead, ${wins(2)} three weeks ahead and ${wins(3)} four weeks ahead.${none(done)} Several of the gains are only a few percent. These runs were made after the files were found, so they are extra evidence, not results fixed in advance, and the weekly files themselves carry no stated source or licence.</p>`; return; }
+  const Mo = S.dengue.models, st = Mo.filter((m) => m.state !== "All ten states together"), wins = (k) => st.filter((m) => m.results[k].best !== "last_value").length;
+  const skipped = Object.keys(S.dengue.monthly.states).filter((nm) => !st.some((m) => m.state === nm));
   $("stBody").innerHTML = `<h3>The same model comparison, state by state <span class="chip real">Measured</span></h3>
     <p class="note">For each state: the earliest 70% of months train the models, the latest 30% test them. Each cell names the method with the lowest error and how much it beat "same as last month". Settings are the ones used for the weekly models; nothing was tuned per state. Dashed lines on the chart project three months past the data (early 2011) and cannot be checked.</p>
     <table><tr><th>State</th><th>Months</th><th>Test period</th><th>1 month ahead</th><th>2 months ahead</th><th>3 months ahead</th></tr>
-    ${S.dengue.models.map((m) => `<tr><td>${m.state}</td><td>${m.months}</td><td>${m.test_start} to ${m.test_end}</td>${m.results.map(cell).join("")}</tr>`).join("")}</table>
-    <p class="note">A model beat "same as last month" in ${wins(0)} of ${tot} states one month ahead, ${wins(1)} of ${tot} two months ahead and ${wins(2)} of ${tot} three months ahead. Selangor is the exception at every horizon. Three states with monthly data (Kelantan, Sabah, Sarawak) have gaps in their series and were not modelled. This data ends in 2010, so it shows the method working on other states, not anything about dengue today.</p>`;
+    ${Mo.map((m) => `<tr><td>${m.state}</td><td>${m.months}</td><td>${m.test_start} to ${m.test_end}</td>${m.results.map((r) => gain(r, "month")).join("")}</tr>`).join("")}</table>
+    <p class="note">A model beat "same as last month" in ${wins(0)} of ${st.length} states one month ahead, ${wins(1)} two months ahead and ${wins(2)} three months ahead.${none(st)}${skipped.length ? ` ${skipped.join(", ")} have gaps in their monthly series and were not modelled.` : ""} This data ends in 2010, so it shows the method working on other states, not anything about dengue today.</p>`;
 }
-function setupStates() {
-  $("stDisease").onchange = (e) => { ST.disease = e.target.value; clearInterval(ST.playing); ST.playing = null; $("stPlay").textContent = "Play years"; stMeasureOptions(); renderStates(); renderStateMap(); };
+function setupAtlas() {
+  const stop = () => { clearInterval(ST.playing); ST.playing = null; $("stPlay").textContent = "Play years"; };
+  $("stYear").oninput = (e) => { ST.year = +e.target.value; drawStates(); };
+  $("stMeasure").onchange = (e) => { ST.measure = e.target.value; drawStates(); };
+  $("stPlay").onclick = () => { if (ST.playing) return stop(); const n = STATES.dengue.yearly.labels.length; if (ST.year >= n - 1) ST.year = -1;
+    $("stPlay").textContent = "Pause"; ST.playing = setInterval(() => { ST.year++; drawStates(); if (ST.year >= n - 1) stop(); }, 600); };
+  $("stDisease").onchange = (e) => { ST.disease = e.target.value; ST.on = {}; stop(); stMeasureOptions(); renderStates(); renderMap(context()); };
+  $("viewAll").onclick = viewAll; $("viewSel").onclick = () => zoomTo(boundsOf(GEO));
   $("stView").onchange = (e) => { ST.view = e.target.value; ST.on = {}; renderStates(); };
   $("stToggles").onchange = (e) => { const k = e.target.dataset.st; if (!k) return; if (k === "__nat") ST.national = e.target.checked; else ST.on[k] = e.target.checked; renderStates(); };
   $("stToggles").onclick = (e) => { const b = e.target.closest("button[data-all]"); if (!b) return; for (const k in ST.on) ST.on[k] = b.dataset.all === "1"; renderStates(); };
+  if (!STATES || !STGEO) { $("stCtl").hidden = true; $("ly_state").closest("label").hidden = true; $("viewAll").hidden = true; }
 }
 
 function renderDengue() {
@@ -673,18 +738,19 @@ function setupUpload() {
     setupUpload.ack = null; const ownNew = t === "lab" && $("ownSeries").checked;
     const failed = await saveUpload(t, out, ownNew);
     if (failed) { $("uerr").textContent = failed + " Enter a passcode under Upload history."; return; }
-    render();
+    render(); if (t === "clusters" || t === "clusterlist") zoomTo(boundsOf(GEO));
     if (setupUpload.nextFile()) return;
     $("dlg").close(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
 
 (async function () {
   [D, GEO, HOSP] = await Promise.all(["data/site.json", "data/districts.geojson", "data/hospitals.json"].map((u) => fetch(u).then((r) => r.json())));
-  FAC = await fetch("data/facilities.json").then((r) => r.json()).catch(() => HOSP.map((h) => ({ ...h, kind: "government" })));
+  const fj = await fetch("data/facilities.json").then((r) => r.json()).catch(() => null);
+  FAC = fj ? fj.rows || fj : HOSP.map((h) => ({ ...h, kind: "government" })); FACMETA = fj && fj.meta;
   DENGUE = await fetch("data/dengue.json").then((r) => r.json()).catch(() => null);
   STATES = await fetch("data/states.json").then((r) => r.json()).catch(() => null);
   STGEO = await fetch("data/states_map.geojson").then((r) => r.json()).catch(() => null);
-  await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupStates(); renderStates(); if (STATES && STGEO) { stMeasureOptions(); setupStateMap(); renderStateMap(); } renderProof(); renderDengue();
+  await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupAtlas(); if (STATES) stMeasureOptions(); renderStates(); renderProof(); renderDengue();
   $("adm").oninput = $("share").oninput = () => renderPlan(context());
   $("mapMode").onchange = () => renderMap(context());
   $("aiOn").disabled = !SERVER; $("aiOn").onchange = () => renderSummary(context());
