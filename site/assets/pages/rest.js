@@ -116,3 +116,14 @@
   const rows = document.createElement("div"); rows.className = "rows"; rows.append(d); card.append(rows);
   d.addEventListener("toggle", Room.resize);
 })();
+// Trends by state: what it shows depends on the app's Disease picker, which lives on the Where page. Here the same picker
+// is offered as two pills at the top of the section (they set the app's own #stDisease and fire its own change handler),
+// so "dengue by state" is reachable where the row promises it.
+(function () {
+  const box = $("trendBox"), sel = $("stDisease"); if (!box || !sel || box.querySelector(".seg")) return;
+  const seg = document.createElement("div"); seg.className = "seg"; seg.setAttribute("role", "group"); seg.setAttribute("aria-label", "Disease");
+  seg.innerHTML = [...sel.options].map((o) => `<button type="button" data-v="${o.value}">${o.textContent}</button>`).join("");
+  const mark = () => seg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === sel.value));
+  seg.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b || b.dataset.v === sel.value) return; sel.value = b.dataset.v; sel.dispatchEvent(new Event("change", { bubbles: true })); mark(); Room.resize(); });
+  sel.addEventListener("change", mark); box.prepend(seg); mark();
+})();
