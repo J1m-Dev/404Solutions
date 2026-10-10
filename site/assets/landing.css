@@ -74,12 +74,12 @@ h2{font-size:clamp(24px,min(4.2vw,7.4vh),66px)}
 .copy p{margin:0;color:var(--mute);font-size:clamp(15px,min(1.5vw,2.6vh),21px)}
 /* the one emphasis on the page: a line draws itself under the word that matters */
 .mark{position:relative;white-space:nowrap}
-.mark::after{content:"";position:absolute;left:0;right:0;bottom:-.06em;height:.09em;border-radius:.05em;background:var(--mark);transform:scaleX(0);transform-origin:left;transition:transform .9s var(--swing) .7s}
+.mark::after{content:"";position:absolute;left:0;right:0;bottom:-.06em;height:.09em;border-radius:.05em;background:var(--mark);transform:scaleX(0);transform-origin:left;transition:transform .8s var(--swing) .6s}
 body.ready .mark::after{transform:scaleX(1)}
-/* "spreads." starts to drift apart, then snaps back as the line lands under "outbreak": caught before it spreads */
+/* read in order: the line draws under "outbreak", a short pause, then "spreads." drifts apart and snaps back */
 .spread{white-space:nowrap}
 .spread span{display:inline-block}
-body.ready .spread span{animation:spread 1.75s var(--swing) .25s both}
+body.ready .spread span{animation:spread 1.5s var(--swing) 1.9s both}
 @keyframes spread{0%{transform:none;opacity:1}50%,70%{transform:translateX(calc(var(--i)*.1em)) translateY(calc((var(--j) - .5)*.1em));opacity:.85}100%{transform:none;opacity:1}}
 
 .s1{display:grid;grid-template-rows:auto minmax(0,1fr);padding-top:clamp(62px,12vh,128px);padding-bottom:clamp(14px,3vh,34px)}
