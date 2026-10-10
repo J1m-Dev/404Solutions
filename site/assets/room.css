@@ -3,7 +3,7 @@
    TO CHANGE THE COLOURS: edit :root. The room stays blue; --acc is the one colour that follows the alert. */
 @property --acc{syntax:"<color>";inherits:true;initial-value:#ffffff}
 :root{
-  --sky-1:#1f346a; --sky-2:#34579a; --sky-3:#79a3dc;      /* the room */
+  --sky-1:#18233a; --sky-2:#263a5e; --sky-3:#4a628c;      /* the room: the deep end of the landing page's steel-blue fog */
   --sun:#ffcf4a;                                          /* the one highlight: main buttons, the selected page */
   --mark:#ff6a3d;                                         /* the orange point from the logo */
   --paper:#f6f8fc; --ink:#12203a; --mute:#566583; --line:#dfe6f1; --brand:#2f5196;   /* the sheets that carry tables and charts */
@@ -11,7 +11,8 @@
   --green-ink:#1d8a63; --yellow-ink:#a97c00; --orange-ink:#c85f12; --red-ink:#c0322d; /* the same levels as text on paper */
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
   --ease:cubic-bezier(.2,.8,.2,1);
-  --rail:92px;
+  --pad:clamp(18px,4vw,56px); --top:clamp(12px,2.4vh,24px);   /* the landing page's own margins, so the logo sits in the same place */
+  --rail:calc(var(--pad) + 82px);
   transition:--acc .9s var(--ease);
 }
 [data-state=early]{--acc:#ffe08a}
@@ -27,15 +28,14 @@ body{margin:0;color:#fff;font:16px/1.5 var(--sans);-webkit-font-smoothing:antial
 button{font:inherit;color:inherit}
 
 /* navigation: a slim glass rail; each page is a small live picture with its name */
-.rail{position:fixed;z-index:6;left:14px;top:14px;bottom:14px;width:calc(var(--rail) - 22px);display:flex;flex-direction:column;align-items:center;gap:clamp(1px,.6vh,6px);padding:clamp(8px,1.6vh,16px) 0;overflow:hidden auto;scrollbar-width:none;border-radius:26px;
+.rail{position:fixed;z-index:6;left:var(--pad);top:calc(var(--top) + 30px + clamp(10px,2vh,18px));max-height:calc(100vh - var(--top) - 30px - clamp(10px,2vh,18px) - 14px);width:70px;display:flex;flex-direction:column;align-items:center;gap:clamp(1px,.6vh,6px);padding:clamp(8px,1.6vh,16px) 0;overflow:hidden auto;scrollbar-width:none;border-radius:26px;
   background:linear-gradient(170deg,rgba(255,255,255,.2),rgba(255,255,255,.06));backdrop-filter:blur(26px) saturate(1.6);-webkit-backdrop-filter:blur(26px) saturate(1.6);border:1px solid rgba(255,255,255,.22)}
 .rail a{display:grid;justify-items:center;gap:1px;width:60px;padding:5px 0 5px;flex:none;border-radius:16px;color:#fff;text-decoration:none;font-size:12px;font-weight:600;opacity:.7;transition:opacity .25s,background .25s}
 .rail a:hover{opacity:1;background:rgba(255,255,255,.1)}
 .rail a.on{opacity:1;background:rgba(255,255,255,.18);box-shadow:inset 0 -2px 0 var(--sun)}
 .rail svg{width:34px;height:34px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
-.rail .logo{opacity:1;margin-bottom:clamp(2px,1vh,10px);padding:0;width:34px;height:34px;flex:none}
-.rail .logo i{display:block;width:34px;height:34px;border-radius:50%;box-shadow:inset 0 0 0 2.5px #fff;position:relative;background:radial-gradient(circle,rgba(255,255,255,.9) 0 .8px,transparent 1.2px) 0 0/4px 4px}
-.rail .logo i::after{content:"";position:absolute;right:18%;top:42%;width:24%;height:24%;border-radius:50%;background:var(--mark)}
+.logo{position:fixed;z-index:7;left:var(--pad);top:var(--top);display:flex;align-items:center;gap:3px;color:#fff;text-decoration:none;font:700 22px/1 "Unbounded",var(--sans);view-transition-name:dom-logo}
+.logo canvas{width:30px;height:30px;display:block}
 
 main{position:relative;z-index:2;margin-left:var(--rail);min-height:100vh}
 
@@ -152,7 +152,7 @@ tr.undone td{color:var(--mute);text-decoration:line-through}tr.undone td:last-ch
 /* the data-status line of the app: uploads, simulation, reset */
 .stamp{position:relative;z-index:3;margin:0;padding:10px clamp(18px,3.4vw,52px) 0;font-size:13.5px;color:rgba(255,255,255,.9)}
 .stamp b.unv,.stamp .simflag{color:var(--yellow)}.stamp button{margin-left:8px;padding:3px 11px;font-size:12.5px}
-[data-page=now] .stamp{position:absolute;left:0;right:0;top:0;padding-left:clamp(20px,5vw,84px);padding-right:340px}
+[data-page=now] .stamp{position:absolute;left:0;right:0;top:0;padding-left:clamp(20px,5vw,84px);padding-right:240px}
 [data-page=now] .stamp.quiet{display:none}
 .replay{display:none}   /* the app's own replay bar; the first screen carries the replay buttons instead */
 
@@ -197,9 +197,9 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
 @media (max-width:860px){.grid2{grid-template-columns:1fr}}
 @media (max-width:760px){
   :root{--rail:0px}
-  .rail{left:8px;right:8px;top:8px;bottom:auto;width:auto;flex-direction:row;justify-content:flex-start;gap:2px;padding:6px 8px;border-radius:20px;overflow:auto hidden}
-  .rail .logo{margin:0 6px 0 0}.rail a{width:52px;padding:3px 0}.rail svg{width:28px;height:28px}
-  main{padding-top:84px}
+  .rail{left:8px;right:8px;top:calc(var(--top) + 38px);bottom:auto;width:auto;flex-direction:row;justify-content:flex-start;gap:2px;padding:6px 8px;border-radius:20px;overflow:auto hidden}
+  .rail a{width:52px;padding:3px 0}.rail svg{width:28px;height:28px}
+  main{padding-top:calc(var(--top) + 112px)}
   .page,.page.on{padding:14px 16px 28px}
   #p-now.on{height:auto;min-height:calc(100vh - 84px);padding:10px 18px 28px;grid-template-rows:auto auto auto;gap:18px}
   .top{justify-content:flex-start;font-size:13px}
@@ -208,3 +208,31 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
   .sheet{left:8px;right:8px;width:auto}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- every page opens the same way: the question, the answer in one sentence, then one picture ---------- */
+.ask{flex:1 1 100%!important;margin:0 0 2px!important;font-size:14px!important;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.7!important}
+.phead h1{max-width:24em;text-wrap:balance}
+.score{max-width:1180px;margin:0 0 16px;display:grid;gap:10px}
+.dots{display:flex;flex-wrap:wrap;gap:5px;max-width:980px}
+.dots i{width:13px;height:13px;border-radius:50%;background:var(--sun);animation:pop .5s var(--ease) both;animation-delay:calc(var(--n) * 6ms)}
+.dots i.miss{background:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
+.dots i.false{background:none;box-shadow:inset 0 0 0 2px var(--orange);border-radius:3px}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:none;opacity:1}}
+.score p{margin:0;font-size:15px;display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center}
+.score p span{display:inline-flex;align-items:center;gap:8px}.score p b{font-weight:800;font-size:19px}
+.score p i{width:13px;height:13px;border-radius:50%;background:var(--sun);display:inline-block}
+.score p i.miss{background:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}.score p i.false{background:none;box-shadow:inset 0 0 0 2px var(--orange);border-radius:3px}
+
+/* long explanations become drawers; nothing is removed, and each drawer's title says what is inside */
+details.fold{border-top:1px solid var(--line)}details.fold:last-child{border-bottom:1px solid var(--line)}
+details.fold>summary{display:flex;align-items:center;gap:10px;padding:14px 2px;cursor:pointer;list-style:none;font-weight:700;font-size:15.5px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::after{content:"+";margin-left:auto;font-weight:400;font-size:24px;line-height:1;color:var(--mute);transition:transform .3s var(--ease)}
+details.fold[open]>summary::after{transform:rotate(45deg)}
+details.fold>summary:hover{color:var(--brand)}
+.foldbody{padding:0 2px 16px;animation:page .35s var(--ease)}
+.strip .small{font-size:13px;opacity:.82;margin-top:2px}
+
+/* nothing half-filled is ever shown: the first screen fades in once the reading is known */
+#p-now .read,#p-now .top{transition:opacity .5s var(--ease)}
+html:not([data-ready]) #p-now .read,html:not([data-ready]) #p-now .top{opacity:0}

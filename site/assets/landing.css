@@ -23,7 +23,7 @@ body.loading{overflow:hidden}
 #earth{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
 /* the dive ends in the control room's own sky (same three colours as --sky-1..3 in dash.css), so the next page arrives out of it */
 @view-transition{navigation:auto}
-#veil{position:fixed;inset:0;background:linear-gradient(150deg,#1f346a 0%,#34579a 48%,#79a3dc 100%);opacity:0;pointer-events:none;transition:opacity .55s ease;z-index:9}
+#veil{position:fixed;inset:0;background:linear-gradient(150deg,#18233a 0%,#263a5e 50%,#4a628c 100%);opacity:0;pointer-events:none;transition:opacity .55s ease;z-index:9}
 #veil.on{opacity:1}
 
 /* opening, a little over two seconds: wire lines and a counter, the logo with the Earth as its O, then the Earth flies to its place */
@@ -41,6 +41,7 @@ body.p-logo .intro-tag{opacity:1;letter-spacing:.42em;transition-delay:.12s}
 .bar{position:fixed;z-index:6;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:clamp(12px,2.4vh,24px) var(--pad)}
 .logo{display:flex;align-items:center;gap:3px;color:var(--ink);text-decoration:none;font:700 22px/1 "Unbounded",var(--sans)}
 .logo canvas{width:30px;height:30px;display:block}
+.logo{view-transition-name:dom-logo}
 
 /* buttons: on hover the dot grows to fill the pill, the label slides, an arrow arrives */
 .btn{--bg:#fff;--fill:var(--dark);--fg:var(--dark);--fg2:#fff;
@@ -119,7 +120,8 @@ body.ready .spread span{animation:spread 1.5s var(--swing) 1.9s both}
 .bar,.s1 .copy>*,.hint{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .7s var(--ease)}
 body.ready .bar,body.ready .s1 .copy>*,body.ready .hint{opacity:1;transform:none}
 body.ready .s1 .copy>*:nth-child(2){transition-delay:.08s}body.ready .s1 .copy>*:nth-child(3){transition-delay:.16s}body.ready .hint{transition-delay:.4s}
-body.leaving main,body.leaving .bar,body.leaving .tag,body.leaving .hud{opacity:0;transition:opacity .35s ease}
+body.leaving main,body.leaving .bar .btn,body.leaving .tag,body.leaving .hud{opacity:0;transition:opacity .35s ease}
+body.leaving .bar{z-index:10}   /* the logo stays on screen through the dive and is still there when the control room arrives */
 
 @media (max-width:760px){
   .hint{display:none}

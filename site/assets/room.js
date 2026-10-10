@@ -45,7 +45,7 @@
 
   function update() {
     const c = context(), a = c.a, iso = starts(c.series), lastIso = iso[iso.length - 1], early = !a.dataWarning && a.level === "green" && c.rise.yes;
-    root.dataset.state = early ? "early" : a.level;
+    root.dataset.state = early ? "early" : a.level; root.dataset.ready = "1";
     $("lvl").textContent = "Alert level: " + a.level[0].toUpperCase() + a.level.slice(1); $("lvl").style.setProperty("--c", css(COL[a.level]));
     $("flag").hidden = !(c.sim || c.own || c.uploaded);
     $("flag").textContent = c.sim ? `Simulation on: the newest ${c.nSim} week${c.nSim > 1 ? "s are" : " is"} invented` : c.own ? "Your own uploaded series, not verified" : REPLAY ? "Replay of real weeks" : "Includes uploaded weeks, not verified";
@@ -63,10 +63,33 @@
     $("rpAgain").hidden = !(REPLAY && n > 0); $("rpLeave").hidden = !REPLAY;
     $("strip").hidden = !REPLAY;
     if (REPLAY) { fresh = lastCount >= 0 && n > lastCount ? n - lastCount : 0; lastCount = n; bars(c, iso); }
-    icons(c);
+    icons(c); answers();
     // the data-status line matters on the first screen only when something unusual is on (uploads or a simulation)
     $("stamp").classList.toggle("quiet", !(c.sim || STATE.stamp));
   }
+
+  // ---------- the answer sentence at the top of a page, built only from the app's own figures ----------
+  let answered = false;
+  function answers() {
+    if (answered) return; answered = true;
+    const W = D.rise.walk, G = (W ? W.pooled : D.rise.test.models).gradient_boosted, S = (W ? W.pooled : D.rise.test.models).already_in_outbreak_now, n = G.tp + G.fn, v = D.validation.per_horizon, passed = v.filter((x) => x.passed).length;
+    $("ans-proof").textContent = `In ${W ? "year-by-year " : ""}tests it caught ${G.tp} of ${n} rapid rises, with ${G.fp} false alarms.`;
+    $("sub-proof").textContent = `Modest evidence: a simple rule caught ${S.tp}. Forecasting the flu level itself failed its test (${passed} of ${v.length}), so DOM gives a chance of a rise instead of a level.`;
+    const dot = (cls, k) => `<i class="${cls}" style="--n:${k}"></i>`;
+    $("score").innerHTML = `<div class="dots" role="img" aria-label="${G.tp} caught, ${G.fn} missed, ${G.fp} false alarms">${Array.from({ length: n }, (_, k) => dot(k < G.tp ? "" : "miss", k)).join("")}${Array.from({ length: G.fp }, (_, k) => dot("false", n + k)).join("")}</div>
+      <p><span><i></i><b>${G.tp}</b> rises caught</span><span><i class="miss"></i><b>${G.fn}</b> missed</span><span><i class="false"></i><b>${G.fp}</b> false alarms</span><span>${W ? W.n_test : D.rise.test.n_test} weeks it had never seen</span></p>`;
+  }
+
+  // ---------- long explanations become drawers: each heading with what follows it; nothing is removed ----------
+  function fold(box) {
+    if (!box || !box.querySelector(":scope > h3")) return;
+    let cur = null;
+    for (const el of [...box.children]) {
+      if (el.tagName === "H3") { cur = document.createElement("details"); cur.className = "fold"; const s = document.createElement("summary"); s.innerHTML = el.innerHTML; const body = document.createElement("div"); body.className = "foldbody"; cur.append(s, body); box.insertBefore(cur, el); el.remove(); }
+      else if (cur) cur.lastChild.appendChild(el);
+    }
+  }
+  for (const id of ["proofBody"]) { const box = $(id); new MutationObserver(() => fold(box)).observe(box, { childList: true }); fold(box); }
 
   // In the replay: the week the classifier first said "likely", and the weeks the alert level first reached Yellow and Orange.
   function milestones() {
@@ -81,6 +104,7 @@
       `<u style="bottom:${h(c.th.orange)}%;--k:${css("--orange")}"><b>Alert line ${f1(c.th.orange)}%</b></u><u style="bottom:${h(c.th.yellow)}%;--k:${css("--yellow")}"><b>Watch line ${f1(c.th.yellow)}%</b></u>`;
     $("bars").setAttribute("aria-label", `Weekly flu positivity, last ${vals.length} weeks; newest ${f1(vals[vals.length - 1])}%`);
     $("stripNote").innerHTML = ms.signal ? `<b>First signal: ${dm(ms.signal)}.</b>` + (ms.yellow && ms.yellow > ms.signal ? ` Level Yellow on ${dm(ms.yellow)}: the signal came <b>${days(ms.signal, ms.yellow)} days earlier</b>.` : " The alert level is still Green.") + (ms.orange ? ` Orange on ${dm(ms.orange)}.` : "") : "Each bar is one real week: the share of flu tests that came back positive.";
+    $("stripNote").innerHTML += `<span class="small"><br>Seen with each week's own lab counts in hand. Public data alone arrives about ${D.pub_lag} weeks later.</span>`;
   }
 
   async function replayFile() {
@@ -119,6 +143,17 @@
     set("history", `<path d="M22 28V11M15 17l7-7 7 7M9 30v5h26v-5"/>${STATE.lab.length ? `<circle cx="35" cy="11" r="4" fill="${sun}" stroke="none"/>` : ""}`);
     set("stakes", `<circle cx="22" cy="15" r="6"/><path d="M10 36c1-8 6-11 12-11s11 3 12 11"/>`);
   }
+
+  // ---------- the logo's O: the same small Earth as on the landing page (data/dots.json) ----------
+  fetch("data/dots.json").then((r) => r.json()).then((d) => {
+    const RAD = Math.PI / 180, vec = ([lon, lat]) => { const l = lon * RAD, p = lat * RAD; return [Math.cos(p) * Math.sin(l), Math.sin(p), Math.cos(p) * Math.cos(l)]; };
+    const g = $("navO").getContext("2d"), R = 26, o = 30, l = 108 * RAD, p = 2 * RAD;
+    const pr = (v) => { const X = v[0] * Math.cos(l) - v[2] * Math.sin(l), Z0 = v[0] * Math.sin(l) + v[2] * Math.cos(l); return [X, v[1] * Math.cos(p) - Z0 * Math.sin(p), v[1] * Math.sin(p) + Z0 * Math.cos(p)]; };
+    g.clearRect(0, 0, 60, 60); g.fillStyle = "#fff";
+    for (const pt of d.land) { const q = pr(vec(pt)); if (q[2] > 0.05) { g.globalAlpha = 0.55 + 0.45 * q[2]; g.fillRect(o + q[0] * R - 0.8, o - q[1] * R - 0.8, 1.6, 1.6); } }
+    g.globalAlpha = 0.95; g.strokeStyle = "#fff"; g.lineWidth = 1.6; g.beginPath(); g.arc(o, o, R + 1.5, 0, 7); g.stroke();
+    g.globalAlpha = 1; const q = pr(vec([102.2, 3.9])); g.fillStyle = css("--mark"); g.beginPath(); g.arc(o + q[0] * R, o - q[1] * R, 4.2, 0, 7); g.fill();
+  }).catch(() => {});
 
   // ---------- the background lines: steady atmosphere, not a signal ----------
   (function contours() {
