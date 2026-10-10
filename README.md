@@ -56,3 +56,13 @@ Real data / Estimated / Exploratory / Simulated / Uploaded, not verified. Bed nu
 - **All states chart** (`pipeline/states.py`): dengue by state, monthly 1993-2010 and yearly 2009-2023, with a switch per state and a national layer, plus the model comparison per state. Influenza has no state series; the chart shows the national line and the published state snapshots.
 - **Data request draft**: `docs/PILOT_REQUEST.md`, for the Selangor State Health Department. Not sent.
 - **Heat maps**: the "All states" section has a map shading every state by dengue cases or cases per 100,000 people, with a year slider (2009-2018 and 2023) and a play button; for influenza it shows the week-40 2025 snapshot. On the Selangor map, an uploaded cluster list is drawn as a heat layer (`site/vendor/leaflet-heat.js`) with its own switch.
+
+## Dengue rebuilt to 2026 from WHO reports
+No weekly dataset exists for Malaysia after 2022. `pipeline/who_dengue.py` rebuilds one from WHO Western Pacific Dengue Situation Updates:
+```
+py who_dengue.py fetch   # downloads the 84 fortnightly PDFs (about 98 MB, not committed) from WHO's library
+py who_dengue.py parse   # reads the Malaysia sentence in each (80 have one) -> data/raw/who_dengue/parsed.json
+py who_dengue.py build   # weekly series with a status per week -> data/raw/who_dengue/mys_weekly_2023_2026.csv
+py who_dengue.py model   # joins it to 2011-2022 and reruns the model comparison -> site/data/dengue.json
+```
+Each week is **reported** (stated in a report), **derived** (exact from the running totals), **estimated** (several weeks share one published total, spread between neighbours) or missing. Of 187 rebuilt weeks: 108 reported, 14 derived, 65 estimated. Forecast accuracy is scored on reported and derived weeks only. Needs `pdftotext` on the path.

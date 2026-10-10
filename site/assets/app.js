@@ -514,26 +514,32 @@ function setupStates() {
 
 function renderDengue() {
   const d = DENGUE; if (!d) { $("dengue").hidden = true; return; }
-  const n = d.series.length, k = d.split_index, ex = d.extrapolation;
+  const n = d.series.length, k = d.split_index, ex = d.extrapolation, st = d.status || [], comp = d.composition;
   const labels = d.series.map((r) => r[0]).concat(ex.map((e) => e.start));
-  const vals = d.series.map((r) => r[1]);
-  $("dengueNote").textContent = `Weekly reported dengue cases, Malaysia, ${d.series[0][0]} to ${d.series[n - 1][0]} (${n} weeks). Source: ${d.source}. This is a historical experiment: the series ends in December 2022, so it shows the method on past data and says nothing about dengue today. Some years count confirmed cases and others all reported cases.`;
+  const vals = d.series.map((r) => r[1]), est = (i) => st[i] === "estimated";
+  $("dengueNote").innerHTML = `Weekly reported dengue cases, Malaysia, ${d.series[0][0]} to ${d.series[n - 1][0]} (${n} weeks). Source: ${d.source}.` +
+    (comp ? ` No dataset exists for 2023 onward, so those ${comp.reported + comp.derived + comp.estimated} weeks were rebuilt from the sentences in WHO's fortnightly reports: <b>${comp.reported}</b> weeks are stated in a report, <b>${comp.derived}</b> follow exactly from the running totals, and <b>${comp.estimated}</b> are estimated, because WHO published only a combined total for several weeks, which we spread across them. Missing: ${d.missing_weeks}. Nothing was read from charts.` : "");
   new Chart($("dengueChart"), { type: "line", data: { labels, datasets: [
     { label: "Training weeks (earliest 70%)", data: vals.map((v, i) => (i < k ? v : null)), borderColor: "#16202a", pointRadius: 0, borderWidth: 1.5 },
     { label: "Test weeks (latest 30%)", data: vals.map((v, i) => (i >= k - 1 ? v : null)), borderColor: "#2a5aa8", pointRadius: 0, borderWidth: 1.5 },
+    { label: "Estimated weeks (a published total spread over several weeks)", data: vals.map((v, i) => (est(i) ? v : null)), borderColor: "#e07a00", backgroundColor: "#e07a00", showLine: false, pointRadius: 2.5 },
     { label: "Extrapolation, 1 to 4 weeks past the data", data: Array(n - 1).fill(null).concat([vals[n - 1]], ex.map((e) => e.cases)), borderColor: "#c0282d", borderDash: [5, 3], pointRadius: 2, borderWidth: 2 } ] },
     options: { maintainAspectRatio: false, animation: false, scales: { y: { beginAtZero: true, title: { display: true, text: "Reported cases per week" } }, x: { ticks: { maxTicksLimit: 13 } } } } });
   const pct = (a, b) => Math.round((1 - a / b) * 100);
   const cm = (m) => (m ? `<td class="num">${m.tp}</td><td class="num">${m.fp}</td><td class="num">${m.tn}</td><td class="num">${m.fn}</td><td class="num">${m.recall == null ? "n/a" : Math.round(m.recall * 100) + "%"}</td><td class="num">${m.precision == null ? "n/a" : Math.round(m.precision * 100) + "%"}</td>` : "");
   const NAMES = { already_in_outbreak_now: "Simple rule: already in outbreak now", logistic_regression: "Logistic regression", gradient_boosted: "Gradient-boosted classifier" };
+  const table = (F) => `<table><tr><th>Weeks ahead</th><th class="num">Test weeks</th><th class="num">Same as last week</th><th class="num">Same-week average</th><th class="num">Ridge regression</th><th class="num">Gradient-boosted</th><th>Best</th><th class="num">Best vs last week</th></tr>
+  ${F.map((f) => `<tr><td>${f.weeks_ahead}</td><td class="num">${f.n_test}</td><td class="num">${f.mae.last_value}</td><td class="num">${f.mae.same_week_average}</td><td class="num">${f.mae.ridge}</td><td class="num">${f.mae.gradient_boosted}</td><td>${f.best.replace(/_/g, " ")}</td><td class="num ${f.best === "last_value" ? "fail" : "pass"}">${f.best === "last_value" ? "no gain" : pct(f.mae[f.best], f.mae.last_value) + "% lower error"}</td></tr>`).join("")}</table>`;
   $("dengueBody").innerHTML = `
   <h3>Forecast accuracy on the unseen 30% <span class="chip real">Measured</span></h3>
-  <p class="note">Train to ${d.train_end}, test ${d.test_start} to ${d.test_end}, split by date. Settings were fixed before scoring. Errors are average misses in cases per week; test weeks averaged about ${Math.round(d.forecast[0].mean_actual)} cases.</p>
-  <table><tr><th>Weeks ahead</th><th class="num">Same as last week</th><th class="num">Same-week average</th><th class="num">Ridge regression</th><th class="num">Gradient-boosted</th><th>Best</th><th class="num">Best vs last week</th></tr>
-  ${d.forecast.map((f) => `<tr><td>${f.weeks_ahead}</td><td class="num">${f.mae.last_value}</td><td class="num">${f.mae.same_week_average}</td><td class="num">${f.mae.ridge}</td><td class="num">${f.mae.gradient_boosted}</td><td>${f.best.replace(/_/g, " ")}</td><td class="num ${f.best === "last_value" ? "fail" : "pass"}">${f.best === "last_value" ? "no gain" : pct(f.mae[f.best], f.mae.last_value) + "% lower error"}</td></tr>`).join("")}</table>
+  <p class="note">Train to ${d.train_end}, test ${d.test_start} to ${d.test_end}, split by date, same settings as before. Errors are average misses in cases per week.${d.forecast_measured ? " This table scores only test weeks whose real value is known (stated by WHO or exact from its totals). Estimated weeks are left out because they are smooth by construction and would flatter any model." : ""}</p>
+  ${table(d.forecast_measured || d.forecast)}
+  ${d.forecast_measured ? `<p class="note">For comparison, scored on every test week including the estimated ones:</p>${table(d.forecast)}<p class="note">${d.earlier_result} This extended run was done afterwards and is extra evidence, not a result fixed in advance.</p>` : ""}
+  ${(d.notes || []).length ? `<p class="note"><b>Where the reports disagreed:</b> ${d.notes.join(" ")}</p>` : ""}
   <h3>Extrapolation past the end of the data <span class="chip est">Estimated</span></h3>
-  <p class="note">${ex.map((e) => `Week of ${e.start}: ${e.cases} cases`).join(" · ")}. These weeks are in early 2023 and cannot be checked against this dataset.</p>
+  <p class="note">${ex.map((e) => `Week of ${e.start}: ${e.cases} cases`).join(" · ")}. These weeks had not been published by WHO when this was built, so they cannot be checked yet.</p>
   <h3>Outbreak within the next four weeks: yes or no <span class="chip real">Measured</span></h3>
+  <p class="note">These tables include the estimated weeks, so read them as indicative.</p>
   ${d.outbreak.map((o) => `<p class="note"><b>${o.definition === "usual" ? "Definition A: cases above the usual level for that week (training-year average plus two standard deviations)" : "Definition B: cases at least 50% higher than four weeks earlier"}.</b> ${o.train_outbreak_weeks} of ${o.n_train} training weeks and ${o.test_outbreak_weeks} of ${o.n_test} test weeks were followed by an outbreak. ${o.note || ""}</p>
   <table><tr><th>Method</th><th class="num">TP</th><th class="num">FP</th><th class="num">TN</th><th class="num">FN</th><th class="num">Recall</th><th class="num">Precision</th></tr>${Object.keys(o.models).map((m) => `<tr><td>${NAMES[m]}</td>${cm(o.models[m])}</tr>`).join("")}</table>`).join("")}`;
 }

@@ -41,3 +41,6 @@ Target changed from positivity to the weekly count of influenza-positive lab sam
 ## Addendum: walk-forward check and advance record (10 Oct 2026)
 - `pipeline/walkforward.py` tests the rapid-rise classifier one calendar year at a time, training only on earlier years. It was written and run AFTER the single-split result was known, with no setting changed. It is extra evidence, not a pre-registered result. Outcome: recall 76%, precision 68% over 282 weeks, against 38% and 78% for the simple rule.
 - `pipeline/archive.py record` saves what the system says today about weeks that are not yet published. Each record is committed on the day it is made and never edited except by `archive.py score`, which adds the outcome. The first record is `outputs/prospective/2026-10-10.json`.
+
+## Addendum: dengue extended to August 2026 (10 Oct 2026)
+The 2023 to 2026 weeks were rebuilt from WHO reports (`pipeline/who_dengue.py`) and the dengue comparison was rerun on 2011 to 2026 with the frozen settings. This was done after the 2011 to 2022 result was known, so it is extra evidence, not a pre-registered result. Estimated weeks are excluded from scoring. Outcome on 177 measured test weeks: the best model cut the error of "same as last week" by 7%, 9%, 12% and 16% at one to four weeks ahead.

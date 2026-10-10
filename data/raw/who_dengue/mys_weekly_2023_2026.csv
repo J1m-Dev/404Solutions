@@ -1,0 +1,192 @@
+year,week,start,cases,status,basis
+2023,1,2023-01-01,2219,reported,Dengue-20230119.pdf
+2023,2,2023-01-08,2520,reported,Dengue-20230202.pdf
+2023,3,2023-01-15,2319,reported,Dengue-20230202.pdf
+2023,4,2023-01-22,1910,reported,Dengue-20230216.pdf
+2023,5,2023-01-29,2159,reported,Dengue-20230216.pdf
+2023,6,2023-02-05,1967,derived,running totals in Dengue-20230302.pdf
+2023,7,2023-02-12,2149,reported,Dengue-20230302.pdf
+2023,8,2023-02-19,2145,reported,Dengue-20230316.pdf
+2023,9,2023-02-26,2062,reported,Dengue-20230316.pdf
+2023,10,2023-03-05,2152,reported,Dengue-20230413.pdf
+2023,11,2023-03-12,2151,reported,Dengue-20230413.pdf
+2023,12,2023-03-19,2326,estimated,3 weeks share a published total of 7173 (Dengue-20230427.pdf)
+2023,13,2023-03-26,2391,estimated,3 weeks share a published total of 7173 (Dengue-20230427.pdf)
+2023,14,2023-04-02,2456,estimated,3 weeks share a published total of 7173 (Dengue-20230427.pdf)
+2023,15,2023-04-09,2399,reported,Dengue-20230427.pdf
+2023,16,2023-04-16,1877,reported,Dengue-20230511.pdf
+2023,17,2023-04-23,1775,reported,Dengue-20230511.pdf
+2023,18,2023-04-30,1936,derived,running totals in Dengue-20230525.pdf
+2023,19,2023-05-07,2242,reported,Dengue-20230525.pdf
+2023,20,2023-05-14,2444,reported,Dengue-20230622.pdf
+2023,21,2023-05-21,2638,reported,Dengue-20230622.pdf
+2023,22,2023-05-28,2466,derived,running totals in Dengue-20230706.pdf
+2023,23,2023-06-04,2608,reported,Dengue-20230706.pdf
+2023,24,2023-06-11,2808,reported,Dengue-20230803.pdf
+2023,25,2023-06-18,2582,reported,Dengue-20230803.pdf
+2023,26,2023-06-25,2420,estimated,4 weeks share a published total of 9503 (Dengue-20230817.pdf)
+2023,27,2023-07-02,2390,estimated,4 weeks share a published total of 9503 (Dengue-20230817.pdf)
+2023,28,2023-07-09,2361,estimated,4 weeks share a published total of 9503 (Dengue-20230817.pdf)
+2023,29,2023-07-16,2332,estimated,4 weeks share a published total of 9503 (Dengue-20230817.pdf)
+2023,30,2023-07-23,2427,reported,Dengue-20230817.pdf
+2023,31,2023-07-30,2542,reported,Dengue-20230817.pdf
+2023,32,2023-08-06,2487,reported,Dengue-20230914.pdf
+2023,33,2023-08-13,2248,reported,Dengue-20230914.pdf
+2023,34,2023-08-20,2349,derived,running totals in Dengue-20230928.pdf
+2023,35,2023-08-27,1924,reported,Dengue-20230928.pdf
+2023,36,2023-09-03,2284,reported,Dengue-20230928.pdf
+2023,37,2023-09-10,2380,derived,running totals in Dengue-20231012.pdf
+2023,38,2023-09-17,2310,reported,Dengue-20231012.pdf
+2023,39,2023-09-24,2299,reported,Dengue-20231012.pdf
+2023,40,2023-10-01,2436,reported,Dengue-20231026.pdf
+2023,41,2023-10-08,2271,reported,Dengue-20231026.pdf
+2023,42,2023-10-15,2262,reported,Dengue-20231109.pdf
+2023,43,2023-10-22,2272,reported,Dengue-20231123.pdf
+2023,44,2023-10-29,2221,reported,Dengue-20231123.pdf
+2023,45,2023-11-05,2435,derived,running totals in Dengue-20231207.pdf
+2023,46,2023-11-12,2372,reported,Dengue-20231207.pdf
+2023,47,2023-11-19,2686,reported,Dengue-20231221.pdf
+2023,48,2023-11-26,2988,reported,Dengue-20231221.pdf
+2023,49,2023-12-03,2948,derived,running totals in Dengue-20240104.pdf
+2023,50,2023-12-10,3140,reported,Dengue-20240104.pdf
+2023,51,2023-12-17,2913,reported,Dengue-20240104.pdf
+2023,52,2023-12-24,2715,reported,Dengue-20240118.pdf
+2024,1,2023-12-31,3181,reported,Dengue-20240118.pdf
+2024,2,2024-01-07,3525,reported,Dengue-20240201.pdf
+2024,3,2024-01-14,3971,reported,Dengue-20240201.pdf
+2024,4,2024-01-21,3781,derived,running totals in Dengue-20240215.pdf
+2024,5,2024-01-28,3969,reported,Dengue-20240215.pdf
+2024,6,2024-02-04,3631,reported,Dengue-20240328.pdf
+2024,7,2024-02-11,3483,reported,Dengue-20240328.pdf
+2024,8,2024-02-18,3378,estimated,4 weeks share a published total of 12983 (Dengue-20240411.pdf)
+2024,9,2024-02-25,3290,estimated,4 weeks share a published total of 12983 (Dengue-20240411.pdf)
+2024,10,2024-03-03,3202,estimated,4 weeks share a published total of 12983 (Dengue-20240411.pdf)
+2024,11,2024-03-10,3114,estimated,4 weeks share a published total of 12983 (Dengue-20240411.pdf)
+2024,12,2024-03-17,3041,reported,Dengue-20240411.pdf
+2024,13,2024-03-24,2579,reported,Dengue-20240411.pdf
+2024,14,2024-03-31,2487,reported,Dengue-20240425.pdf
+2024,15,2024-04-07,1698,reported,Dengue-20240502.pdf
+2024,16,2024-04-14,2321,reported,Dengue-20240502.pdf
+2024,17,2024-04-21,2237,reported,Dengue-20240516.pdf
+2024,18,2024-04-28,1995,reported,Dengue-20240516.pdf
+2024,19,2024-05-05,2338,derived,running totals in Dengue-20240613.pdf
+2024,20,2024-05-12,2461,reported,Dengue-20240613.pdf
+2024,21,2024-05-19,2426,reported,Dengue-20240613.pdf
+2024,22,2024-05-26,2522,derived,running totals in Dengue-20240627.pdf
+2024,23,2024-06-02,2508,reported,Dengue-20240627.pdf
+2024,24,2024-06-09,2900,reported,Dengue-20240627.pdf
+2024,25,2024-06-16,2438,reported,Dengue-20240711.pdf
+2024,26,2024-06-23,2788,reported,Dengue-20240711.pdf
+2024,27,2024-06-30,2805,reported,Dengue-20240725.pdf
+2024,28,2024-07-07,2373,reported,Dengue-20240808.pdf
+2024,29,2024-07-14,2690,reported,Dengue-20240808.pdf
+2024,30,2024-07-21,2609,derived,running totals in Dengue-20240822.pdf
+2024,31,2024-07-28,2515,reported,Dengue-20240822.pdf
+2024,32,2024-08-04,2278,reported,Dengue-20240822.pdf
+2024,33,2024-08-11,2294,reported,Dengue-20240905.pdf
+2024,34,2024-08-18,1980,reported,Dengue-20240905.pdf
+2024,35,2024-08-25,1765,reported,Dengue-20240919.pdf
+2024,36,2024-09-01,1870,reported,Dengue-20240919.pdf
+2024,37,2024-09-08,1794,reported,Dengue-20241003.pdf
+2024,38,2024-09-15,1514,reported,Dengue-20241003.pdf
+2024,39,2024-09-22,1760,reported,Dengue-20241017.pdf
+2024,40,2024-09-29,1639,reported,Dengue-20241128.pdf
+2024,41,2024-10-06,1624,reported,Dengue-20241128.pdf
+2024,42,2024-10-13,1614,estimated,2 weeks share a published total of 3131 (Dengue-20241212.pdf)
+2024,43,2024-10-20,1517,estimated,2 weeks share a published total of 3131 (Dengue-20241212.pdf)
+2024,44,2024-10-27,1346,reported,Dengue-20241212.pdf
+2024,45,2024-11-03,1583,reported,Dengue-20241212.pdf
+2024,46,2024-11-10,1422,estimated,5 weeks share a published total of 6842 (Dengue-20250206.pdf)
+2024,47,2024-11-17,1395,estimated,5 weeks share a published total of 6842 (Dengue-20250206.pdf)
+2024,48,2024-11-24,1368,estimated,5 weeks share a published total of 6842 (Dengue-20250206.pdf)
+2024,49,2024-12-01,1342,estimated,5 weeks share a published total of 6842 (Dengue-20250206.pdf)
+2024,50,2024-12-08,1315,estimated,5 weeks share a published total of 6842 (Dengue-20250206.pdf)
+2024,51,2024-12-15,1407,reported,Dengue-20250206.pdf
+2024,52,2024-12-22,1341,reported,Dengue-20250206.pdf
+2025,1,2024-12-29,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,2,2025-01-05,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,3,2025-01-12,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,4,2025-01-19,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,5,2025-01-26,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,6,2025-02-02,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,7,2025-02-09,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,8,2025-02-16,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,9,2025-02-23,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,10,2025-03-02,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,11,2025-03-09,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,12,2025-03-16,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,13,2025-03-23,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,14,2025-03-30,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,15,2025-04-06,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,16,2025-04-13,1209,estimated,16 weeks share a published total of 19347 (Dengue-20250529.pdf)
+2025,17,2025-04-20,1127,reported,Dengue-20250529.pdf
+2025,18,2025-04-27,1205,reported,Dengue-20250529.pdf
+2025,19,2025-05-04,1240,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,20,2025-05-11,1226,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,21,2025-05-18,1212,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,22,2025-05-25,1199,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,23,2025-06-01,1185,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,24,2025-06-08,1171,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,25,2025-06-15,1157,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,26,2025-06-22,1144,estimated,8 weeks share a published total of 9534 (Dengue-20250724.pdf)
+2025,27,2025-06-29,1086,reported,Dengue-20250724.pdf
+2025,28,2025-07-06,1048,reported,Dengue-20250724.pdf
+2025,29,2025-07-13,1013,reported,Dengue-20250807.pdf
+2025,30,2025-07-20,988,reported,Dengue-20250821.pdf
+2025,31,2025-07-27,930,reported,Dengue-20250821.pdf
+2025,32,2025-08-03,881,estimated,3 weeks share a published total of 2544 (Dengue-20250918.pdf)
+2025,33,2025-08-10,848,estimated,3 weeks share a published total of 2544 (Dengue-20250918.pdf)
+2025,34,2025-08-17,815,estimated,3 weeks share a published total of 2544 (Dengue-20250918.pdf)
+2025,35,2025-08-24,794,reported,Dengue-20250918.pdf
+2025,36,2025-08-31,664,reported,Dengue-20250918.pdf
+2025,37,2025-09-07,790,reported,Dengue-20251002.pdf
+2025,38,2025-09-14,681,reported,Dengue-20251002.pdf
+2025,39,2025-09-21,834,reported,Dengue-20251016.pdf
+2025,40,2025-09-28,866,reported,Dengue-20251030.pdf
+2025,41,2025-10-05,931,reported,Dengue-20251030.pdf
+2025,42,2025-10-12,911,derived,running totals in Dengue-20251113.pdf
+2025,43,2025-10-19,794,reported,Dengue-20251113.pdf
+2025,44,2025-10-26,896,reported,Dengue-20251113.pdf
+2025,45,2025-11-02,871,reported,Dengue-20251127.pdf
+2025,46,2025-11-09,912,reported,Dengue-20251211.pdf
+2025,47,2025-11-16,844,reported,Dengue-20251211.pdf
+2025,48,2025-11-23,822,reported,Dengue-20260305.pdf
+2025,49,2025-11-30,974,reported,Dengue-20260305.pdf
+2025,50,2025-12-07,,missing,no report covers this week
+2025,51,2025-12-14,,missing,no report covers this week
+2025,52,2025-12-21,,missing,no report covers this week
+2025,53,2025-12-28,,missing,no report covers this week
+2026,1,2026-01-04,1290,estimated,7 weeks share a published total of 9027 (Dengue-20260319.pdf)
+2026,2,2026-01-11,1290,estimated,7 weeks share a published total of 9027 (Dengue-20260319.pdf)
+2026,3,2026-01-18,1290,estimated,7 weeks share a published total of 9027 (Dengue-20260319.pdf)
+2026,4,2026-01-25,1290,estimated,7 weeks share a published total of 9027 (Dengue-20260319.pdf)
+2026,5,2026-02-01,1290,estimated,7 weeks share a published total of 9027 (Dengue-20260319.pdf)
+2026,6,2026-02-08,1290,estimated,7 weeks share a published total of 9027 (Dengue-20260319.pdf)
+2026,7,2026-02-15,1290,estimated,7 weeks share a published total of 9027 (Dengue-20260319.pdf)
+2026,8,2026-02-22,1197,reported,Dengue-20260319.pdf
+2026,9,2026-03-01,1116,reported,Dengue-20260319.pdf
+2026,10,2026-03-08,1159,estimated,2 weeks share a published total of 2287 (Dengue-20260416.pdf)
+2026,11,2026-03-15,1128,estimated,2 weeks share a published total of 2287 (Dengue-20260416.pdf)
+2026,12,2026-03-22,1028,reported,Dengue-20260416.pdf
+2026,13,2026-03-29,1276,reported,Dengue-20260416.pdf
+2026,14,2026-04-05,1302,derived,running totals in Dengue-20260514.pdf
+2026,15,2026-04-12,1382,reported,Dengue-20260514.pdf
+2026,16,2026-04-19,1475,reported,Dengue-20260514.pdf
+2026,17,2026-04-26,1461,estimated,2 weeks share a published total of 3024 (Dengue-20260611.pdf)
+2026,18,2026-05-03,1563,estimated,2 weeks share a published total of 3024 (Dengue-20260611.pdf)
+2026,19,2026-05-10,1806,reported,Dengue-20260611.pdf
+2026,20,2026-05-17,2053,reported,Dengue-20260611.pdf
+2026,21,2026-05-24,1898,derived,running totals in Dengue-20260903.pdf
+2026,22,2026-05-31,2094,reported,Dengue-20260903.pdf
+2026,23,2026-06-07,2732,reported,Dengue-20260903.pdf
+2026,24,2026-06-14,2577,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,25,2026-06-21,2610,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,26,2026-06-28,2643,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,27,2026-07-05,2676,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,28,2026-07-12,2709,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,29,2026-07-19,2742,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,30,2026-07-26,2775,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,31,2026-08-02,2809,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,32,2026-08-09,2842,estimated,9 weeks share a published total of 24382 (Dengue-20260917.pdf)
+2026,33,2026-08-16,3088,reported,Dengue-20260917.pdf
+2026,34,2026-08-23,2585,reported,Dengue-20260917.pdf
