@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOM · Disease No More</title>
+<meta name="description" content="DOM watches influenza and dengue in Malaysia, warns when a surge is likely, explains why, and says what to do first.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/landing.css">
+</head>
+<body>
+<canvas id="earth" aria-hidden="true"></canvas>
+<div id="veil" aria-hidden="true"></div>
+
+<header class="bar">
+  <a class="logo" href="landing.html" aria-label="DOM, Disease No More">
+    <span>D</span><i id="logoO" aria-hidden="true"></i><span>M</span>
+    <small>Disease No More</small>
+  </a>
+  <nav>
+    <a href="index.html#proof" data-enter>How it is tested</a>
+    <button class="btn" data-enter>Open the control room</button>
+  </nav>
+</header>
+
+<main class="hero">
+  <section class="copy">
+    <h1>See the outbreak before it spreads.</h1>
+    <p>DOM watches influenza and dengue in Malaysia, warns when a surge is likely, explains why, and says what to do first.</p>
+    <button class="btn big" data-enter>Open the control room</button>
+  </section>
+
+  <div id="slot" aria-hidden="true"></div>
+
+  <aside class="lens" aria-label="Forecast, sample data">
+    <div class="lens-head"><span>Malaysia · Influenza</span><span class="chip">Sample data</span></div>
+    <div class="ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <defs><linearGradient id="arcG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb8e6"/><stop offset="1" stop-color="#d9f0ff"/></linearGradient></defs>
+        <g id="ticks"></g>
+        <circle class="track" cx="100" cy="100" r="78"/>
+        <circle class="arc" id="arc" cx="100" cy="100" r="78" transform="rotate(-90 100 100)"/>
+        <circle class="tip" id="tip" r="6"/>
+      </svg>
+      <div class="ring-in"><b><span id="pct">0</span><em>%</em></b><span id="level">Watch</span></div>
+    </div>
+    <p class="line">Chance of a surge in the next <b id="wkLabel">4 weeks</b></p>
+    <label class="slide"><span>1 week</span><input id="weeks" type="range" min="1" max="4" step="1" value="4" aria-label="Weeks ahead"><span>4 weeks</span></label>
+    <p class="why"><b>Why:</b> <span id="why"></span></p>
+  </aside>
+</main>
+
+<div id="tag" class="tag" hidden><b>Malaysia</b><span>the only country watched today</span></div>
+
+<script src="assets/landing.js"></script>
+</body>
+</html>
