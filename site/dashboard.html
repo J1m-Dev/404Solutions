@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOM · Control room</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%2334579a' stroke='white' stroke-width='2'/%3E%3Ccircle cx='20' cy='17' r='4' fill='%23ff6a3d'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/dash.css">
+</head>
+<body>
+<div class="depth" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+<nav class="rail" aria-label="Views">
+  <a class="logo" href="landing.html" aria-label="DOM, back to the start"><span>D</span><i></i><span>M</span></a>
+  <div class="tabs" id="tabs">
+    <button data-view="now" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Now</span></button>
+    <button data-view="forecast"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 8-9"/><path d="M3 21h18"/></svg><span>Forecast</span></button>
+    <button data-view="map"><svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg><span>Map</span></button>
+    <button data-view="proof"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.500-1-8-4-8-9V6l8-3z"/><path d="M8.500 12l2.500 2.500 4.500-5"/></svg><span>Proof</span></button>
+    <button data-view="data"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/></svg><span>Data</span></button>
+  </div>
+  <a class="back" href="landing.html">Back to start</a>
+</nav>
+
+<main>
+  <header class="top">
+    <div class="seg" id="disease" role="tablist" aria-label="Disease">
+      <button data-d="flu" class="on">Influenza</button><button data-d="dengue">Dengue</button>
+    </div>
+    <div class="fresh" id="fresh"></div>
+  </header>
+
+  <section class="view on" id="v-now">
+    <div class="verdict">
+      <span class="lvl" id="lvl"></span>
+      <h1 id="head"></h1>
+      <p id="sub"></p>
+    </div>
+    <div class="three">
+      <article class="card" id="cardChance">
+        <h2>Chance of a rapid rise</h2>
+        <div class="ring"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="80"/><circle class="arc" id="arc" cx="100" cy="100" r="80" transform="rotate(-90 100 100)"/></svg><b><span id="pct">0</span><em>%</em></b></div>
+        <p id="chanceLine">that flu positives rise by half within four weeks</p>
+        <p class="quiet" id="chanceProof"></p>
+      </article>
+      <article class="card">
+        <h2>Why</h2>
+        <ul class="why" id="why"></ul>
+        <button class="link" id="lang">Baca dalam Bahasa Melayu</button>
+        <p class="quiet" id="summary" hidden></p>
+      </article>
+      <article class="card" id="cardDo">
+        <h2>Do first</h2>
+        <p class="first" id="first"></p>
+        <p class="who" id="who"></p>
+        <ul class="then" id="then"></ul>
+        <p class="quiet">Proposed actions, not official guidance.</p>
+      </article>
+    </div>
+    <div class="replay" id="replay"></div>
+  </section>
+
+  <section class="view" id="v-forecast">
+    <div class="vhead"><h1>Where it is heading</h1><p id="fcLead"></p></div>
+    <article class="card wide"><canvas id="fc" class="plot"></canvas><div class="legend" id="fcLegend"></div><p class="quiet" id="fcNote"></p></article>
+  </section>
+
+  <section class="view" id="v-map">
+    <div class="vhead"><h1>Where to be ready</h1><p>Selangor's districts, hospitals and clinics. Shading shows where people live, not where flu is: no district flu data is published.</p></div>
+    <div class="two">
+      <article class="card"><canvas id="mapc" class="plot tall"></canvas><div class="legend" id="mapLegend"></div></article>
+      <article class="card">
+        <h2 id="dName">Move patients before wards fill</h2>
+        <p class="quiet" id="dInfo">Hover a district to see who lives there and its nearest hospitals.</p>
+        <label class="sl">Usual weekly respiratory admissions <b id="admV"></b><input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
+        <label class="sl">Share of beds free for flu <b id="shareV"></b><input type="range" id="share" min="20" max="100" step="5" value="100"></label>
+        <div id="plan"></div>
+        <p class="quiet" id="planNote"></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="view" id="v-proof">
+    <div class="vhead"><h1>Does it work?</h1><p>Every result, pass or fail. Rules were fixed before the unseen weeks were scored.</p></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="two"><article class="card" id="proofA"></article><article class="card" id="proofB"></article></div>
+  </section>
+
+  <section class="view" id="v-data">
+    <div class="vhead"><h1>Bring it up to date</h1><p>Public numbers arrive about four weeks late. Adding this week's lab counts is what makes the warning early.</p></div>
+    <div class="two">
+      <article class="card">
+        <h2>Replay October 2025</h2>
+        <p>Step through the real weeks before last year's surge and watch the verdict change.</p>
+        <div class="row"><button class="btn" id="rpStart"></button><button class="btn ghost" id="rpNext">Add the next real week</button></div>
+        <p class="quiet" id="rpState"></p>
+      </article>
+      <article class="card">
+        <h2>Add your own weekly counts</h2>
+        <p>Drop a CSV with the columns <code>year, week, samples_tested, influenza_positive</code>. It stays in this browser only.</p>
+        <label class="drop" id="drop"><input type="file" id="file" accept=".csv" hidden><span>Drop a CSV here, or click to choose</span></label>
+        <p class="quiet" id="upState"></p>
+        <div class="row"><a class="btn ghost" href="templates/template_lab_counts.csv" download>Get the template</a><button class="btn ghost" id="reset">Clear what was added</button></div>
+      </article>
+    </div>
+  </section>
+
+  <footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support, not medical advice. Data: WHO FluNet, OpenDengue, OpenDOSM, geoBoundaries, OpenStreetMap contributors. <a href="index.html">Full technical page</a></footer>
+</main>
+
+<script src="assets/model.js"></script>
+<script src="assets/dash.js"></script>
+</body>
+</html>

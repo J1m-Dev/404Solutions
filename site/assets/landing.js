@@ -19,7 +19,7 @@
 
   let W = 0, H = 0, DPR = 1, land = [], mys = [], mark = null, scat = null, buf = [], cnt = [0, 0, 0, 0, 0, 0], lines = [], net = [], snow = [], flat = [];
   let pointer = { x: -9999, y: -9999, nx: 0, ny: 0 }, drag = null, off = { lon: 0, lat: 0 }, tilt = { x: 0, y: 0 }, lastDrag = 0, view = { x: 0, y: 0, R: 1 };
-  let t0 = performance.now(), introStart = 0, introDone = STILL, diveStart = 0, diveTo = "index.html", todayP = 0;
+  let t0 = performance.now(), introStart = 0, introDone = STILL, diveStart = 0, diveTo = "dashboard.html", todayP = 0;
 
   const vec = ([lon, lat]) => { const l = lon * RAD, p = lat * RAD; return [Math.cos(p) * Math.sin(l), Math.sin(p), Math.cos(p) * Math.cos(l)]; };
   const ease = (k) => 1 - Math.pow(1 - k, 3);
@@ -214,7 +214,7 @@
   // ---- entering the app: dive into Malaysia, then hand over ----
   document.querySelectorAll("[data-enter]").forEach((el) => el.addEventListener("click", (e) => {
     e.preventDefault(); if (diveStart) return;
-    diveTo = el.getAttribute("href") || "index.html";
+    diveTo = el.getAttribute("href") || "dashboard.html";
     if (STILL) { location.href = diveTo; return; }
     document.body.classList.add("leaving"); diveStart = performance.now();
     setTimeout(() => $("veil").classList.add("on"), 900);

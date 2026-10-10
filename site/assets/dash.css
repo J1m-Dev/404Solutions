@@ -1,0 +1,152 @@
+/* DOM control room.
+   TO CHANGE THE COLOURS: edit the values in :root below. Nothing else in this file names a colour by hand
+   except the soft shapes in .depth, which are built from the same variables. */
+:root{
+  --sky-1:#1f346a;        /* background, top left */
+  --sky-2:#34579a;        /* background, middle */
+  --sky-3:#79a3dc;        /* background, bottom right */
+  --sun:#ffcf4a;          /* the yellow highlight: active tab, sliders, "today" */
+  --card:#f7f9fd;         /* panels */
+  --ink:#12203a;          /* text on panels */
+  --mute:#5a6984;         /* quiet text on panels */
+  --line:#dde5f1;         /* hairlines on panels */
+  --on-sky:#ffffff;       /* text on the background */
+  --green:#23b487; --yellow:#eaa92a; --orange:#f5803a; --red:#e5483d;   /* the four alert levels */
+  --mark:#ff6a3d;         /* the orange point from the logo */
+  --ease:cubic-bezier(.2,.8,.2,1); --swing:cubic-bezier(.7,0,.2,1);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --rail:212px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;color:var(--on-sky);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;background:linear-gradient(150deg,var(--sky-1) 0%,var(--sky-2) 48%,var(--sky-3) 100%) fixed;overflow-x:hidden}
+
+/* depth: large soft shapes layered behind everything, drifting slowly */
+.depth{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+.depth i{position:absolute;border-radius:50%;animation:float 30s ease-in-out infinite alternate}
+.depth i:nth-child(1){width:92vmax;height:92vmax;left:38%;top:-46vmax;background:color-mix(in srgb,var(--sky-3) 38%,transparent)}
+.depth i:nth-child(2){width:70vmax;height:70vmax;left:-26vmax;top:44%;background:color-mix(in srgb,var(--sky-1) 60%,transparent);animation-duration:38s;animation-direction:alternate-reverse}
+.depth i:nth-child(3){width:46vmax;height:46vmax;right:-14vmax;bottom:-22vmax;background:color-mix(in srgb,#fff 16%,transparent);animation-duration:44s}
+.depth i:nth-child(4){width:26vmax;height:26vmax;right:16%;top:10%;background:radial-gradient(circle,color-mix(in srgb,var(--sun) 42%,transparent),transparent 68%);animation-duration:26s}
+@keyframes float{from{transform:translate3d(-1.5%,-1%,0) scale(1)}to{transform:translate3d(2%,2.5%,0) scale(1.06)}}
+
+/* navigation: liquid glass */
+.rail{position:fixed;z-index:5;left:16px;top:16px;bottom:16px;width:calc(var(--rail) - 32px);display:flex;flex-direction:column;gap:22px;padding:22px 14px;border-radius:28px;
+  background:linear-gradient(165deg,rgba(255,255,255,.22),rgba(255,255,255,.07));backdrop-filter:blur(26px) saturate(1.6);-webkit-backdrop-filter:blur(26px) saturate(1.6);
+  border:1px solid rgba(255,255,255,.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 24px 60px rgba(8,18,48,.28)}
+.logo{display:flex;align-items:center;gap:4px;padding:0 10px;color:#fff;text-decoration:none;font:700 22px/1 "Unbounded",var(--sans)}
+.logo i{width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 2px #fff;position:relative;background:radial-gradient(circle,rgba(255,255,255,.9) 0 .8px,transparent 1.2px) 0 0/4px 4px}
+.logo i::after{content:"";position:absolute;right:4px;top:10px;width:6px;height:6px;border-radius:50%;background:var(--mark)}
+.tabs{display:grid;gap:4px;position:relative}
+.tabs button{display:flex;align-items:center;gap:12px;width:100%;padding:12px 12px;border:0;border-radius:14px;background:transparent;color:rgba(255,255,255,.82);font:500 16px/1 var(--sans);cursor:pointer;text-align:left;transition:background .25s,color .25s,transform .2s var(--ease)}
+.tabs button:hover{background:rgba(255,255,255,.12);color:#fff}
+.tabs button:active{transform:scale(.97)}
+.tabs button.on{background:rgba(255,255,255,.2);color:#fff;box-shadow:inset 3px 0 0 var(--sun)}
+.tabs svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.back{margin-top:auto;padding:10px 12px;color:rgba(255,255,255,.75);font-size:14px;text-decoration:none}
+.back:hover{color:#fff}
+
+main{position:relative;z-index:2;margin-left:var(--rail);padding:22px clamp(16px,3vw,44px) 26px 12px;min-height:100vh;display:flex;flex-direction:column;gap:clamp(14px,2.4vh,26px)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.seg{display:inline-flex;padding:4px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2)}
+.seg button{border:0;border-radius:999px;padding:9px 18px;background:transparent;color:rgba(255,255,255,.85);font:600 15px/1 var(--sans);cursor:pointer;transition:background .25s,color .25s}
+.seg button.on{background:#fff;color:var(--ink)}
+.fresh{font-size:14px;color:rgba(255,255,255,.9);text-align:right}
+.fresh b{color:#fff}
+
+.view{display:none;flex-direction:column;gap:clamp(14px,2.6vh,28px);flex:1}
+.view.on{display:flex;animation:in .5s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* the verdict: one plain sentence, biggest thing on the screen */
+.verdict{display:grid;gap:10px;justify-items:start;padding:clamp(4px,2vh,22px) 0 0}
+.lvl{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 10px;border-radius:999px;background:rgba(255,255,255,.16);font-weight:600;font-size:14px}
+.lvl::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c,#fff);box-shadow:0 0 0 4px color-mix(in srgb,var(--c,#fff) 30%,transparent)}
+h1{margin:0;font-weight:700;font-size:clamp(30px,min(5vw,8.6vh),76px);line-height:1.02;letter-spacing:-.025em;text-shadow:0 2px 30px rgba(8,18,48,.3)}
+.verdict p,.vhead p{margin:0;font-size:clamp(15px,1.4vw,19px);color:rgba(255,255,255,.9);max-width:62ch}
+.vhead{display:grid;gap:8px}
+.vhead h1{font-size:clamp(28px,min(3.8vw,6.6vh),54px)}
+
+.card{background:var(--card);color:var(--ink);border-radius:24px;padding:clamp(16px,2vw,24px);box-shadow:0 26px 60px rgba(8,18,48,.26);display:grid;align-content:start;gap:12px;transition:transform .35s var(--ease),box-shadow .35s}
+.card:hover{transform:translateY(-3px);box-shadow:0 32px 70px rgba(8,18,48,.32)}
+.card h2{margin:0;font-size:14px;font-weight:600;color:var(--mute);letter-spacing:.01em}
+.card p{margin:0}
+.quiet{font-size:13px;color:var(--mute)}
+.three{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr) minmax(0,1.1fr);gap:clamp(12px,1.6vw,20px);flex:1;align-items:stretch}
+.two{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(12px,1.6vw,20px);align-items:start}
+
+.ring{position:relative;width:min(100%,clamp(120px,22vh,190px));aspect-ratio:1;justify-self:center}
+.ring svg{width:100%;height:100%}
+.trk{fill:none;stroke:var(--line);stroke-width:14}
+.arc{fill:none;stroke:var(--c,var(--sky-2));stroke-width:14;stroke-linecap:round;stroke-dasharray:0 999;transition:stroke-dasharray .9s var(--ease),stroke .4s}
+.ring b{position:absolute;inset:0;display:grid;place-content:center;grid-auto-flow:column;align-items:baseline;font-size:clamp(34px,6.4vh,58px);font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.ring em{font-style:normal;font-size:.42em;color:var(--mute);margin-left:2px}
+#chanceLine{text-align:center;font-size:15px}
+#cardChance .quiet{text-align:center}
+.why{margin:0;padding:0;list-style:none;display:grid;gap:10px;font-size:clamp(15px,1.25vw,17px)}
+.why li{padding-left:22px;position:relative}
+.why li::before{content:"";position:absolute;left:2px;top:.6em;width:8px;height:8px;border-radius:50%;background:var(--sky-2)}
+.why b{font-weight:700}
+.link{justify-self:start;border:0;background:none;padding:0;color:var(--sky-2);font:600 14px/1.4 var(--sans);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.first{font-size:clamp(19px,1.9vw,26px);font-weight:700;line-height:1.2;letter-spacing:-.01em}
+.who{color:var(--mute);font-size:15px}
+.then{margin:0;padding-left:18px;font-size:15px;display:grid;gap:6px}
+.then:empty{display:none}
+
+/* the replay strip under the verdict */
+.replay{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);font-size:15px}
+.replay b{font-weight:600}
+.replay .sp{flex:1}
+.btn{border:0;border-radius:999px;padding:12px 20px;background:#fff;color:var(--ink);font:600 15px/1 var(--sans);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .2s var(--ease),box-shadow .3s,background .25s}
+.btn:hover{box-shadow:0 10px 26px rgba(8,18,48,.28)}
+.btn:active{transform:scale(.96)}
+.btn.sun{background:var(--sun)}
+.btn.ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor;opacity:.9}
+.btn[disabled]{opacity:.4;cursor:default}
+.card .btn{background:var(--ink);color:#fff}
+.card .btn.ghost{background:transparent;color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+
+.plot{width:100%;height:clamp(240px,46vh,440px);display:block}
+.plot.tall{height:clamp(280px,58vh,560px)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:16px;height:4px;border-radius:2px;background:var(--k)}
+.legend i.dot{width:10px;height:10px;border-radius:50%}
+.sl{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+.sl b{color:var(--ink);font-size:16px}
+input[type=range]{appearance:none;-webkit-appearance:none;width:100%;height:26px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--line)}
+input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-9px;border-radius:50%;background:var(--sun);box-shadow:0 3px 10px rgba(8,18,48,.3);transition:transform .2s var(--ease)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:var(--sun)}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.15)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mute);font-weight:500}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.ok{color:var(--green);font-weight:700}.no{color:var(--red);font-weight:700}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.4vw,18px)}
+.kpi{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:20px;padding:16px;display:grid;gap:4px}
+.kpi b{font-size:clamp(22px,2.6vw,34px);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.kpi span{font-size:13px;color:rgba(255,255,255,.88)}
+.drop{display:grid;place-items:center;min-height:110px;border:2px dashed var(--line);border-radius:18px;color:var(--mute);cursor:pointer;transition:border-color .2s,background .2s;text-align:center;padding:14px}
+.drop:hover,.drop.over{border-color:var(--sky-2);background:color-mix(in srgb,var(--sky-3) 14%,transparent)}
+code{font:13px ui-monospace,Menlo,monospace;background:var(--line);padding:1px 6px;border-radius:6px}
+footer{margin-top:auto;font-size:12px;color:rgba(255,255,255,.78);padding-top:6px}
+footer a{color:#fff}
+:focus-visible{outline:2px solid var(--sun);outline-offset:3px}
+
+@media (max-width:1100px){.three{grid-template-columns:1fr 1fr}.three .card:first-child{grid-row:span 1}.two{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){
+  .rail{left:10px;right:10px;top:auto;bottom:10px;width:auto;flex-direction:row;align-items:center;gap:6px;padding:8px;border-radius:22px;background:linear-gradient(165deg,rgba(24,40,84,.82),rgba(24,40,84,.7))}
+  .rail .logo,.rail .back{display:none}
+  .tabs{grid-auto-flow:column;grid-auto-columns:1fr;flex:1;gap:2px}
+  .tabs button{flex-direction:column;gap:4px;padding:8px 2px;font-size:11px;justify-content:center;text-align:center}
+  .tabs button.on{box-shadow:inset 0 -3px 0 var(--sun)}
+  main{margin-left:0;padding:16px 14px 104px}
+  .three{grid-template-columns:1fr}
+  .fresh{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){.depth i,.view.on{animation:none}.card,.arc,.btn{transition:none}}
