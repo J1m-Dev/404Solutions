@@ -62,10 +62,15 @@ def stress(series, split, th):
     return res
 
 
-def rise_model(upto=None):
+# One short key per column of dengue.feats(), in order; the site groups each stump's share of the score by these.
+RISE_INPUTS = ["level", "change_1wk", "change_prev_wk", "change_3wk", "above_8wk_average", "season", "season", "season", "season"]
+
+
+def rise_model(upto=None, keep=False):
     """Gradient-boosted 'rapid rise within 4 weeks' classifier, exported as decision stumps for the site.
 
-    Trained on weekly positives for 2017-2019 and 2022 onward (optionally only up to a date)."""
+    Trained on weekly positives for 2017-2019 and 2022 onward (optionally only up to a date).
+    keep=True also returns the fitted scikit-learn model and its weekly rows, for parity.py."""
     import csv as _csv
     import datetime as dt
     import dengue as d
@@ -87,7 +92,8 @@ def rise_model(upto=None):
     init = float(gb.decision_function(X[:1])[0] - 0.03 * sum((l if X[0][f] <= th else r) for f, th, l, r in stumps))
     chk = init + 0.03 * sum((l if X[-1][f] <= th else r) for f, th, l, r in stumps)
     assert abs(chk - gb.decision_function(X[-1:])[0]) < 1e-6, "stump export does not match the model"
-    return {"init": init, "lr": 0.03, "stumps": [[f, round(th, 6), round(l, 6), round(r, 6)] for f, th, l, r in stumps], "n_train": len(idx)}
+    out = {"init": init, "lr": 0.03, "stumps": [[f, round(th, 6), round(l, 6), round(r, 6)] for f, th, l, r in stumps], "n_train": len(idx), "inputs": RISE_INPUTS}
+    return (out, gb, rows) if keep else out
 
 
 def main():
@@ -128,7 +134,11 @@ def main():
                      "test": json.loads((c.ROOT / "outputs" / "flu_cases.json").read_text())["same_test"]["outbreak"][1]}}
     wf = c.ROOT / "outputs" / "walkforward.json"
     if wf.exists():
-        site["rise"]["walk"] = json.loads(wf.read_text())
+        walk = json.loads(wf.read_text())
+        ev = walk.pop("evidence", None)
+        site["rise"]["walk"] = walk
+        if ev:  # Watch and Warning cut-offs travel with each classifier; the counts behind them go alongside
+            site["rise"]["current"]["tiers"], site["rise"]["replay"]["tiers"], site["rise"]["evidence"] = ev["live_tiers"], ev["live_tiers"], ev  # the replay shows the same frozen cut-offs as the live page
     site["prospective"] = [json.loads(f.read_text()) for f in sorted((c.ROOT / "outputs" / "prospective").glob("*.json"))]
     c.dump(site, SITE / "data" / "site.json")
 

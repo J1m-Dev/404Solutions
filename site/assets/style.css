@@ -85,3 +85,26 @@ tr.undone td { color:var(--mute); text-decoration:line-through; } tr.undone td:l
 #stMeasure { font:inherit; padding:4px 6px; } #stYear { width:220px; vertical-align:middle; }
 .legend { font-size:13px; margin:6px 0 14px; } .lgbar { display:inline-flex; vertical-align:middle; border:1px solid var(--line); }
 .lgbar i { width:22px; height:12px; display:inline-block; } .lgna { margin-left:14px; } .lgna i { display:inline-block; width:14px; height:12px; background:#d5dbe1; border:1px solid var(--line); vertical-align:middle; }
+
+/* folded sections under "More" */
+details.fold > summary { cursor:pointer; list-style:none; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+details.fold > summary::-webkit-details-marker { display:none; }
+details.fold > summary::before { content:"+"; font-weight:700; color:var(--brand); width:12px; }
+details.fold[open] > summary::before { content:"\2212"; }
+details.fold > summary h2 { margin:0; font-size:16px; } details.fold > summary .note { margin:0; }
+details.fold[open] > summary { margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--line); }
+.morehead { margin:14px 4px 0; font-size:14px; color:var(--mute); font-weight:600; }
+/* early-warning ladder */
+.ladder { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:12px 0 8px; }
+.ladder .step { border:1px solid var(--line); border-radius:6px; padding:6px 8px; font-size:13px; text-align:center; color:var(--mute); background:#fafbfc; }
+.ladder .step b { display:block; font-size:14px; } .ladder .step small { font-size:11px; }
+.ladder .step.on { color:var(--ink); border-width:2px; font-weight:600; }
+.ladder .step.on.clear { border-color:var(--green); background:#edf8f1; } .ladder .step.on.watch { border-color:var(--yellow); background:#fff9e0; }
+.ladder .step.on.warning { border-color:var(--orange); background:#fff1e3; } .ladder .step.on.outbreak { border-color:var(--red); background:#fdeaea; }
+.level.clear .dot { background:var(--green); } .level.watch .dot { background:var(--yellow); } .level.warning .dot { background:var(--orange); } .level.outbreak .dot { background:var(--red); }
+.nb { color:var(--mute); font-weight:700; }
+.planbox { border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-top:12px; background:#fafbfc; }
+.planbox button { padding:5px 12px; font-size:13px; margin-right:6px; }
+.evchart { height:300px; }
+section, details.fold, .morehead { scroll-margin-top:96px; } /* nav jumps land below the sticky header */
+.level.unconfirmed .dot { background:#9aa7b3; } .ladder .step.on.unconfirmed { border-style:dashed; border-color:#7d8a96; background:#f3f5f7; }

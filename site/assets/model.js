@@ -84,20 +84,27 @@
   function riseSignal(series, cls) {
     const y = series.map((s) => Math.log1p(s.pos)), i = y.length - 1;
     let m = 0; for (let k = i - 7; k <= i; k++) m += y[k] / 8;
-    const w = weekAfter(series[i].week, 2);
+    const w = weekAfter(Math.min(series[i].week, 52), 2); // week 53 counts as 52, as in pipeline/dengue.py prep()
     const x = [y[i], y[i] - y[i - 1], y[i - 1] - y[i - 2], y[i] - y[i - 3], y[i] - m];
     for (const k of [1, 2]) { const a = (2 * Math.PI * k * w) / 52; x.push(Math.sin(a), Math.cos(a)); }
+    // Each stump adds lr times one leaf value to the log-odds score; `by` keeps that share per input group.
+    const names = cls.inputs || x.map((_, f) => "input_" + f), by = {};
+    for (const k of names) by[k] = 0;
     let z = cls.init;
-    for (const [f, th, l, r] of cls.stumps) z += cls.lr * (x[f] <= th ? l : r);
+    for (const [f, th, l, r] of cls.stumps) { const v = cls.lr * (x[f] <= th ? l : r); z += v; by[names[f]] += v; }
     const p = 1 / (1 + Math.exp(-z));
-    return { prob: p, yes: p >= 0.5 };
+    const t = cls.tiers || { warning: 0.5, watch: 0.5 };
+    const band = p >= t.warning ? "warning" : p >= t.watch ? "watch" : "clear";
+    const parts = Object.keys(by).map((key) => ({ key, value: by[key] })).sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+    return { prob: p, yes: p >= 0.5, band, parts, base: cls.init, score: z };
   }
 
-  // Rebuilds the current uploaded data from the upload history, skipping uploads that were undone.
+  // Rebuilds the current uploaded data from the upload history, skipping uploads that were undone
+  // and entries of any other type (they are not uploaded data).
   function reduceLog(log) {
     const s = { lab: [], ili: [], clusters: [], beds: [], clusterlist: [], own: false, stamp: null };
     for (const e of log) {
-      if (e.undone) continue;
+      if (e.undone || !Array.isArray(s[e.type]) || !Array.isArray(e.rows)) continue;
       if (e.type === "lab" && e.own) { s.lab = e.rows.slice(); s.own = true; }
       else if (e.type === "beds" || e.type === "clusterlist") s[e.type] = e.rows.slice();
       else s[e.type] = s[e.type].concat(e.rows);
