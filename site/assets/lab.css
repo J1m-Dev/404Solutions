@@ -1,0 +1,161 @@
+/* DOM control room, trial page for two directions. Colours are variables: the three sky colours per alert state are
+   the only place a background colour is named. */
+@property --sky-1{syntax:"<color>";inherits:true;initial-value:#1f346a}
+@property --sky-2{syntax:"<color>";inherits:true;initial-value:#34579a}
+@property --sky-3{syntax:"<color>";inherits:true;initial-value:#79a3dc}
+@property --acc{syntax:"<color>";inherits:true;initial-value:#ffffff}
+:root{
+  --sun:#ffcf4a; --mark:#ff6a3d; --ink:#12203a;
+  --green:#58d6ae; --yellow:#ffcf4a; --orange:#ff9a4d; --red:#ff6a5a;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1); --swing:cubic-bezier(.7,0,.2,1);
+  --rail:92px;
+  transition:--sky-1 1.4s var(--ease),--sky-2 1.4s var(--ease),--sky-3 1.4s var(--ease),--acc .9s var(--ease);
+}
+/* the room warms with the alert level */
+[data-room=warm][data-state=early]{--sky-1:#272f66;--sky-2:#4a4f96;--sky-3:#b79bb0}
+[data-room=warm][data-state=yellow]{--sky-1:#2d2a4d;--sky-2:#7d5f52;--sky-3:#e9b558}
+[data-room=warm][data-state=orange]{--sky-1:#3a1f33;--sky-2:#a34a34;--sky-3:#f39a52}
+[data-room=warm][data-state=red]{--sky-1:#3a1524;--sky-2:#a32f33;--sky-3:#f0705a}
+/* the room stays blue: only the number, the pill and the lines take the alert colour */
+[data-room=blue][data-state=early]{--acc:#ffe08a}
+[data-room=blue][data-state=yellow]{--acc:var(--yellow)}
+[data-room=blue][data-state=orange]{--acc:var(--orange)}
+[data-room=blue][data-state=red]{--acc:var(--red)}
+
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;color:#fff;font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  background:linear-gradient(150deg,var(--sky-1) 0%,var(--sky-2) 50%,var(--sky-3) 100%) fixed}
+#contours{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+button{font:inherit;color:inherit}
+
+/* comparison switches */
+.lab{white-space:nowrap;display:flex;align-items:center;gap:10px;padding:6px 8px 6px 14px;border-radius:999px;background:rgba(10,18,40,.55);backdrop-filter:blur(12px);font-size:12px;letter-spacing:.04em}
+.lab>span{opacity:.7;text-transform:uppercase}
+.sw{display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.1)}
+.sw button{border:0;background:transparent;padding:6px 12px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px;opacity:.8}
+.sw button.on{background:#fff;color:var(--ink);opacity:1}
+
+/* navigation: a slim glass rail; each page is a small live picture */
+.rail{position:fixed;z-index:6;left:14px;top:14px;bottom:14px;width:calc(var(--rail) - 22px);display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0;border-radius:26px;
+  background:linear-gradient(170deg,rgba(255,255,255,.22),rgba(255,255,255,.06));backdrop-filter:blur(26px) saturate(1.6);-webkit-backdrop-filter:blur(26px) saturate(1.6);
+  border:1px solid rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 24px 60px rgba(8,18,48,.26)}
+.rail a{display:grid;justify-items:center;gap:3px;width:58px;padding:7px 0 6px;border-radius:16px;color:#fff;text-decoration:none;font-size:12px;font-weight:600;opacity:.72;transition:opacity .25s,background .25s,transform .25s var(--ease)}
+.rail a:hover{opacity:1;background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.rail a.on{opacity:1;background:rgba(255,255,255,.18);box-shadow:inset 0 -2px 0 var(--sun)}
+.rail svg{width:40px;height:40px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.rail .logo{opacity:1;margin-bottom:10px;padding:0;width:34px;height:34px}
+.rail .logo i,.word i{display:inline-block;border-radius:50%;box-shadow:inset 0 0 0 2.5px #fff;position:relative;background:radial-gradient(circle,rgba(255,255,255,.9) 0 .8px,transparent 1.2px) 0 0/4px 4px}
+.rail .logo i{width:34px;height:34px}
+.rail .logo i::after,.word i::after{content:"";position:absolute;right:18%;top:42%;width:24%;height:24%;border-radius:50%;background:var(--mark)}
+
+main{position:relative;z-index:2;margin-left:var(--rail);height:100vh;min-height:470px;padding:clamp(14px,2.6vh,26px) clamp(18px,3.4vw,52px) clamp(12px,2.2vh,22px) clamp(10px,2vw,30px);display:grid;grid-template-rows:auto 1fr auto;gap:clamp(6px,1.6vh,18px)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.word{display:flex;align-items:center;gap:3px;font:800 22px/1 var(--sans);letter-spacing:.02em}
+.word i{width:21px;height:21px;box-shadow:inset 0 0 0 2px #fff}
+.word span{font:500 14px/1 var(--sans);letter-spacing:0;opacity:.8;margin-left:12px}
+.fresh{font-size:14px;opacity:.92;text-align:right}.fresh b{font-weight:700}
+
+/* the reading */
+.read{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:clamp(20px,5vw,84px);min-height:0}
+.lvl{display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 11px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);font-weight:600;font-size:14px}
+.lvl::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c,#fff);box-shadow:0 0 0 4px color-mix(in srgb,var(--c,#fff) 28%,transparent)}
+.big{display:flex;align-items:flex-start;font-weight:800;letter-spacing:-.055em;line-height:.84;color:var(--acc);font-size:clamp(150px,min(46vh,27vw),440px);font-variant-numeric:tabular-nums;margin:clamp(4px,1.4vh,16px) 0 clamp(6px,1.6vh,16px) -.04em;text-shadow:0 30px 80px rgba(8,18,48,.25)}
+.big em{font-style:normal;font-size:.36em;letter-spacing:0;margin:.12em 0 0 .06em;opacity:.75}
+.cap{margin:0;max-width:30ch;font-size:clamp(14px,1.9vh,17px);line-height:1.35;opacity:.92}
+.say h1{margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.02;font-size:clamp(30px,min(7.4vh,4.6vw),68px);text-wrap:balance}
+.sub{margin:clamp(8px,1.6vh,16px) 0 0;max-width:44ch;font-size:clamp(15px,2.1vh,18px);line-height:1.4;opacity:.92}
+.do{margin-top:clamp(12px,2.6vh,26px);padding-left:16px;border-left:3px solid var(--sun);max-width:46ch}
+.do small{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.do p{margin:2px 0;font-weight:700;font-size:clamp(17px,2.5vh,22px);line-height:1.25}
+.do span{font-size:14px;opacity:.85}
+.whybtn{margin-top:clamp(10px,2vh,20px);border:0;background:none;padding:0 0 2px;cursor:pointer;font-weight:600;font-size:15px;border-bottom:1.5px solid rgba(255,255,255,.6)}
+.whybtn::after{content:" →"}
+.whybtn:hover{border-color:var(--sun)}
+
+/* the weeks behind the number, and the replay */
+.strip{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:clamp(14px,3vw,40px)}
+.bars{position:relative;height:clamp(48px,11vh,96px);display:flex;align-items:flex-end;gap:3px}
+.bars i{flex:1;min-width:2px;border-radius:3px 3px 0 0;background:rgba(255,255,255,.5);transform-origin:bottom;transition:height .7s var(--ease),background .5s}
+.bars i.y{background:var(--yellow)}.bars i.o{background:var(--orange)}.bars i.now{background:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.bars i.new{animation:grow .7s var(--ease)}
+@keyframes grow{from{transform:scaleY(0)}to{transform:none}}
+.bars u{position:absolute;left:0;right:0;border-top:1.5px dashed var(--k);text-decoration:none;pointer-events:none}
+.bars u b{position:absolute;right:0;bottom:3px;font-size:12px;font-weight:600;color:var(--k);white-space:nowrap}
+.ctl{display:grid;gap:8px;justify-items:end;text-align:right;max-width:340px}
+.ctl p{margin:0;font-size:14px;line-height:1.35;opacity:.92}
+.btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.btn{border:0;border-radius:999px;padding:12px 20px;font-weight:700;font-size:15px;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(8,18,48,.3)}.btn:active{transform:scale(.97)}
+.btn.sun{background:var(--sun);color:var(--ink)}.btn.ghost{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3)}
+.btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+
+/* why sheet */
+.sheet{position:fixed;z-index:9;right:18px;top:18px;width:min(420px,calc(100vw - 36px));max-height:calc(100vh - 36px);overflow:auto;padding:22px 24px;border-radius:24px;color:var(--ink);background:rgba(247,249,253,.96);box-shadow:0 30px 80px rgba(8,18,48,.4);animation:sheet .45s var(--ease)}
+@keyframes sheet{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.sheet h2{margin:0 0 10px;font-size:20px}.sheet ul{margin:0;padding-left:18px}.sheet li{margin:8px 0;line-height:1.45}
+.sheet .quiet{font-size:13px;color:#5a6984;margin:12px 0 0}
+.sheet .x{position:absolute;right:14px;top:10px;border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:var(--ink)}
+
+/* ---------- direction 1: one number ---------- */
+[data-dir=number] .stage{display:none}
+
+/* ---------- direction 2: living map ---------- */
+.stage{position:absolute;z-index:-1;inset:clamp(54px,9vh,84px) clamp(10px,2vw,30px) clamp(110px,22vh,170px) 0}
+#my{width:100%;height:100%;overflow:visible}
+#states path{fill:url(#dots);fill-opacity:.5;stroke:rgba(255,255,255,.75);stroke-width:1;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill-opacity .3s,stroke-width .3s}
+#states path:hover,#states path.hot{fill-opacity:1;stroke:#fff;stroke-width:2}
+#states path.sel{stroke:var(--sun);stroke-width:2}
+.stagenote{position:absolute;right:0;top:0;margin:0;max-width:30ch;text-align:right;font-size:13px;line-height:1.35;opacity:.88}
+.statecard{position:absolute;right:0;bottom:0;width:min(300px,60%);padding:14px 16px;border-radius:18px;background:linear-gradient(165deg,rgba(255,255,255,.26),rgba(255,255,255,.1));backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.28);font-size:14px;line-height:1.4}
+.statecard b{display:block;font-size:19px;margin-bottom:2px}.statecard small{opacity:.8;font-size:12px}
+[data-dir=map] .read{grid-template-columns:minmax(0,340px);align-items:start;align-content:start;gap:clamp(8px,1.6vh,14px);width:min(360px,100%);padding:clamp(14px,2.4vh,22px);border-radius:26px;align-self:start;
+  background:linear-gradient(165deg,rgba(255,255,255,.24),rgba(255,255,255,.07));backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border:1px solid rgba(255,255,255,.26);box-shadow:0 24px 60px rgba(8,18,48,.24)}
+[data-dir=map] .big{font-size:clamp(84px,min(19vh,11vw),150px);margin:clamp(2px,1vh,8px) 0 2px}
+[data-dir=map] .cap{font-size:13px}
+[data-dir=map] .say h1{font-size:clamp(22px,min(4vh,2.6vw),30px)}
+[data-dir=map] .sub{font-size:14px;margin-top:6px}
+[data-dir=map] .do{margin-top:10px}[data-dir=map] .do p{font-size:16px}
+[data-dir=map] .whybtn{margin-top:8px;font-size:14px}
+[data-dir=map] #contours{opacity:.45}
+
+/* short windows (about 1000 x 520) */
+@media (max-height:600px){
+  .big{font-size:clamp(120px,min(40vh,24vw),300px)}
+  [data-dir=map] .sub,[data-dir=map] .cap{display:none}
+  .do span{display:none}
+}
+/* phone: the rail becomes a strip across the top (never the bottom) */
+@media (max-width:760px){
+  :root{--rail:0px}
+  .rail{left:10px;right:10px;top:10px;bottom:auto;width:auto;flex-direction:row;justify-content:space-between;padding:6px 10px;border-radius:22px}
+  .rail .logo{margin:0 4px 0 0}.rail a{width:52px;padding:4px 0}.rail svg{width:30px;height:30px}
+  main{height:auto;min-height:100vh;padding:104px 16px 80px;grid-template-rows:auto auto auto}
+  .word span{display:none}.fresh{font-size:13px}
+  .read{grid-template-columns:1fr;gap:18px}
+  .big{font-size:min(46vw,210px)}
+  .strip{grid-template-columns:1fr}.ctl{justify-items:start;text-align:left;max-width:none}.btns{justify-content:flex-start}
+  .stage{position:relative;inset:auto;height:44vw;order:2;z-index:0}
+  [data-dir=map] .read{width:100%}
+  .top{flex-wrap:wrap}.lab{order:3;width:100%;justify-content:center;flex-wrap:wrap;white-space:normal;border-radius:18px}.lab>span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* direction 2: the map sits beside the glass panel, never under it */
+@media (min-width:761px){[data-dir=map] .stage{left:min(390px,42%)}}
+
+/* the week the model first said "likely": one sun point above its bar */
+.bars i{position:relative}.bars i.sig::after{content:"";position:absolute;left:50%;bottom:calc(100% + 6px);width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 4px rgba(255,207,74,.3)}
+.ctl p b{font-weight:700}
+/* a soft glow behind the number that deepens with the alert colour (most visible when the room stays blue) */
+.figure{position:relative}
+.figure::before{content:"";position:absolute;z-index:-1;left:-12%;top:-6%;width:124%;height:112%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--acc) 26%,transparent),transparent);opacity:0;transition:opacity 1.2s var(--ease)}
+[data-room=blue]:not([data-state=green]) .figure::before{opacity:1}
+.bars u b{left:0;right:auto;bottom:3px;padding:1px 7px;border-radius:7px;background:rgba(10,18,40,.5)}
+
+.bars u:nth-of-type(2) b{left:132px}
+#dots circle{fill:var(--acc)}
+@media (max-width:1180px){.word span{display:none}.lab>span{display:none}}
+
+.statecard{bottom:auto;top:0}
+.stage:has(.statecard:not([hidden])) .stagenote{visibility:hidden}
