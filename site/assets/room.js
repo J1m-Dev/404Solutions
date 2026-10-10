@@ -11,7 +11,7 @@
   const css = (v) => getComputedStyle(root).getPropertyValue(v).trim();
   const STILL = matchMedia("(prefers-reduced-motion:reduce)").matches;
   const REPLAY_FILE = "templates/demo_real_replay_2025_W38_W41.csv", BARS = 44;
-  let replayRows = null, fresh = 0, lastCount = -1, busy = false;
+  let replayRows = null, fresh = 0, lastCount = -1, busy = false, lastLen = 0;
   root.dataset.replay = REPLAY ? "1" : "";
   // the Monday an ISO week starts on (4 January is always in week 1)
   const monday = (y, w) => { const d = new Date(Date.UTC(y, 0, 4)); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) + (w - 1) * 7); return d.toISOString().slice(0, 10); };
@@ -23,9 +23,13 @@
     if (!pages.includes(id)) id = "now";
     document.querySelectorAll(".page").forEach((p) => p.classList.toggle("on", p.dataset.page === id));
     document.querySelectorAll(".rail a[data-go]").forEach((a) => a.classList.toggle("on", a.dataset.go === id));
-    root.dataset.page = id; scrollTo(0, 0); $("sheet").hidden = true;
+    root.dataset.page = id; scrollTo(0, 0); $("sheet").hidden = true; slideHl();
     resize();   // charts and the map were laid out off screen; let them take their real size now
   }
+  // one soft highlight slides to the page that is open; it is the only glass on the screen
+  function slideHl() { const a = document.querySelector(".rail a.on"), h = document.querySelector(".rail .hl"); if (!a || !h) return;
+    h.style.transform = `translate(${a.offsetLeft}px,${a.offsetTop}px)`; h.style.width = a.offsetWidth + "px"; h.style.height = a.offsetHeight + "px"; h.style.opacity = 1; }
+  addEventListener("resize", slideHl); if (document.fonts && document.fonts.ready) document.fonts.ready.then(slideHl);
   // Routes are written "#/trust", so the browser never jumps to the app's own sections of the same name.
   // A plain link inside the app's text (for example "#proof", which the app folds under More) opens the right page and fold.
   const route = () => {
@@ -60,16 +64,21 @@
     $("lvl").textContent = c.rise.off ? "Classifier off for your own series" : `Classifier: ${STEP[c.rise.band].name} · Alert rule: ${RULE_WORDS[a.level]}`;
     $("flag").hidden = !(c.sim || c.own || c.uploaded);
     $("flag").textContent = c.sim ? `Simulation on: the newest ${c.nSim} week${c.nSim > 1 ? "s are" : " is"} invented` : c.own ? "Your own uploaded series, not verified" : REPLAY && pure ? "Replay of real weeks" : REPLAY ? "Replay with uploaded weeks, not verified" : "Includes uploaded weeks, not verified";
-    $("head").textContent = (a.dataWarning ? "Data warning: check the newest week before acting" : H.head) + ".";
+    // the sentence under the step word is the app's own sub-line, read from its alert card so the two can never differ
+    const sub = document.querySelector("#alertCard .level .sub"), say = a.dataWarning || !sub ? (a.dataWarning ? "Data warning: check the newest week before acting" : H.head) : sub.textContent.trim();
+    $("head").textContent = say + (/[.!?]$/.test(say) ? "" : ".");
+    if (!$("steps").children.length) $("steps").innerHTML = STEPS.map((k) => `<li>${STEP[k].name}</li>`).join("");
+    const si = STEPS.indexOf(st.key); [...$("steps").children].forEach((li, i) => { li.className = i === si ? "on" : i < si ? "past" : ""; }); $("steps").style.setProperty("--k", si / 3);
     $("label").textContent = "Early-warning step, " + (c.own ? "your own lab network" : "Malaysia");
-    $("pct").textContent = a.dataWarning ? "Check" : STEP[st.key].name;
+    const word = a.dataWarning ? "Check" : STEP[st.key].name;
+    if ($("pct").textContent !== word) { const b = $("pct"); b.textContent = word; b.classList.remove("roll"); void b.offsetWidth; b.classList.add("roll"); }
     const when = lastIso ? `<b>${dmy(lastIso)}</b>` : `<b>${wk(a.last)}</b>`;
     $("basis").innerHTML = (band ? `In six past years a rapid rise followed ${band.rises} of ${band.weeks} ${STEP[st.band].name} weeks. ` : H.byRule && !a.dataWarning ? "Set by the alert rule on the data. " : "") +
       (c.sim ? `A what-if drill, not a reading: it runs to ${when}.` : c.own ? `Your uploaded series to ${when}.` : REPLAY && pure ? `Replay on real national data to ${when}.` : REPLAY ? `Replay with uploaded weeks, not verified, to ${when}.` : `National data to ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
     $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls
     const n = STATE.lab.length, nr = REPLAY && !c.own ? nextRow(c) : null, done = REPLAY && nr === null;
-    $("rpGo").textContent = REPLAY ? (done ? "Replay finished" : "Add the next real week") : "Replay October 2025"; $("rpGo").disabled = done || busy; $("rpGo").hidden = REPLAY && c.own;
+    $("rpGoLab").textContent = REPLAY ? (done ? "Replay finished" : "Add the next real week") : "Replay October 2025"; $("rpGo").disabled = done || busy; $("rpGo").hidden = REPLAY && c.own;
     $("rpAgain").hidden = !(REPLAY && (n > 0 || c.sim)); $("rpLeave").hidden = !REPLAY;
     // the strip describes the real replay weeks only: it steps aside while the what-if drill or an own series is on screen
     $("strip").hidden = !REPLAY || c.sim || c.own;
@@ -78,8 +87,13 @@
     const bar = $("replayBar"); bar.querySelectorAll('a[href="./"]').forEach((x) => x.setAttribute("href", "dashboard.html#/now"));
     if (REPLAY) $("rpAbout").innerHTML = bar.innerHTML.split(/ (?:Newer weeks are loaded|Drop in <a)/)[0];
     icons(c);
+    // hand the living object what it draws: the app's own weekly values, alert lines, step and wording (nothing is computed here)
+    const N = 40, ser = c.series, len = ser.length, grew = lastLen > 0 && len > lastLen ? len - lastLen : 0; lastLen = len;
+    dispatchEvent(new CustomEvent("room:update", { detail: { step: si, vals: ser.slice(-N).map(M.pct), dates: iso.slice(-N), prev: !c.own && len >= N + 52 ? ser.slice(-N - 52, -52).map(M.pct) : null,
+      th: { yellow: c.th.yellow, orange: c.th.orange }, fresh: grew, names: STEPS.map((k) => STEP[k].name), says: STEPS.map((k) => STEP[k].say),
+      records: STEPS.map((k) => (ES && ES.bands[k] ? `In six past years a rapid rise followed ${ES.bands[k].rises} of ${ES.bands[k].weeks} ${STEP[k].name} weeks.` : "")) } }));
     // the data-status line matters on the first screen only when something unusual is on (uploads or a simulation)
-    $("stamp").classList.toggle("quiet", !(c.sim || STATE.stamp));
+    $("stamp").classList.toggle("quiet", !(c.sim || (typeof barMsg !== "undefined" && barMsg)));
   }
 
   // ---------- long explanations become drawers: each heading with what follows it; nothing is removed ----------
@@ -107,7 +121,7 @@
     $("bars").innerHTML = vals.map((v, i) => `<i class="${v >= c.th.orange ? "o" : v >= c.th.yellow ? "y" : ""}${i === vals.length - 1 ? " now" : ""}${i >= vals.length - fresh ? " new" : ""}${first && d[i] === first ? " sig" : ""}" style="height:${h(v)}%" title="Week of ${d[i] ? dmy(d[i]) : wk(ser[i])}: ${f1(v)}%"></i>`).join("") +
       `<u style="bottom:${h(c.th.orange)}%;--k:${css("--orange")}"><b>Alert line ${f1(c.th.orange)}%</b></u><u style="bottom:${h(c.th.yellow)}%;--k:${css("--yellow")}"><b>Watch line ${f1(c.th.yellow)}%</b></u>`;
     $("bars").setAttribute("aria-label", `Weekly flu positivity, last ${vals.length} weeks; newest ${f1(vals[vals.length - 1])}%`);
-    $("stripNote").innerHTML = (first ? `<b>${firstName} first shown on data to ${dm(first)}.</b>` + (ms.outbreak && ms.outbreak > first ? ` Outbreak on data to ${dm(ms.outbreak)}: <b>${days(first, ms.outbreak)} days of data earlier</b>.` : ms.outbreak ? "" : " The alert rule has not called Outbreak yet.") : "Each bar is one real week: the share of flu tests that came back positive.") +
+    $("stripNote").innerHTML = (first ? `<b>${firstName} first shown on data to ${dm(first)}.</b>` + (ms.outbreak && ms.outbreak > first ? ` Outbreak on data to ${dm(ms.outbreak)}, <b>${days(first, ms.outbreak)} days later</b>.` : ms.outbreak ? "" : " The alert rule has not called Outbreak yet.") : "Each bar is one real week: the share of flu tests that came back positive.") +
       `<span class="small"><br>This is what a planner sees with each week's own lab counts in hand. Public data alone arrives about ${D.pub_lag} weeks later.</span>`;
   }
 
@@ -131,7 +145,7 @@
   // Start again also leaves the what-if drill, the same way the app's own "Exit simulation" button does
   $("rpAgain").onclick = () => { if (SIM.on) { SIM.on = false; if ($("simOn")) $("simOn").checked = false; } resetState(); };
   $("rpLeave").onclick = () => { location.href = "dashboard.html#/now"; };
-  $("whyBtn").onclick = () => { $("sheet").hidden = false; }; $("sheetX").onclick = () => { $("sheet").hidden = true; };
+  $("whyBtn").onclick = () => { $("sheet").hidden = false; $("sheet").scrollTop = 0; $("sheetX").focus({ preventScroll: true }); }; $("sheetX").onclick = () => { $("sheet").hidden = true; $("whyBtn").focus({ preventScroll: true }); };
   addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && !e.repeat && REPLAY && root.dataset.page === "now" && $("sheet").hidden && !document.querySelector("dialog[open]") && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
 
   // ---------- the rail: each page is a small live picture ----------
@@ -167,19 +181,10 @@
     g.globalAlpha = 1; const q = pr(vec([102.2, 3.9])); g.fillStyle = css("--mark"); g.beginPath(); g.arc(o + q[0] * R, o - q[1] * R, 4.2, 0, 7); g.fill();
   }).catch(() => {});
 
-  // ---------- the background lines: steady atmosphere, not a signal ----------
-  (function contours() {
-    const cv = $("contours"), g = cv.getContext("2d"); let w, h, t = 0, last = performance.now();
-    const size = () => { const r = Math.min(2, devicePixelRatio || 1); w = innerWidth; h = innerHeight; cv.width = w * r; cv.height = h * r; g.setTransform(r, 0, 0, r, 0, 0); }; size(); addEventListener("resize", size);
-    (function draw(now) {
-      const dt = Math.min(50, now - last); last = now; t += dt * 0.0002;
-      g.clearRect(0, 0, w, h); const cx = w * 0.74, cy = h * 0.5, R = Math.hypot(w, h) * 0.085, acc = css("--acc");
-      for (let i = 1; i <= 9; i++) { g.beginPath();
-        for (let k = 0; k <= 96; k++) { const th = (k / 96) * Math.PI * 2, r = R * i * (1 + 0.065 * Math.sin(3 * th + t * 6 + i * 0.5) + 0.04 * Math.sin(5 * th - t * 4 + i * 0.9)), x = cx + r * 1.35 * Math.cos(th), y = cy + r * 0.8 * Math.sin(th); k ? g.lineTo(x, y) : g.moveTo(x, y); }
-        g.strokeStyle = i <= 3 ? acc : "#fff"; g.globalAlpha = (i <= 3 ? 0.3 : 0.14) * (1 - i / 14) + 0.012; g.lineWidth = 1.2; g.stroke(); }
-      g.globalAlpha = 1; if (!STILL) requestAnimationFrame(draw);
-    })(last);
-  })();
+  // ---------- review copy only: switch the first-screen treatment and the navigation without reloading ----------
+  const rv = $("review"); if (rv) { const mark = () => rv.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x.dataset.look === root.dataset.look || x.dataset.nav === root.dataset.nav)); mark();
+    rv.addEventListener("click", (e) => { const x = e.target.closest("button"); if (!x) return; for (const k of ["look", "nav"]) if (x.dataset[k]) { root.dataset[k] = x.dataset[k]; try { sessionStorage.setItem("dom-" + k, x.dataset[k]); } catch (err) {} }
+      mark(); requestAnimationFrame(() => { slideHl(); resize(); }); }); }
 
   // ---------- join the team's render loop: after every render of theirs, refresh the first screen ----------
   const theirs = window.render;
