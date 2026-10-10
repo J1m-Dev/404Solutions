@@ -203,7 +203,7 @@ def main():
     out["evidence"] = ev
     c.dump(out, c.ROOT / "outputs" / "walkforward.json")
     (c.ROOT / "site" / "data" / "evidence.json").write_text(json.dumps({"weeks": weeks, "note": (
-        "One row per test week, 2019 and 2022 to 2026. score is the chance of a rapid rise from a model trained only on earlier years. "
+        "One row per test week, 2019 and 2022 to 2026. score is the classifier's score (not a calibrated probability) from a model trained only on earlier years. "
         "band uses the cut-offs picked for that year. rise_now: positives are already at least 1.5 times those of four weeks earlier. "
         "rise_follows: that happens in at least one of the next four weeks.")}), encoding="utf-8")
     for f in folds:

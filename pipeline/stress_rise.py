@@ -54,7 +54,7 @@ def main():
     rise = np.concatenate([[lab[i] for i in te] for _, te in folds]).astype(bool)
     rng = np.random.default_rng(0)
     out = []
-    for kind, label in (("half", "Half the samples"), ("noise", "Noise of 20% on every weekly count"), ("missing", "One week in ten missing, filled with the week before"), ("all", "All three together")):
+    for kind, label in (("half", "Half the samples, counts scaled back up"), ("noise", "Noise of 20% on every weekly count"), ("missing", "One week in ten missing, filled with the week before"), ("all", "All three together")):
         same, warn_kept, clear_kept, caught = [], [], [], []
         for _ in range(RUNS):
             y2 = np.log1p(damage(cs, kind, rng))

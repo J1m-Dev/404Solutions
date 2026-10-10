@@ -14,7 +14,7 @@
  },
  "tests": [
   {
-   "test": "Half the samples",
+   "test": "Half the samples, counts scaled back up",
    "runs": 20,
    "band_unchanged": 0.829,
    "band_unchanged_worst": 0.762,

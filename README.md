@@ -14,7 +14,7 @@ Replay demo: click **Upload newest data**, choose *Weekly lab counts*, pick `sit
 Create `.env.local` next to `server.js` (it is git-ignored):
 ```
 GEMINI_API_KEY=your-key
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=                # leave empty for gemini-3.5-flash-lite, with built-in fallbacks
 ```
 Check the model name against Google's current list. Without a key the template summary is shown. The AI text is used only if every number in it appears in the figures it was sent.
 
@@ -91,7 +91,7 @@ Each week is **reported** (stated in a report), **derived** (exact from the runn
 
 ## Known limits found by the code audit (11 October 2026), not fixed
 - **Week 53.** The week arithmetic assumes 52 weeks a year; 2026 has an ISO week 53 (28 December 2026). Uploads and the classifier's time-of-year inputs will be one week out across that boundary.
-- **The alert rule uses the level projection** for an early Yellow and for Red against Orange, although as a forecast that projection was no better than "same as last week". It is labelled on the page; the rule was not changed because its test results belong to it as it is.
-- **The classifier's event is loose.** Over half of the weeks it flags are rises already under way, and at the low lab volumes of 2017 to 2019 a 1.5-times change is often noise. A stricter event (a floor on the count, or "crosses the watch line") is the next step, as a new event version scored in the Track record.
+- **The alert rule uses the level projection** for an early Yellow, an early Orange and for Red against Orange, although as a forecast that projection was no better than "same as last week". It is labelled on the page; the rule was not changed because its test results belong to it as it is.
+- **The classifier's event is loose.** 72 of its 133 Warning weeks (54%) came with a rapid rise already under way or within the three weeks before, and at the low lab volumes of 2017 to 2019 a 1.5-times change is often noise. A stricter event (a floor on the count, or "crosses the watch line") is the next step, as a new event version scored in the Track record.
 - **Undo and restore** do not re-check that the remaining lab weeks are consecutive.
 - **The repository is private**, so the commit time of a Track record entry is not something an outsider can check today.

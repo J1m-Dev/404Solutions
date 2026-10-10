@@ -20,14 +20,14 @@
 <main>
 <section class="card hero" id="hero">
   <h1>See an influenza surge in the week your lab figures show it, not four weeks later.</h1>
-  <p>The only public weekly lab series for Malaysia, WHO FluNet, runs about four weeks behind. FluSentinel takes a planner's own newer lab figures and returns an alert level, the kind of wave, a proposed action and the reason for it. Before a rise is visible, a machine-learning classifier sorts each week into Clear, Watch or Warning, and the page shows how often each of those was right over six past years. Every test result is shown, including the ones that failed.</p>
+  <p>The only public weekly lab series for Malaysia, WHO FluNet, was about four weeks behind when we checked on 10 October 2026. FluSentinel takes a planner's own newer lab figures and returns an alert level, the kind of wave, a proposed action and the reason for it. A machine-learning classifier, reading the national series, sorts each week into Clear, Watch or Warning for a rapid rise, and the page shows how often each of those was right over six past years. The results we rely on are shown in full, and so are the ones that failed.</p>
   <p><a class="btn" href="?replay=1">Run the October 2025 replay</a> <a class="btn ghost" href="#trust">Why trust it</a></p>
 </section>
 <section id="now" class="grid2">
   <div class="card" id="alertCard"></div>
   <div class="card">
     <h3>Summary <span class="chip ai" id="sumChip">Template</span></h3>
-    <label class="tog"><input type="checkbox" id="aiOn"><span class="sw"></span><span>AI wording (experimental)</span></label> <span class="note" id="aiNote">Off: the text below is a fixed template. On: an AI service rewords the English summary from the same figures; its text is rejected if it contains any number not in them. The Malay text is always the fixed template.</span>
+    <label class="tog"><input type="checkbox" id="aiOn"><span class="sw"></span><span>AI wording (experimental)</span></label> <span class="note" id="aiNote">Off: the text below is a fixed template. On: an AI service rewords the English summary from the same figures; its text is rejected if it contains any number not in them. The Malay text is always a shorter fixed template.</span>
     <p id="sumEn" class="summary"></p>
     <p id="sumBm" class="summary bm"></p>
     <h3>Proposed action <span class="chip exp">Proposal</span></h3>
@@ -38,13 +38,13 @@
 
 <section id="forecast" class="card">
   <h2>The signal: sentinel influenza positivity <span class="chip real">Real data</span></h2>
-  <p class="note">Share of sentinel lab samples that tested positive for influenza, Malaysia. This is not a count of cases.</p>
+  <p class="note">Share of sentinel lab samples that tested positive for influenza, Malaysia. Sentinel means a fixed set of clinics and labs that report every week. This is not a count of cases. FluNet labels the rows from 2024 onward as sentinel; the 2022 and 2023 rows carry no origin label and are treated as the same series.</p>
   <div class="chartbox"><canvas id="chart"></canvas></div>
   <div id="signals" class="signals"></div>
 </section>
 
 <section id="trust" class="card">
-  <h2>Why trust it <span class="chip est">Tested on six past years</span></h2>
+  <h2>Why trust it <span class="chip est">Back-tested on six years; Watch cut-off chosen on them</span></h2>
   <div id="trustBody"></div>
 </section>
 
@@ -95,7 +95,7 @@
 </section>
 
 <section id="track" class="card">
-  <h2>Track record: scored on weeks that have not been published yet <span class="chip real">Real, awaiting data</span></h2>
+  <h2>Track record: to be scored when these weeks are published <span class="chip real">Real, awaiting data</span></h2>
   <div id="trackBody"></div>
 </section>
 
@@ -120,7 +120,7 @@
         <tr><th>When</th><th>What happened</th><th>Source</th></tr>
         <tr><td>Week ending 27 Sep</td><td>Selangor's surge period begins (week 39)</td><td>Selangor State Assembly answer, Nov 2025</td></tr>
         <tr><td>9 Oct</td><td>Ministry reports clusters up from 14 to 97 in one week; 43 are in Selangor</td><td>Ministry of Health statement, reported by Bernama</td></tr>
-        <tr><td>5 to 11 Oct</td><td>National sentinel positivity reaches 37%, above our alert line</td><td>WHO FluNet</td></tr>
+        <tr><td>Week 41 (6 to 12 Oct)</td><td>National sentinel positivity reaches 37%, above our alert line</td><td>WHO FluNet</td></tr>
         <tr><td>25 Oct</td><td>Selangor total reaches 3,239 cases in 268 clusters; 81% of clusters are in institutions</td><td>Selangor State Assembly answer</td></tr>
         <tr><td>10 Nov</td><td>Selangor's school vaccination programme starts in four districts</td><td>Selangor State Assembly answer</td></tr>
       </table>
@@ -204,7 +204,7 @@
     <p class="note" id="upNote"></p>
     <label>Data type
       <select id="utype">
-        <option value="lab">Weekly lab counts (updates the forecast and alert)</option>
+        <option value="lab">Weekly lab counts (updates the alert)</option>
         <option value="ili">Weekly ILI clinic rate (supporting signal)</option>
         <option value="clusters">Cluster counts by district (map)</option>
         <option value="clusterlist">Cluster list with sizes and locations (map hotspots)</option>

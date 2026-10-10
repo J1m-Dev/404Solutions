@@ -267,7 +267,7 @@ async function draftPlan(mode, p) {
 const LAN = process.env.ALLOW_LAN === "1", LOCAL = ["127.0.0.1", "::1", "::ffff:127.0.0.1"];
 http.createServer(async (req, res) => {
   if (!LAN && !LOCAL.includes(req.socket.remoteAddress)) { res.writeHead(403); return res.end("This server answers only the computer it runs on. Set ALLOW_LAN=1 to open it to the network."); }
-  const url = new URL(req.url, "http://x");
+  let url; try { url = new URL(req.url, "http://x"); } catch { return send(res, 400, { error: "bad request" }); } // a request line such as "GET //" has no usable address
   try {
     if (["/api/state", "/api/undo", "/api/plan", "/api/plan/approve"].includes(url.pathname)) {
       const mode = url.searchParams.get("mode") === "replay" ? "replay" : "live";
@@ -297,23 +297,30 @@ http.createServer(async (req, res) => {
       if (url.pathname.startsWith("/api/plan") && req.method === "POST") { // draft a plan, or record one that a named person approved
         if (role !== "uploader" && role !== "admin") return deny();
         const b = await body(req), p = planInput(b);
-        if (!p) return send(res, 400, { error: "bad plan request" });
+        if (p.error) return send(res, 400, { error: "bad plan request", detail: p.error });
         if (url.pathname === "/api/plan") return send(res, 200, await draftPlan(mode, p));
-        if (!["ai", "cache", "template"].includes(b.source)) return send(res, 400, { error: "bad plan request" });
-        const g = guard(b.steps, p, b.source === "template"), by = String(b.by || "").trim().slice(0, 60);
+        if (!["ai", "cache", "template"].includes(b.source)) return send(res, 400, { error: "bad plan request", detail: "The plan must say whether it is an AI draft or the template." });
+        const fixed = b.source === "template", g = guard(b.steps, p, fixed), key = planKey(p), by = String(b.by ?? "").trim();
         if (g.error) return send(res, 400, { error: "plan rejected", detail: g.error });
+        // A draft counts only if it is, word for word, the one this server made and checked for these inputs.
+        if (!fixed && JSON.stringify((draftsOf(mode)[key] || {}).steps) !== JSON.stringify(g.steps))
+          return send(res, 400, { error: "plan rejected", detail: "These steps are not the draft this server made for these figures. Draft the plan again, then approve it." });
         if (p.figures.simulated_scenario === true) return send(res, 400, { error: "plan rejected", detail: "A plan for a simulated scenario cannot be approved." });
-        if (!by) return send(res, 400, { error: "name needed", detail: "Enter your name before approving a plan." });
-        log.push({ id: crypto.randomUUID(), at: new Date().toISOString(), by, role, type: "plan", source: b.source, steps: g.steps, key: planKey(p) });
+        if (!NAME.test(by)) return send(res, 400, { error: "name needed", detail: by ? "Use a plain name of up to 60 characters: letters, numbers, spaces and simple punctuation." : "Enter your name before approving a plan." });
+        log.push({ id: crypto.randomUUID(), at: new Date().toISOString(), by, role, type: "plan", source: b.source, steps: g.steps, key });
         return save();
       }
     }
-    if (url.pathname === "/api/summary" && req.method === "POST") return send(res, 200, await summary(await body(req)));
+    if (url.pathname === "/api/summary" && req.method === "POST") { // AI wording spends the shared calls, so with passcodes set a viewer cannot ask for it
+      const role = roleOf(req);
+      if (role !== "uploader" && role !== "admin") return send(res, role === "locked" ? 429 : 401, { error: role === "locked" ? "too many wrong passcodes" : "passcode" });
+      return send(res, 200, await summary(await body(req)));
+    }
     let p = path.normalize(path.join(SITE, url.pathname === "/" ? "index.html" : decodeURIComponent(url.pathname)));
-    if (!p.startsWith(SITE) || !fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404); return res.end("Not found"); }
+    if (hidden(SITE, p) || !fs.existsSync(p) || fs.statSync(p).isDirectory() || hidden(SITE_REAL, fs.realpathSync.native(p))) { res.writeHead(404); return res.end("Not found"); }
     res.writeHead(200, { "Content-Type": TYPES[path.extname(p)] || "application/octet-stream", "Cache-Control": "no-store" });
-    fs.createReadStream(p).pipe(res);
-  } catch (e) { send(res, 500, { error: String(e.message || e) }); }
+    fs.createReadStream(p).on("error", () => res.destroy()).pipe(res);
+  } catch (e) { if (res.headersSent) res.destroy(); else send(res, 500, { error: String(e.message || e) }); }
 }).listen(PORT, () => {
   console.log(`FluSentinel running at http://localhost:${PORT}  (replay demo: /?replay=1)`);
   console.log(`  AI wording: ${(process.env.GEMINI_API_KEY || "").trim() ? `on (model ${MODELS[0]}${MODELS.length > 1 ? `, then ${MODELS.slice(1).join(", ")} if it fails` : ", no fallback"})` : "off (no GEMINI_API_KEY in .env.local)"}`);

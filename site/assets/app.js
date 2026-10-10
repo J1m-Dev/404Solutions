@@ -27,9 +27,9 @@ const ACTIONS = {
 // Warning for preparation; the costly response starts at Outbreak.
 const STEPS = ["clear", "watch", "warning", "outbreak"];
 const STEP = {
-  clear: { name: "Clear", head: "Clear: no sign of a rapid rise", say: "No rapid rise is expected in the next four weeks.", bm: "Tiada tanda kenaikan pesat" },
-  watch: { name: "Watch", head: "Watch: a rapid rise is possible", say: "A rapid rise in the next four weeks is possible. Keep watching and do the free checks.", bm: "Pantau: kenaikan pesat mungkin berlaku" },
-  warning: { name: "Warning", head: "Warning: prepare for a rapid rise", say: "A rapid rise in the next four weeks is likely, or positivity is already above the watch line. Prepare; the response itself waits for Outbreak.", bm: "Amaran awal: bersedia untuk kenaikan pesat" },
+  clear: { name: "Clear", head: "Clear: no sign of a rapid rise", say: "No rapid rise is expected in the next four weeks.", bm: "Normal: tiada tanda peningkatan mendadak" },
+  watch: { name: "Watch", head: "Watch: a rapid rise is possible", say: "A rapid rise in the next four weeks is possible. Keep watching and do the free checks.", bm: "Waspada: peningkatan mendadak mungkin berlaku" },
+  warning: { name: "Warning", head: "Warning: prepare for a rapid rise", say: "A rapid rise in the next four weeks is likely. Prepare; the response itself waits for Outbreak.", bm: "Amaran: bersedia menghadapi peningkatan mendadak" },
   outbreak: { name: "Outbreak", say: "Positivity is at, or expected to reach, the alert line. Respond." },
 };
 const STEP_ACTIONS = {
@@ -41,9 +41,18 @@ const STEP_ACTIONS = {
             ["Ask hospitals to review surge rosters and respiratory ward plans", "Hospital directors"]],
 };
 const RULE_RANK = { green: 0, yellow: 2, orange: 3, red: 3 };
+const RULE_WORDS = { green: "below both lines", yellow: "at the watch line", orange: "at the alert line", red: "above the alert line and not easing" };
 function stepOf(c) {
   const band = c.rise.off ? null : c.rise.band, cl = band ? STEPS.indexOf(band) : 0, ru = RULE_RANK[c.a.level];
   return { key: STEPS[Math.max(cl, ru)], band, cl, ru };
+}
+// Headline and sub-line for the step. When the alert rule set the step (or the classifier is off), the words are the rule's.
+const RULE_TEXT = { clear: { head: "No outbreak trend", sub: "Routine surveillance", bm: "Normal: tiada trend wabak" },
+  warning: { head: "Warning: positivity is at the watch line", sub: "Positivity is above the watch line, or the rule's projection expects it to cross. Prepare; the response itself waits for Outbreak.", bm: "Amaran: kadar positif melepasi garis pantau" } };
+function headOf(c) {
+  const st = stepOf(c), byRule = st.ru > st.cl || c.rise.off;
+  if (st.key === "outbreak") return { ...LEVELS[c.a.level], byRule: true, bm: { orange: "Wabak: trend wabak dikesan", red: "Wabak: lonjakan sedang berlaku" }[c.a.level] };
+  return byRule ? { ...RULE_TEXT[st.key === "warning" ? "warning" : "clear"], byRule } : { head: STEP[st.key].head, sub: STEP[st.key].say, bm: STEP[st.key].bm, byRule };
 }
 const stepActions = (c) => (stepOf(c).key === "outbreak" ? ACTIONS[c.a.level === "red" ? "red" : "orange"] : STEP_ACTIONS[stepOf(c).key]);
 // Under a data warning the only proposed action is to check the figure; the step's own actions wait for that.
@@ -93,15 +102,25 @@ async function api(method, path, body) {
     return { ok: r.ok, status: r.status, data };
   } catch { return { ok: false, status: 0, data: null }; }
 }
+// The server stores what it is sent. Rows are checked again here before anything is drawn from them.
+function tidy(d) {
+  const num = Number.isFinite, names = GEO ? new Set(GEO.features.map((f) => f.properties.name)) : null, ok = (r) => r && typeof r === "object";
+  d.lab = (d.lab || []).filter((r) => ok(r) && [r.year, r.week, r.n, r.pos].every(num) && r.n > 0);
+  d.ili = (d.ili || []).filter((r) => ok(r) && [r.year, r.week, r.rate].every(num));
+  d.clusters = (d.clusters || []).filter((r) => ok(r) && [r.year, r.week, r.clusters].every(num) && (!names || names.has(r.district)));
+  d.clusterlist = (d.clusterlist || []).filter((r) => ok(r) && num(r.cases) && (!names || names.has(r.district)));
+  d.beds = (d.beds || []).filter((r) => ok(r) && typeof r.hospital === "string" && num(r.beds));
+  return d;
+}
 const emptyState = () => ({ lab: [], ili: [], clusters: [], beds: [], clusterlist: [], own: false, stamp: null, log: [], auth: { required: false, role: "admin" } });
 const localLog = () => JSON.parse(localStorage.getItem("fs_log_" + MODE) || "[]");
 function useLocal(log) {
   localStorage.setItem("fs_log_" + MODE, JSON.stringify(log));
-  STATE = { ...emptyState(), ...M.reduceLog(log), log: log.map(({ rows, ...e }) => ({ ...e, n: rows.length })) };
+  STATE = tidy({ ...emptyState(), ...M.reduceLog(log), log: log.map(({ rows, ...e }) => ({ ...e, n: (rows || []).length })) });
 }
 async function loadState() {
   const r = await api("GET", `/api/state?mode=${MODE}`);
-  if (r.ok) STATE = { ...emptyState(), ...r.data }; else { SERVER = false; useLocal(localLog()); }
+  if (r.ok) STATE = tidy({ ...emptyState(), ...r.data }); else { SERVER = false; useLocal(localLog()); }
 }
 const denied = (r) => (r.status === 401 ? "That passcode does not allow this." : r.status === 429 ? "Too many wrong passcodes. Wait ten minutes." : "The server did not accept that.");
 // Returns an error message, or "" when saved.
@@ -109,14 +128,14 @@ async function saveUpload(type, rows, own) {
   const by = localStorage.getItem("fs_by") || "";
   if (!SERVER) { useLocal(localLog().concat([{ id: Date.now() + "-" + Math.random().toString(16).slice(2, 8), at: new Date().toISOString(), by: by || "this browser", role: "local", type, own: !!own, rows }])); return ""; }
   const r = await api("POST", `/api/state?mode=${MODE}`, { type, rows, own: !!own, by });
-  if (r.ok) { STATE = { ...emptyState(), ...r.data }; return ""; }
+  if (r.ok) { STATE = tidy({ ...emptyState(), ...r.data }); return ""; }
   return denied(r);
 }
 async function setUndone(id, undone) {
   let msg = "";
   if (!SERVER) useLocal(localLog().map((e) => (e.id === id ? { ...e, undone } : e)));
-  else { const r = await api("POST", `/api/undo?mode=${MODE}`, { id, restore: !undone }); if (r.ok) STATE = { ...emptyState(), ...r.data }; else msg = denied(r); }
-  render(); $("histMsg").textContent = msg;
+  else { const r = await api("POST", `/api/undo?mode=${MODE}`, { id, restore: !undone }); if (r.ok) STATE = tidy({ ...emptyState(), ...r.data }); else msg = denied(r); }
+  planMsg = ""; render(); $("histMsg").textContent = msg;
 }
 // Alert lines for an uploaded own-network series: the same formula as the national ones, from the uploader's
 // own weeks (leaving out the newest four). Under a year of history, the national lines are used and flagged.
@@ -131,8 +150,8 @@ function ownThresholds(rows) {
 async function resetState() {
   let msg = "";
   if (!SERVER) useLocal(localLog().map((e) => ({ ...e, undone: true })));
-  else { const r = await api("DELETE", `/api/state?mode=${MODE}`); if (r.ok) STATE = { ...emptyState(), ...r.data }; else msg = r.status === 401 ? "Resetting everything needs the admin passcode. Single uploads can still be undone below." : denied(r); }
-  render(); $("histMsg").textContent = msg;
+  else { const r = await api("DELETE", `/api/state?mode=${MODE}`); if (r.ok) STATE = tidy({ ...emptyState(), ...r.data }); else msg = r.status === 401 ? "Resetting everything needs the admin passcode. Single uploads can still be undone below." : denied(r); }
+  planMsg = ""; barMsg = msg; render(); $("histMsg").textContent = msg;
 }
 
 function context(k) {
@@ -157,7 +176,7 @@ function context(k) {
 function figures(c) {
   const a = c.a, st = stepOf(c);
   return {
-    headline: a.dataWarning ? "Data warning: check the newest week before acting" : st.key === "outbreak" ? LEVELS[a.level].head : STEP[st.key].head, alert_level: a.level,
+    headline: a.dataWarning ? "Data warning: check the newest week before acting" : headOf(c).head, headline_malay: headOf(c).bm, alert_level: a.level,
     early_warning_step: st.key, classifier_band: st.band || "off",
     newest_data_week: wk(a.last), newest_positivity_percent: +f1(a.pLast),
     positivity_two_weeks_earlier_percent: +f1(a.p2),
@@ -166,17 +185,17 @@ function figures(c) {
     watch_line_percent: +f1(c.th.yellow), alert_line_percent: +f1(c.th.orange),
     wave_type: a.wave, wave_type_share_percent: Math.round(a.waveShare * 100),
     phase: a.phase, data_warning: a.dataWarning,
-    based_on_uploaded_unverified_data: c.uploaded, simulated_scenario: c.sim,
+    based_on_uploaded_unverified_data: c.uploaded, simulated_scenario: c.sim, own_series: c.own,
     proposed_action: actionsOf(c)[0][0],
   };
 }
 function template(fg) {
   const src = fg.simulated_scenario ? " (simulated scenario, not real data)" : fg.based_on_uploaded_unverified_data ? " (based on uploaded, unverified data)" : "";
-  const en = `${fg.headline}${src}. Sentinel positivity is ${fg.newest_positivity_percent}% in ${fg.newest_data_week}, ${fg.phase} from ${fg.positivity_two_weeks_earlier_percent}% two weeks earlier; the alert line is ${fg.alert_line_percent}%. ` +
+  const en = `${fg.headline}${src}. ${fg.own_series ? "Positivity in your series" : "Sentinel positivity"} is ${fg.newest_positivity_percent}% in ${fg.newest_data_week}, ${fg.phase} from ${fg.positivity_two_weeks_earlier_percent}% two weeks earlier; the alert line is ${fg.alert_line_percent}%. ` +
     (fg.classifier_band === "off" ? "" : `The rapid-rise classifier reads ${STEP[fg.classifier_band].name}. `) + (fg.wave_type === "Mixed" ? "No single virus type dominates. " : `${fg.wave_type} makes up ${fg.wave_type_share_percent}% of typed positives. `) + `Proposed action: ${fg.proposed_action}.`;
-  const lv = fg.early_warning_step === "outbreak" ? { orange: "Trend wabak dikesan", red: "Trend wabak dikesan: lonjakan sedang berlaku" }[fg.alert_level] : STEP[fg.early_warning_step].bm;
+  const lv = fg.headline_malay;
   const srcBm = fg.simulated_scenario ? " (senario simulasi, bukan data sebenar)" : fg.based_on_uploaded_unverified_data ? " (berdasarkan data yang dimuat naik, belum disahkan)" : "";
-  const bm = `${fg.data_warning ? "Amaran data: semak minggu terbaharu sebelum bertindak" : lv}${srcBm}. Kadar positif sentinel ialah ${fg.newest_positivity_percent}% pada ${fg.newest_data_week}, berbanding ${fg.positivity_two_weeks_earlier_percent}% dua minggu sebelumnya; garis amaran ialah ${fg.alert_line_percent}%.`;
+  const bm = `${fg.data_warning ? "Amaran data: semak minggu terbaharu sebelum bertindak" : lv}${srcBm}. ${fg.own_series ? "Kadar positif dalam siri anda" : "Kadar positif sentinel"} ialah ${fg.newest_positivity_percent}% pada ${fg.newest_data_week}, berbanding ${fg.positivity_two_weeks_earlier_percent}% dua minggu sebelumnya; ambang wabak ialah ${fg.alert_line_percent}%.`;
   return { en, bm };
 }
 // The AI text is shown only if every number in it appears in the figures it was given.
@@ -222,8 +241,8 @@ function evStats() {
 // What pushed the classifier's score up or down this week, in plain words. Exact: the model is a sum of one-input steps.
 function riseReasons(c) {
   const s = c.series, i = s.length - 1, pos = (k) => s[k].pos, pc = (a, b) => (b ? Math.round((100 * (a - b)) / b) : 0), sg = (v) => (v > 0 ? "+" : "") + v;
-  let m8 = 0; for (let k = i - 7; k <= i; k++) m8 += Math.log1p(pos(k)) / 8;
-  const d8 = Math.round(100 * (Math.exp(Math.log1p(pos(i)) - m8) - 1));
+  let a8 = 0; for (let k = i - 7; k <= i; k++) a8 += pos(k) / 8;
+  const d8 = a8 ? Math.round(100 * (pos(i) / a8 - 1)) : 0; // what is printed: this week against the plain average of the last eight
   const say = (key, up) => { const dir = up ? "raises" : "lowers";
     if (/season/.test(key)) return `the time of year ${dir} the score`;
     if (/level/.test(key)) return `the number of positives this week (${pos(i)}) ${dir} the score`;
@@ -236,18 +255,19 @@ function riseReasons(c) {
 }
 function renderAlert(c) {
   const a = c.a, th = c.th, st = stepOf(c), E = D.rise.evidence, ES = evStats(), B = ES ? ES.bands : {};
-  const head = a.dataWarning ? "Data warning: check the newest week before acting" : st.key === "outbreak" ? LEVELS[a.level].head : STEP[st.key].head;
+  const H = headOf(c), byRule = H.byRule; // byRule: the step shown comes from the alert rule, not from the classifier
+  const head = a.dataWarning ? "Data warning: check the newest week before acting" : H.head;
   // The classifier speaks about the four weeks after the newest data week. On public data those weeks have already happened but are not published.
   const span = c.lag > 0 ? `the four weeks after the newest data (${wk(nextWeek(a.last, 1))} to ${wk(nextWeek(a.last, 4))}, not published yet)` : "the next four weeks";
-  let subline = a.dataWarning ? `Step on this data: ${STEP[st.key].name}` : st.key === "outbreak" ? LEVELS[a.level].sub : STEP[st.key].say.replace("the next four weeks", span);
+  let subline = a.dataWarning ? `Step on this data: ${STEP[st.key].name}` : H.sub.replace("the next four weeks", span);
   if (!a.dataWarning && a.level === "orange" && a.pLast > th.orange) subline = `Latest data (${f1(a.pLast)}%) is above the alert line (${f1(th.orange)}%). The projection expects it to ease, so the rule says Orange, not Red.`;
   if (c.own && !th.calibrated && !a.dataWarning) subline = "Uncalibrated: these alert lines were not learned from your data. Treat the step with caution.";
-  const ladder = STEPS.map((k) => `<div class="step ${k}${k === st.key ? (a.dataWarning ? " on unconfirmed" : " on") : ""}"><b>${STEP[k].name}</b><small>${k === st.key && a.dataWarning ? "unconfirmed: check the newest week" : k === "outbreak" ? "set by the alert rule" : B[k] ? `a rise followed ${B[k].rises} of ${B[k].weeks} weeks` : "classifier band"}</small></div>`).join("");
+  const ladder = STEPS.map((k) => `<div class="step ${k}${k === st.key ? (a.dataWarning ? " on unconfirmed" : " on") : ""}"><b>${STEP[k].name}</b><small>${k === st.key && a.dataWarning ? "unconfirmed: check the newest week" : k === "outbreak" || (k === st.key && byRule) ? "set by the alert rule" : c.rise.off ? "classifier off" : B[k] ? `a rise followed ${B[k].rises} of ${B[k].weeks} weeks` : "classifier band"}</small></div>`).join("");
   const why = [];
   if (c.rise.off) why.push(`The rapid-rise classifier is <b>switched off for your own series</b>. One of its inputs is the size of the national sentinel network${E && E.scale_test ? `: in a test at a tenth of that volume, ${E.scale_test.changed_at_a_tenth} of ${E.scale_test.weeks} of its calls changed` : ""}. The step shown comes from the alert rule alone.`);
   else { const rs = riseReasons(c), b = c.rise.band;
     why.push(`Rapid-rise classifier (machine learning, national signal): <b>${STEP[b].name}</b>.${B[b] ? ` In six past years a rapid rise followed ${B[b].rises} of ${B[b].weeks} ${STEP[b].name} weeks.` : ""}${rs.length ? ` This week: ${rs.join("; ")}.` : ""} It speaks about ${span}${c.lag > 0 ? ": on public data it fills the reporting gap, and with current data it looks ahead" : ""}.`); }
-  why.push(`Alert rule: <b>${a.level}</b>. Newest data (${wk(a.last)}): ${f1(a.pLast)}% of sentinel samples positive, ${a.phase} from ${f1(a.p2)}% two weeks earlier. Watch line ${f1(th.yellow)}%, alert line ${f1(th.orange)}%; highest level in the projection the rule uses ${f1(Math.max(...a.ahead))}% (as a forecast that projection was no better than "same as last week").`);
+  why.push(`Alert rule: <b>${RULE_WORDS[a.level]}</b> (rule level ${a.level}). Newest data (${wk(a.last)}): ${f1(a.pLast)}% of ${c.own ? "your" : "sentinel"} samples positive, ${a.phase} from ${f1(a.p2)}% two weeks earlier. Watch line ${f1(th.yellow)}%, alert line ${f1(th.orange)}%; highest level in the projection the rule uses ${f1(Math.max(...a.ahead))}% (as a forecast that projection was no better than "same as last week").`);
   why.push(c.lag > 0 ? `That data is ${c.lag} week${c.lag > 1 ? "s" : ""} behind today, so today's level is projected, not observed.` : `Data is current to this week, so the level is observed.`);
   why.push(a.wave === "Mixed" ? "No single virus type dominates the last four weeks." : `${a.wave} makes up ${Math.round(a.waveShare * 100)}% of typed positives in the last four weeks.`);
   if (c.own) why.push(th.calibrated ? `Alert lines are computed from your own ${th.weeks} weeks, by the same formula as the national ones.` : `Alert lines are the national ones and may not fit your lab network: ${OWN_MIN_WEEKS} weeks of your own history are needed to compute yours, and you have ${th.weeks}.`);
@@ -255,33 +275,34 @@ function renderAlert(c) {
   $("alertCard").innerHTML = `
     <div class="level ${a.dataWarning ? "unconfirmed" : st.key}"><div class="dot"></div><div><h1>${head}</h1><div class="sub">${subline}</div></div></div>
     <div class="ladder">${ladder}</div>
-    <div class="cats"><span class="cat">Classifier: <b>${c.rise.off ? "off" : STEP[c.rise.band].name}</b></span><span class="cat">Alert rule: <b>${a.level.toUpperCase()}</b></span><span class="cat">Type: <b>${a.wave}</b></span>
+    <div class="cats"><span class="cat">Classifier: <b>${c.rise.off ? "off" : STEP[c.rise.band].name}</b></span><span class="cat">Alert rule: <b>${RULE_WORDS[a.level]}</b></span><span class="cat">Type: <b>${a.wave}</b></span>
       <span class="cat">Phase: <b>${a.phase}</b></span>${a.dataWarning ? '<span class="cat warn">Data warning</span>' : ""}
       ${c.own ? `<span class="chip ${th.calibrated ? "est" : "exp"}">Thresholds ${th.calibrated ? "calibrated to your data" : "uncalibrated"}</span>` : ""}
       ${c.sim ? '<span class="chip sim">Simulated scenario: not real data</span>' : c.own ? '<span class="chip unv">Your own series, uploaded, not verified</span>' : c.uploaded ? '<span class="chip unv">Uses uploaded, unverified data</span>' : '<span class="chip real">Public data only</span>'}</div>
     <h3>Why this step</h3><ul class="why">${why.map((w) => `<li>${w}</li>`).join("")}</ul>
-    <p class="note">The step is the higher of two things: the classifier's band and the alert rule. Both read the national sentinel series, so this is a national signal.${c.rise.off ? "" : ` Classifier score ${c.rise.prob.toFixed(2)} (Watch from ${c.rise.tiers.watch}, Warning from ${c.rise.tiers.warning}); the score is not a probability.`} The counts for each band come from a test on six past years (see Why trust it). Thresholds are project thresholds, not the Ministry of Health's.</p>`;
+    <p class="note">${c.own ? "The step comes from the alert rule on your own series; the classifier is off." : "The step is the higher of two things: the classifier's band and the alert rule. Crossing the watch line gives Warning; crossing the alert line gives Outbreak. Both read the national sentinel series, so this is a national signal."}${c.rise.off ? "" : ` Classifier score ${c.rise.prob.toFixed(2)} (Watch from ${c.rise.tiers.watch}, Warning from ${c.rise.tiers.warning}); the score is not a probability.`}${c.rise.off ? "" : " The counts under Clear, Watch and Warning are how often each classifier band was followed by a rapid rise in six past years (see Why trust it)."} Thresholds are project thresholds, not the Ministry of Health's.</p>`;
   $("action").innerHTML = `<table><tr><th>Action at this step</th><th>Who acts</th></tr>${actionsOf(c).map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table>
     ${a.dataWarning ? `<p class="note"><b>If the figure is confirmed</b>, the actions at this step would be: ${stepActions(c).map((r) => r[0]).join("; ")}.</p>` : ""}
-    <p class="note">Proposed actions for discussion with a health professional; not official guidance. Watch asks only for free checks and Warning for preparation; the costly response starts at Outbreak.</p>`;
+    <p class="note">Proposed actions for discussion with a health professional; not official guidance. They are the public-health actions the signal points to: a planner outside the Ministry would raise them with the body named. Watch asks only for free checks and Warning for preparation; the costly response starts at Outbreak.</p>`;
   renderPlanBox(c);
 }
 
 // Why an AI call came back without text, in words a presenter can read at a glance.
-const AI_WHY = { no_key: "no AI key is set on this server", guard: "the AI text failed the checks", timeout: "the AI service took too long", network: "the AI service could not be reached", rate_limited: "the hourly limit for AI calls is used up", blocked: "the AI service declined to answer", empty: "the AI service sent nothing back", bad_reply: "the AI service sent something unreadable", simulated: "simulated figures are never sent" };
+const AI_WHY = { passcode: "AI wording needs the uploader passcode", bad_request: "the figures were not accepted", no_key: "no AI key is set on this server", guard: "the AI text failed the checks", timeout: "the AI service took too long", network: "the AI service could not be reached", rate_limited: "the hourly limit for AI calls is used up", blocked: "the AI service declined to answer", empty: "the AI service sent nothing back", bad_reply: "the AI service sent something unreadable", simulated: "simulated figures are never sent" };
 const aiWhy = (code) => AI_WHY[code] || (String(code || "").startsWith("gemini_") ? `the AI service refused the request (status ${String(code).slice(7)})` : "the AI service did not answer");
 // ---------- action plan: a fixed template, or an AI draft that stays a draft until a named person approves it ----------
-let PLAN = null, planMsg = "";
+let PLAN = null, planMsg = "", barMsg = "";
 const PLAN_WHEN = { clear: "ongoing", watch: "this week", warning: "within 3 days", outbreak: "today" };
 function planInputs(c) { const st = stepOf(c);
   return { figures: figures(c), level: c.a.level, band: st.band || "off", step: st.key, actions: actionsOf(c).map(([action, who]) => ({ action, who })) }; }
-const templatePlan = (inp) => inp.actions.map((x) => ({ what: x.action, who: x.who.split(",")[0].trim(), when: PLAN_WHEN[inp.step] }));
+const templatePlan = (inp) => inp.actions.map((x) => ({ what: x.action, who: x.who.split(",")[0].trim(), when: inp.figures.data_warning ? "today" : PLAN_WHEN[inp.step] }));
 function renderPlanBox(c) {
   const inp = planInputs(c), key = JSON.stringify(inp), ap = STATE.plan;
   if (!PLAN || PLAN.key !== key) { PLAN = { key, source: "template", steps: templatePlan(inp) }; planMsg = ""; }
-  const table = (steps) => `<table><tr><th>#</th><th>Step</th><th>Who</th><th>By when</th></tr>${steps.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.what)}</td><td>${esc(x.who)}</td><td>${esc(x.when)}</td></tr>`).join("")}</table>`;
+  const table = (steps) => `<table><tr><th>#</th><th>Task</th><th>Who</th><th>By when</th></tr>${steps.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.what)}</td><td>${esc(x.who)}</td><td>${esc(x.when)}</td></tr>`).join("")}</table>`;
   const ai = PLAN.source === "ai" || PLAN.source === "cache", why = !SERVER ? "Drafting with AI and approving need the local server." : c.sim ? "Simulated figures are never sent to the AI service, and a simulated plan cannot be approved." : "";
-  const stale = ap && STATE.stamp && new Date(ap.at) < new Date(STATE.stamp), same = ap && JSON.stringify(ap.steps) === JSON.stringify(PLAN.steps);
+  // Stale: any upload, undo or restore of data after the approval was made.
+  const stale = ap && (STATE.log || []).some((e) => e.type !== "plan" && new Date(e.changedAt || e.at) > new Date(ap.at)), same = ap && !stale && JSON.stringify(ap.steps) === JSON.stringify(PLAN.steps);
   $("planBox").innerHTML = `<div class="planbox">
     <b>Step-by-step plan</b> <span class="chip ${same ? "real" : ai ? "ai" : "exp"}">${ai ? `AI draft${PLAN.model ? ` (${esc(PLAN.model)})` : ""}` : "Fixed template"}: ${same ? "approved" : "not approved"}</span>
     ${table(PLAN.steps)}
@@ -289,38 +310,39 @@ function renderPlanBox(c) {
     <button type="button" id="planAI" ${why ? "disabled" : ""}>Draft with AI</button><button type="button" id="planOK" ${why ? "disabled" : ""}>Approve this plan</button>
     <span class="note" id="planMsg">${esc(why || planMsg)}</span>
     ${ap ? `<p style="margin:10px 0 4px"><b>Approved plan</b> <span class="chip real">Approved by ${esc(ap.by)}${ap.role ? ` (${esc(ap.role)})` : ""}, ${new Date(ap.at).toLocaleString()}</span> <span class="chip ${ap.source === "template" ? "exp" : "ai"}">${ap.source === "template" ? "from the template" : "from an AI draft"}</span></p>${table(ap.steps)}
-      <p class="note">${stale ? "<b>Newer data has been uploaded since this was approved.</b> Check it still fits. " : ""}It can be undone in Uploads, roles and history.</p>` : ""}</div>`;
+      <p class="note">${stale ? "<b>The data has changed since this was approved.</b> It may no longer fit the step above: approve a new plan, or undo this one. " : ""}It can be undone in Uploads, roles and history.</p>` : ""}</div>`;
   if (why) return;
   const by = () => localStorage.getItem("fs_by") || "";
   $("planAI").onclick = async () => { $("planMsg").textContent = "Asking the AI service..."; $("planAI").disabled = true;
     const r = await api("POST", `/api/plan?mode=${MODE}`, { ...inp, by: by() }), d = r.data || {};
     if (r.ok && Array.isArray(d.steps) && d.steps.length) { PLAN = { key, source: d.source, steps: d.steps, model: d.model }; planMsg = d.source === "cache" ? "This draft was made earlier for the same figures." : d.tried && d.tried.length ? `Answered by a fallback model, ${d.model}, after ${d.tried.join("; ")}.` : ""; }
-    else planMsg = r.status === 401 ? "Drafting needs the uploader passcode (see Uploads, roles and history)." : r.status === 429 ? "Too many wrong passcodes. Wait ten minutes." : `The fixed template is shown: ${aiWhy(d.reason)}.`;
+    else planMsg = r.status === 401 ? "Drafting needs the uploader passcode (see Uploads, roles and history)." : r.status === 429 ? "Too many wrong passcodes. Wait ten minutes." : r.status === 400 ? `The request was not accepted${d.detail ? ": " + d.detail : ""}.` : `The fixed template is shown: ${aiWhy(d.reason)}${d.detail ? " (" + d.detail + ")" : ""}.`;
     renderPlanBox(context()); };
   $("planOK").onclick = async () => {
     if (!by()) { $("planMsg").textContent = "Enter your name or role under Uploads, roles and history first: an approval needs a name."; return; }
     const r = await api("POST", `/api/plan/approve?mode=${MODE}`, { ...inp, steps: PLAN.steps, source: ai ? "ai" : "template", by: by() });
-    if (r.ok) { STATE = { ...emptyState(), ...r.data }; planMsg = "Approved."; render(); }
+    if (r.ok) { STATE = tidy({ ...emptyState(), ...r.data }); planMsg = "Approved."; render(); }
     else { planMsg = r.status === 401 ? "Approving needs the uploader passcode (see Uploads, roles and history)." : r.status === 429 ? "Too many wrong passcodes. Wait ten minutes." : `The server did not accept this plan${r.data && r.data.detail ? ": " + r.data.detail : ""}.`; renderPlanBox(context()); } };
 }
 
 function renderStamp(c) {
   const b = c.base[c.base.length - 1], past = STATE.lab.length > D.pub_lag;
   let h = c.own ? `Showing <b>your own uploaded series</b>: ${c.base.length} weeks, ${wk(c.base[0])} to ${wk(b)}. The national data is not mixed in. Alert lines: <b>${c.th.calibrated ? "calibrated to your data" : `uncalibrated (${OWN_MIN_WEEKS} weeks needed, ${c.base.length} given)`}</b>.`
-    : `Public data through <b>${wk(b)}</b> (WHO FluNet). ` + (past ? `Uploaded data now runs to <b>${wk(c.today)}</b>.` : `Today is about <b>${wk(c.today)}</b>, so public data is ${D.pub_lag} weeks behind.`);
+    : `Public data through <b>${wk(b)}</b> (WHO FluNet). ` + (c.sim ? `The scenario runs to <b>${wk(c.series[c.series.length - 1])}</b>.` : past ? `Uploaded data now runs to <b>${wk(c.today)}</b>.` : `Today is about <b>${wk(c.today)}</b>, assuming the usual delay of ${D.pub_lag} weeks.`);
   if (STATE.stamp) h += ` &nbsp;|&nbsp; <b class="unv">Uploaded, not verified</b> (${SERVER ? "shared on this server" : "kept in this browser only"}): ${STATE.lab.length} lab week(s), ${STATE.ili.length} ILI, ${STATE.clusters.length} cluster rows, ${STATE.clusterlist.length} listed clusters, ${STATE.beds.length} bed rows, last at ${new Date(STATE.stamp).toLocaleString()} <button id="reset">Reset to public data</button>`;
   if (c.sim) h = `<b class="simflag">SIMULATION ON: the newest ${c.nSim} week(s) are invented, not data.</b> <button id="simOff">Exit simulation</button> &nbsp;|&nbsp; ` + h;
+  if (barMsg) h += ` &nbsp;|&nbsp; <b class="unv">${esc(barMsg)}</b>`;
   $("stamp").innerHTML = h;
   if ($("reset")) $("reset").onclick = resetState;
   if ($("simOff")) $("simOff").onclick = () => { SIM.on = false; $("simOn").checked = false; render(); };
   $("replayBar").hidden = c.own; $("hero").hidden = REPLAY || c.own;
   $("replayBar").innerHTML = REPLAY
-    ? `<b>Replay of real data.</b> The alert, the chart and the classifier are shown as they stood with public data through ${wk(b)}, with today's cut-offs; the map and the timeline show figures published later. The four weeks you can load are the real national figures and stand in for a planner's own lab feed. ` + (STATE.lab.length ? `Newer weeks are loaded. Press Reset above to run it again.` : `Drop in <a href="templates/demo_real_replay_2025_W38_W41.csv" download>the four real weeks that followed</a>, or <button id="playNext">Load those four weeks</button>.`) + ` <a href="./">Leave replay</a>`
+    ? `<b>Replay of real data.</b> The alert, the chart and the classifier are shown as they would have stood if public data ended at ${wk(b)}, using the figures as published in October 2026 and today's cut-offs; the map and the timeline show figures published later. The four weeks you can load are the real national figures and stand in for a planner's own lab feed. ` + (STATE.lab.length ? `Newer weeks are loaded. Press Reset above to run it again.` : `Drop in <a href="templates/demo_real_replay_2025_W38_W41.csv" download>the four real weeks that followed</a>, or <button id="playNext">Load those four weeks</button>.`) + ` <a href="./">Leave replay</a>`
     : `<b>New here?</b> <a href="?replay=1">Run the replay of the October 2025 surge</a> to see the alert change as newer data arrives.`;
   if ($("playNext")) $("playNext").onclick = async () => {
     const wb = XLSX.read(await (await fetch("templates/demo_real_replay_2025_W38_W41.csv")).text(), { type: "string" });
-    const { errs, out } = validate("lab", XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" }));
-    if (!errs.length) { const m = await saveUpload("lab", out); render(); $("histMsg").textContent = m; }
+    const { errs, out } = validate("lab", XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" }), false);
+    barMsg = errs.length ? errs[0] : await saveUpload("lab", out); render();
   };
 }
 
@@ -337,10 +359,10 @@ function renderChart(c) {
     { label: c.sim ? "Simulated scenario (invented)" : "", data: pad(hist.map((s, i) => (s.simulated || (hist[i + 1] && hist[i + 1].simulated) ? M.pct(s) : null))), borderColor: "#7b2cbf", backgroundColor: "#7b2cbf", borderDash: [4, 3], pointRadius: 3, borderWidth: 2 },
     { label: "Last value carried forward (baseline)", data: fut((f) => f.baseline), borderColor: "#2a5aa8", borderDash: [2, 3], pointRadius: 0, borderWidth: 2 },
     { label: "Projection the alert rule uses (not a forecast: see below)", data: fut((f) => f.model), borderColor: "#8a96a3", borderDash: [6, 4], pointRadius: 0, borderWidth: 1.5 },
-    { label: "80% range (baseline)", data: fut((f) => f.hi), borderColor: "transparent", backgroundColor: "rgba(42,90,168,.12)", pointRadius: 0, fill: "+1" },
+    { label: "Usual range around the baseline (80% of changes in the training weeks)", data: fut((f) => f.hi), borderColor: "transparent", backgroundColor: "rgba(42,90,168,.12)", pointRadius: 0, fill: "+1" },
     { label: "", data: fut((f) => f.lo), borderColor: "transparent", pointRadius: 0 },
-    { label: "Watch line", data: line(c.th.yellow), borderColor: "#c99700", borderWidth: 1, pointRadius: 0 },
-    { label: "Alert line", data: line(c.th.orange), borderColor: "#d9660b", borderWidth: 1, pointRadius: 0 },
+    { label: "Watch line (crossing it gives Warning)", data: line(c.th.yellow), borderColor: "#d9660b", borderWidth: 1, pointRadius: 0 },
+    { label: "Alert line (crossing it gives Outbreak)", data: line(c.th.orange), borderColor: "#c0282d", borderWidth: 1, pointRadius: 0 },
   ];
   if (chart) chart.destroy();
   chart = new Chart($("chart"), { type: "line", data: { labels, datasets: ds }, options: { maintainAspectRatio: false, animation: false, spanGaps: false,
@@ -527,7 +549,7 @@ function setupLayers() {
 function renderPlan(c) {
   const adm = +$("adm").value, share = +$("share").value / 100, occA = +$("occ").value / 100, a = c.a;
   $("admV").textContent = adm; $("shareV").textContent = Math.round(share * 100) + "%"; $("occV").textContent = Math.round(occA * 100) + "%";
-  const est = c.lag === 0 ? a.pLast : a.fc[c.lag].model;
+  const est = a.pLast; // the newest value: carried forward, it was the better forecast in testing
   const mult = Math.min(4, Math.max(0.3, est / c.th.median));
   const up = Object.fromEntries(STATE.beds.map((r) => [r.hospital, r.beds]));
   const uploaded = STATE.beds.length > 0, M = HOSPMETA || { counts: { estimated: 0 }, occupancy_reported: [], note: "" }, n = M.counts, allOcc = HOSP.every((h) => h.occ != null), short = (nm) => nm.replace("Hospital ", "");
@@ -550,7 +572,7 @@ function renderPlan(c) {
   const rows = R.map((r) => { unmet += r.need;
     return `<tr><td>${r.d.name}</td><td class="num">${r.d.need}</td><td>${r.got.sort((x, y) => x.km - y.km).map((x) => `${short(x.h.name)} ${x.t} (${Math.round(x.km)} km)`).join(", ") || "none within 40 km"}</td><td class="num">${r.need || ""}</td></tr>`; });
   cap.forEach((h) => { if (naive[h.name] > h.room) overflowNearest++; });
-  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${f1(mult)} (${c.lag === 0 ? "newest" : "projected"} positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), split by population. A district first uses hospitals inside it, then the nearest within 40 km; the rest is shown as unplaced. Room for flu at each hospital = beds × (1 − occupancy) × the share usable for flu. ${M.note}Assumes admissions scale with positivity. This is an illustration, not a recommended allocation. Distances are straight-line.`;
+  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${mult.toFixed(2)} (newest positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%; about ${ds.reduce((x, d) => x + d.need, 0)} admissions), split by population. A district first uses hospitals inside it, then the nearest within 40 km; the rest is shown as unplaced. Room for flu at each hospital = beds × (1 − occupancy) × the share usable for flu. ${M.note}Assumes admissions scale with positivity. This is an illustration, not a recommended allocation. Distances are straight-line.`;
   const from = (h) => (h.beds_src === "estimated" ? `<span class="fail">Estimated</span>` : h.src_url ? `<a href="${h.src_url}" target="_blank" rel="noopener">${h.src}</a>` : h.src);
   $("plan").innerHTML = `<table><tr><th>District</th><th class="num">Need</th><th>Hospitals with room within 40 km</th><th class="num">Unmet</th></tr>${rows.join("")}</table>
     <p class="note"><b>${unmet}</b> admissions unplaced under this scenario (no room within 40 km). If every district simply used its nearest hospital, <b>${overflowNearest}</b> hospital(s) would be over the room worked out for them.</p>
@@ -571,17 +593,19 @@ function renderTrust() {
   // Alert-line crossings in the public series, and how long the classifier had already been at Warning before each.
   const kw = (y, w) => y + "-" + w, byWeek = Object.fromEntries(EVID.weeks.map((w) => [kw(w.year, w.week), w])), Ser = D.series, pcts = Ser.map(M.pct), al = D.thresholds.orange, at = (k) => byWeek[kw(Ser[k].year, Ser[k].week)];
   const cross = []; Ser.forEach((x, i) => { if (i < 8 || pcts[i] <= al || !pcts.slice(i - 8, i).every((v) => v <= al)) return;
-    let nWarn = 0, nAny = 0, run = true; for (let k = i - 1; k >= 0; k--) { const w = at(k); if (!w || w.score < t.watch) break; nAny++; if (run && w.score >= t.warning) nWarn++; else run = false; }
-    cross.push({ week: wk(x), p: pcts[i], nWarn, nAny }); });
+    let nWarn = 0, nAny = 0, run = true, cutW = false, cutA = false; for (let k = i - 1; k >= 0; k--) { const w = at(k); if (!w) { cutA = true; cutW = run; break; } if (w.score < t.watch) break; nAny++; if (run && w.score >= t.warning) nWarn++; else run = false; }
+    cross.push({ week: wk(x), p: pcts[i], nWarn: nWarn + (cutW ? " or more" : ""), nAny: nAny + (cutA ? " or more" : "") }); });
   // The reverse: separate Warning periods in the same years, and how many had a week above the alert line during them or within eight weeks after.
-  let runs = 0, hits = 0; for (let i = 0; i < Ser.length; i++) { const w = at(i); if (!w || w.score < t.warning || (i && at(i - 1) && at(i - 1).score >= t.warning)) continue;
-    let j = i; while (j + 1 < Ser.length && at(j + 1) && at(j + 1).score >= t.warning) j++; runs++; if (pcts.slice(i, j + 9).some((v) => v > al)) hits++; }
+  let runs = 0, hits = 0, recent = 0; for (let i = 0; i < Ser.length; i++) { const w = at(i); if (!w || w.score < t.warning || (i && at(i - 1) && at(i - 1).score >= t.warning)) continue;
+    let j = i; while (j + 1 < Ser.length && at(j + 1) && at(j + 1).score >= t.warning) j++;
+    if (j + 8 >= Ser.length) { recent++; continue; } // fewer than eight weeks have passed since it ended: too recent to judge
+    runs++; if (pcts.slice(i, j + 9).some((v) => v > al)) hits++; }
   const C = E.candidate, nested = E.tiers && E.tiers.watch, worst = [...S.years].filter((y) => y.warning.weeks >= 10).sort((a, b) => a.warning.rises / a.warning.weeks - b.warning.rises / b.warning.weeks)[0];
   $("trustBody").innerHTML = `
-  <p class="note">The rapid-rise classifier is the only machine-learning part the product relies on. A week counts as "followed by a rapid rise" when, in one of the next four weeks, positives are at least 1.5 times the level four weeks before that week. That includes a rise already under way that holds, which is why the quiet-weeks table below matters. All counts are weeks, not separate outbreaks. Each week's score comes from a model trained only on earlier years; the counts use the cut-offs now in use (Watch from ${t.watch}, Warning from ${t.warning}).</p>
+  <p class="note">The rapid-rise classifier is the machine-learning part that sets Clear, Watch and Warning. A week counts as "followed by a rapid rise" when, in one of the next four weeks, positives are at least 1.5 times the level four weeks before that week (for example 150 positives when there were 100 four weeks earlier). That includes a rise already under way that holds, which is why the quiet-weeks table below matters. All counts are weeks, not separate outbreaks, over six years: 2019 and 2022 to August 2026. Each week's score comes from a model trained only on earlier years; the counts use the cut-offs now in use (Watch from ${t.watch}, Warning from ${t.warning}).</p>
   <div class="kpis">
     <div class="kpi"><b>${T.watch.tp} of ${R}</b><span>weeks that were followed by a rapid rise were in Watch or Warning (${pc(T.watch.tp, R)}%). Warning alone: ${T.warning.tp} (${pc(T.warning.tp, R)}%).</span></div>
-    <div class="kpi"><b>${B.clear.rises} of ${B.clear.weeks}</b><span>Clear weeks were followed by a rapid rise (${pc(B.clear.rises, B.clear.weeks)}%). Clear is the informative state.</span></div>
+    <div class="kpi"><b>${B.clear.rises} of ${B.clear.weeks}</b><span>Clear weeks were followed by a rapid rise (${pc(B.clear.rises, B.clear.weeks)}%). Clear is the most reliable state, though uneven by year.</span></div>
     <div class="kpi"><b>${O.watch.tp} of ${O.onsets}</b><span>quiet weeks that were followed by a rapid rise were already in Watch or Warning; ${O.warning.tp} were in Warning.</span></div>
     <div class="kpi"><b>${pc(T.watch.tp + T.watch.fp, N)}% of weeks</b><span>are Watch or higher, so it is a risk band, not an alarm. Warning alone is on in ${pc(T.warning.tp + T.warning.fp, N)}% of weeks.</span></div>
   </div>
@@ -596,8 +620,8 @@ function renderTrust() {
       <tr><th>All weeks</th><th class="num">${N}</th><th class="num">${R} (${pc(R, N)}%)</th></tr></table>
     </div>
     <div>
-      <h3>Before a rise is visible</h3>
-      <p class="note">${O.weeks} quiet weeks: no rapid rise in that week or the three before it. A rapid rise followed within four weeks after ${O.onsets} of them. This is the test of warning before anything is visible.</p>
+      <h3>Before a rise meets the definition</h3>
+      <p class="note">${O.weeks} quiet weeks: no rapid rise in that week or the three before it. A rapid rise followed within four weeks after ${O.onsets} of them. These weeks had not yet met the 1.5-times definition, so this is the closest check of early warning.</p>
       <table><tr><th>Tier</th><th class="num">Of those ${O.onsets} weeks, flagged</th><th class="num">Right when on</th></tr>
       <tr><td>Watch or higher</td><td class="num">${O.watch.tp} of ${O.onsets}</td><td class="num">${O.watch.tp} of ${O.watch.tp + O.watch.fp} (${pc(O.watch.tp, O.watch.tp + O.watch.fp)}%)</td></tr>
       <tr><td>Warning</td><td class="num">${O.warning.tp} of ${O.onsets}</td><td class="num">${O.warning.tp} of ${O.warning.tp + O.warning.fp} (${pc(O.warning.tp, O.warning.tp + O.warning.fp)}%)</td></tr>
@@ -607,22 +631,23 @@ function renderTrust() {
   ${cross.length ? `<h3>Before each time positivity crossed the alert line <span class="chip real">Real data, ${Ser[0].year} onward</span></h3>
   <table><tr><th>Crossed the alert line in</th><th class="num">Positivity that week</th><th class="num">Weeks in a row already at Warning</th><th class="num">Weeks in a row already at Watch or higher</th></tr>
   ${cross.map((x) => `<tr><td>${x.week}</td><td class="num">${f1(x.p)}%</td><td class="num">${x.nWarn}</td><td class="num">${x.nAny}</td></tr>`).join("")}</table>
-  <p class="note">The alert line is the costly event: above it the rule calls Outbreak. There were ${cross.length} crossings, so these are ${cross.length} cases, not a rate. The reverse does not hold: of ${runs} separate Warning periods in the same years, ${hits} had a week above the alert line during the period or within eight weeks after it. Warning means a rapid rise in counts is likely; most rapid rises stop short of the alert line.</p>` : ""}
+  <p class="note">The alert line is the costly event: above it the rule calls Outbreak. There were ${cross.length} crossings, so these are ${cross.length} cases, not a rate. "Or more" means the count runs back to the first week the classifier was scored that year. The reverse does not hold: of ${runs} separate Warning periods in the same years, ${hits} had a week above the alert line during the period or within eight weeks after it${recent ? ` (${recent} more ${recent > 1 ? "are" : "is"} too recent to judge)` : ""}. Warning means a rapid rise in counts is likely; most rapid rises stop short of the alert line.</p>` : ""}
   <h3>Against simple alternatives, same weeks</h3>
   <table><tr><th>Method</th><th class="num">Rise weeks flagged</th><th class="num">Right when on</th><th class="num">Switched on</th><th class="num">On in weeks with no rise after</th><th class="num">Separate periods</th></tr>
   ${tier("Watch or higher", T.watch, per(S.per.watch))}${tier("Warning", T.warning, per(S.per.warning))}
   ${simple.tp != null ? tier("Simple rule: a rise is already under way", simple) : ""}
-  ${tier("Always warn", { tp: R, fp: quiet })}</table>
+  ${tier("Flagging every week", { tp: R, fp: quiet })}</table>
   <p class="note">Ranking score, which needs no cut-off (0.5 is chance, 1 is perfect): the classifier ${E.skill.auc.toFixed(2)}${growth.auc ? `; three-week growth alone ${growth.auc.toFixed(2)}` : ""}${season.auc ? `; time of year alone ${season.auc.toFixed(2)}` : ""}. The skill is real and modest.</p>
   ${STRESS ? `<h3>Does the classifier survive bad data? <span class="chip real">Measured</span></h3>
   <table><tr><th>Damage applied to the weekly counts</th><th class="num">Weekly bands unchanged</th><th class="num">A Warning still Watch or higher</th><th class="num">A Clear still Clear</th><th class="num">Rise weeks still flagged, of ${STRESS.rise_weeks}</th></tr>
   <tr><td>None (clean data)</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">${STRESS.clean.rise_weeks_flagged}</td></tr>
   ${STRESS.tests.map((x) => `<tr><td>${x.test}</td><td class="num">${pc(x.band_unchanged, 1)}% (worst run ${pc(x.band_unchanged_worst, 1)}%)</td><td class="num">${pc(x.warning_still_watch_or_higher, 1)}%</td><td class="num">${pc(x.clear_still_clear, 1)}%</td><td class="num">about ${Math.round(x.rise_weeks_flagged_mean)} (worst run ${x.rise_weeks_flagged_worst})</td></tr>`).join("")}</table>
-  <p class="note">The same models were given damaged counts for each test year, ${STRESS.tests[0].runs} times per kind of damage, and their bands compared with the bands on clean counts. Bad data mostly turns Clear into Watch: it adds false warnings and loses few real ones. The classifier is less steady than the alert rule, whose own stress test is under Every result, pass or fail.</p>` : ""}
+  <p class="note">The same models were given damaged counts for each test year, ${STRESS.tests[0].runs} times per kind of damage, and their bands compared with the bands on clean counts. Under the heaviest damage about ${100 - pc(Math.min(...STRESS.tests.map((x) => x.band_unchanged)), 1)}% of weekly bands change, in both directions. A Warning dropped all the way to Clear in at most ${100 - pc(Math.min(...STRESS.tests.map((x) => x.warning_still_watch_or_higher)), 1)}% of cases, and on average ${Math.round(Math.min(...STRESS.tests.map((x) => x.rise_weeks_flagged_mean)))} to ${Math.round(Math.max(...STRESS.tests.map((x) => x.rise_weeks_flagged_mean)))} of the ${STRESS.rise_weeks} weeks followed by a rise stayed flagged (worst run ${Math.min(...STRESS.tests.map((x) => x.rise_weeks_flagged_worst))}). The classifier is less steady than the alert rule, whose own stress test is under Every result, pass or fail.</p>` : ""}
   <h3>Year by year</h3>
   <table><tr><th>Year tested</th><th class="num">Weeks</th><th class="num">Followed by a rapid rise</th><th class="num">Clear: rise followed</th><th class="num">Watch: rise followed</th><th class="num">Warning: rise followed</th><th class="num">Typical weekly positives</th></tr>
   ${S.years.map((y) => `<tr><td>${y.year}</td><td class="num">${y.weeks}</td><td class="num">${y.rises}</td><td class="num">${bcell(y.clear)}</td><td class="num">${bcell(y.watch)}</td><td class="num">${bcell(y.warning)}</td><td class="num">${y.typical}</td></tr>`).join("")}</table>
-  <p class="note">The years are uneven.${worst ? ` The weakest is ${worst.year}, when a rapid rise followed only ${worst.warning.rises} of ${worst.warning.weeks} Warning weeks.` : ""} In 2019 the lab counts were small (about ${S.years[0].typical} positives a week), where a 1.5-times change is often noise.</p>
+  <p class="note">The years are uneven.${(() => { const cy = S.years.filter((y) => y.clear.weeks >= 5), bad = [...cy].sort((a, b) => b.clear.rises / b.clear.weeks - a.clear.rises / a.clear.weeks).slice(0, 2), big = [...S.years].sort((a, b) => b.clear.weeks - a.clear.weeks).slice(0, 2);
+    return bad.length === 2 ? ` Clear was uneven too: ${bad.map((y) => `${y.clear.rises} of ${y.clear.weeks} Clear weeks in ${y.year}`).join(" and ")} were followed by a rise, and ${big[0].clear.weeks + big[1].clear.weeks} of the ${B.clear.weeks} Clear weeks come from ${Math.min(big[0].year, big[1].year)} and ${Math.max(big[0].year, big[1].year)}.` : ""; })()}${worst ? ` The weakest is ${worst.year}, when a rapid rise followed only ${worst.warning.rises} of ${worst.warning.weeks} Warning weeks.` : ""} In 2019 the lab counts were small (about ${S.years[0].typical} positives a week), where a 1.5-times change is often noise.</p>
   <h3>What this does not show</h3>
   <ul class="why">
     <li>This is a description of past years, not a test fixed in advance. The six-year run was made after earlier results were known, and the Watch cut-off of ${t.watch} was chosen with these years in view: it is the highest cut-off, in steps of 0.05, that still flagged at least 90% of the weeks followed by a rise. ${nested ? `Picking the Watch cut-off each year from earlier years only gave ${nested.tp} of ${R} flagged with ${nested.fp} false-warning weeks, and that figure moves by several points with how the pick is made.` : ""} The cut-offs are frozen from ${t.frozen || "11 October 2026"}; only the Track record below is a test on unseen weeks.</li>
@@ -633,7 +658,7 @@ function renderTrust() {
     <li>On public data the "next four weeks" are the four weeks after the newest published week, which have already happened. It fills the reporting gap; it looks ahead only when given current data.</li>
     ${C ? `<li>A version without the time-of-year inputs looks better on these six years (ranking score ${C.auc.toFixed(2)}; at 0.5, right ${C.warning.tp} of ${C.warning.tp + C.warning.fp} times). We have not switched to it, because choosing a model after seeing its test results is how results get inflated. It is scored beside the live model in the Track record, and future weeks will decide.</li>` : ""}
   </ul>
-  <p class="note"><b>Same method, second disease.</b> ${DENGUE && (DENGUE.forecast_measured || DENGUE.forecast) ? `On weekly dengue counts the best model beat "same as last week" by ${(DENGUE.forecast_measured || DENGUE.forecast).map((f) => Math.round((1 - f.mae[f.best] / f.mae.last_value) * 100) + "%").join(", ")} at one to four weeks ahead (${(DENGUE.forecast_measured || DENGUE.forecast)[0].n_test} measured weeks; the best of two models is taken at each horizon). ` : ""}Forecasting the exact influenza level did not beat that simple guess, so the product does not use it. Both are under <a href="#proof">Every result, pass or fail</a> and <a href="#dengue">Second disease: dengue</a>.</p>`;
+  <p class="note"><b>Second disease: the forecast worked, the classifier did not.</b> ${DENGUE && (DENGUE.forecast_measured || DENGUE.forecast) ? `On weekly dengue counts the best model beat "same as last week" by ${(DENGUE.forecast_measured || DENGUE.forecast).map((f) => Math.round((1 - f.mae[f.best] / f.mae.last_value) * 100) + "%").join(", ")} at one to four weeks ahead (${[...new Set((DENGUE.forecast_measured || DENGUE.forecast).map((f) => f.n_test))].sort().join(" to ")} measured weeks; the best of two models is taken at each horizon). ` : ""}${(() => { const o = DENGUE && (DENGUE.outbreak || []).find((x) => x.definition === "rising"), g = o && o.models.gradient_boosted; return g ? `The same kind of rapid-rise classifier flagged only ${g.tp} of ${g.tp + g.fn} dengue rise weeks, so dengue supports the forecasting method, not the classifier. ` : ""; })()}For influenza it is the other way round: forecasting the exact level did not beat that simple guess, so it is not shown as a forecast; the alert rule still reads that projection in three places, and it never decided a high alert in testing. Both are under <a href="#proof">Every result, pass or fail</a> and <a href="#dengue">Second disease: dengue</a>.</p>`;
   // leave a visible break wherever the weeks are not consecutive (2020 and 2021 are missing)
   const W = []; EVID.weeks.forEach((w, i) => { if (i && new Date(w.start) - new Date(EVID.weeks[i - 1].start) > 30 * 864e5) for (let k = 0; k < 6; k++) W.push(null); W.push(w); });
   const COL = { clear: "#c3ccd5", watch: "#e2b100", warning: "#d9660b" }, bandOf = (w) => (w.score >= S.t.warning ? "warning" : w.score >= S.t.watch ? "watch" : "clear");
@@ -655,7 +680,7 @@ function renderTrack() {
   const prints = (r) => (r.data_sha256 ? `commit <code>${esc(short(r.git_commit))}</code>${r.git_dirty ? " plus uncommitted changes" : ""}<br>data <code>${short(r.data_sha256)}</code><br>model <code>${short(r.classifier_sha256)}</code>` : "made before fingerprints and bands were added");
   const pol = (P.find((r) => r.policy) || {}).policy || "No claim is made from a single scored record.";
   $("trackBody").innerHTML = `
-  <p class="note">Public data runs about four weeks behind, so the weeks each record speaks about have already happened but cannot be seen yet. Each record is saved, committed and pushed to the team's repository on the day it is made, with fingerprints of the data file and the model, and is marked right or wrong when the figures are published. This is the only test here on weeks nobody had seen.</p>
+  <p class="note">Public data runs about four weeks behind, so the weeks a record speaks about have already happened but cannot be seen yet. Each record is saved and committed on the day it is made, with fingerprints of the data file and the model, and will be marked right or wrong when those weeks are published. A person runs this each week. So far there is one claim, written down on two days, and nothing has been scored. The repository is private, so an outsider cannot yet check the commit times. When it has run for a while, this will be the only test here on weeks nobody had seen.</p>
   <table><tr><th>Made on</th><th>Newest data then</th><th>What the system said</th><th>Candidate model, in shadow</th><th>Fingerprints</th><th>Result</th></tr>
   ${P.map((r) => `<tr><td>${r.made_on}</td><td>${r.newest_published_week} (${r.newest_positivity_percent}%)</td><td>${said(r)}</td><td>${cand(r)}</td><td>${prints(r)}</td><td>${res(r)}</td></tr>`).join("") || '<tr><td colspan="6">No records yet.</td></tr>'}</table>
   <p class="note">${pol} ${P.length > 1 ? "Records made on different days about the same unpublished weeks count once. " : ""}Each week: <code>py archive.py score &lt;new FluNet file&gt;</code>, then <code>py archive.py record &lt;new FluNet file&gt;</code>, then commit and push. ${P.filter((r) => r.status === "scored").length} of ${P.length} records scored so far. One quiet period cannot separate the classifier from a simple rule; that needs records across a rise.</p>`;
@@ -673,7 +698,7 @@ function renderProof() {
     <div class="kpi"><b>${Math.round((W ? W.pooled.gradient_boosted : G).recall * 100)}% recall, ${Math.round((W ? W.pooled.gradient_boosted : G).precision * 100)}% precision</b><span>Rapid-rise classifier${W ? ", tested year by year" : ""}, against ${Math.round((W ? W.pooled.already_in_outbreak_now : S).recall * 100)}% and ${Math.round((W ? W.pooled.already_in_outbreak_now : S).precision * 100)}% for the simple rule.</span></div>
     <div class="kpi"><b>${s0.lead_weeks === 0 ? "Same week" : s0.lead_weeks + " weeks ahead"}</b><span>With current data, the alert fired in the week the October 2025 surge crossed the alert line.</span></div>
     <div class="kpi"><b>${-s4.lead_weeks}-week delay removed</b><span>With public data alone the same alert fired ${-s4.lead_weeks} weeks later, because public data runs ${D.pub_lag} weeks behind.</span></div>
-    <div class="kpi"><b class="${passed ? "pass" : "nb"}">${passed} of 8 better</b><span>Forecasts of the exact level: none beat "same as last week", so the product does not use them and classifies instead.</span></div>
+    <div class="kpi"><b class="${passed ? "pass" : "nb"}">${passed} of 8 better</b><span>Forecasts of the exact level: none beat "same as last week", so none is shown as a forecast. The alert rule still reads one projection in three places.</span></div>
   </div>
 
   <h3>What is learned, what is a rule, what is assumed</h3>
@@ -696,7 +721,7 @@ function renderProof() {
   <h3>2. The alert rule: current data against public data <span class="chip real">Measured</span></h3>
   <p class="note">Each unseen week: was the alert high (Orange or Red), and was positivity really above the alert line? One surge occurred (October 2025), so these are counts from a single event, not rates.</p>
   <table>${cmHead}${cmRow("With current data (what an upload provides)", w0)}${cmRow(`With public data only (${D.pub_lag} weeks old)`, w4)}</table>
-  <p class="note">With current data the alert mostly reports that this week's figure is already above the line, so a perfect score here shows the rule works as designed, not that it predicts ahead. The rule also uses the level projection in two places (an early Yellow, and Red against Orange); that projection never decided a high alert in this test. The finding is the gap between the two rows: the same rule on ${D.pub_lag}-week-old data misses the first four surge weeks and stays on four weeks too long. ${a0.false_alarm_episodes} false-alarm episodes in ${a0.weeks_scored} weeks.</p>
+  <p class="note">With current data the alert mostly reports that this week's figure is already above the line, so a perfect score here shows the rule works as designed, not that it predicts ahead. The rule also uses the level projection in three places (an early Yellow, an early Orange, and Red against Orange); that projection never decided a high alert in this test. The finding is the gap between the two rows: the same rule on ${D.pub_lag}-week-old data misses the first four surge weeks and stays on four weeks too long. ${a0.false_alarm_episodes} false-alarm episodes in ${a0.weeks_scored} weeks.</p>
 
   <h3>3. Forecasting the exact level: no better than a simple guess, so we do not use it <span class="chip real">Measured</span></h3>
   <table><tr><th>Weeks ahead</th><th class="num">Model error</th><th class="num">Last-value error</th><th class="num">Same-week-average error</th><th class="num">80% range covered</th><th>Result</th></tr>
@@ -774,7 +799,7 @@ function renderStates() {
     <table><tr><th>State</th><th class="num">Week 40</th><th class="num">Week 43</th><th class="num">Week 44</th><th class="num">Week 45</th><th class="num">Running total to week 45</th><th class="num">ILI consultation rate, week 40</th></tr>
     ${Object.entries(S.flu.states).map(([nm, r]) => `<tr><td>${nm}</td>${["w40", "w43", "w44", "w45", "cumulative_w45"].map((k) => `<td class="num">${r[k] ?? ""}</td>`).join("")}<td class="num">${r.ili_w40 == null ? "" : r.ili_w40 + "%"}</td></tr>`).join("")}
     <tr><th>Malaysia</th>${["w40", "w43", "w44", "w45"].map((k) => `<th class="num">${N[k] ?? ""}</th>`).join("")}<th class="num">${tot}</th><th></th></tr></table>
-    <p class="note">A handful of scattered weeks cannot train or test a state model for influenza. The national model and its results are in the Proof section.</p>`; return; }
+    <p class="note">A handful of scattered weeks cannot train or test a state model for influenza. The national model and its results are under Why trust it.</p>`; return; }
   if (G.kind === "yearly") { $("stBody").innerHTML = `<p class="note">Yearly figures are too few to model (${G.labels.length} points per state). Switch to the weekly or monthly view for the state models.</p>`; return; }
   const gain = (r, unit) => (r.best === "last_value" ? `<td class="fail">No model beat last ${unit}</td>` : `<td class="pass">${r.best.replace(/_/g, " ")}, ${r.gain_vs_last_value_pct}% lower error</td>`);
   const none = (list) => { const z = list.filter((m) => m.results.every((r) => r.best === "last_value")).map((m) => m.state); return z.length ? ` No model beat it at any horizon in ${z.join(", ")}.` : ""; };
@@ -847,10 +872,10 @@ function renderSim(c) {
   if (!SIM.on) { $("simOut").innerHTML = `<p class="note">Switch the simulation on, then drag "Weeks from now" to play the scenario forward.</p>`; return; }
   const rows = []; let firstYellow = null, firstOrange = null, firstRise = null;
   for (let k = 0; k <= total; k++) { const x = context(k), hi = x.a.level === "orange" || x.a.level === "red";
-    if (k && firstYellow == null && x.a.level !== "green") firstYellow = k; if (k && firstOrange == null && hi) firstOrange = k; if (firstRise == null && x.rise.band === "warning") firstRise = k;
+    if (firstYellow == null && x.a.level !== "green") firstYellow = k; if (firstOrange == null && hi) firstOrange = k; if (firstRise == null && x.rise.band === "warning") firstRise = k;
     rows.push(`<tr class="${k === SIM.week ? "cur" : ""}"><td>${k ? "+" + k : "now"}</td><td class="num">${f1(x.a.pLast)}%</td><td><span class="lv ${x.a.level}">${x.a.level}</span></td><td>${x.rise.off ? "off" : STEP[x.rise.band].name}</td></tr>`); }
   const say = (v) => (v == null ? "never in this scenario" : v === 0 ? "already now" : `week +${v}`);
-  $("simOut").innerHTML = `<p><b>In this scenario:</b> the classifier first reads Warning at <b>${say(firstRise)}</b>; the level first leaves Green at <b>${say(firstYellow)}</b> and reaches Orange at <b>${say(firstOrange)}</b>.</p>
+  $("simOut").innerHTML = `<p><b>In this scenario:</b> ${c.rise.off ? "" : `the classifier first reads Warning at <b>${say(firstRise)}</b>; `}the level first leaves Green at <b>${say(firstYellow)}</b> and reaches Orange at <b>${say(firstOrange)}</b>.</p>
     <table class="simtab"><tr><th>Week</th><th class="num">Positivity</th><th>Alert level</th><th>Classifier band</th></tr>${rows.join("")}</table>
     <p class="note">Everything on this page now follows the invented weeks up to the highlighted row. Nothing here is a forecast.</p>`;
 }
@@ -874,7 +899,7 @@ function renderHistory() {
 function setupHistory() {
   $("histBody").onclick = (e) => { const b = e.target.closest("button[data-id]"); if (b) setUndone(b.dataset.id, b.dataset.undo === "1"); };
   $("byIn").onchange = (e) => localStorage.setItem("fs_by", e.target.value.trim().slice(0, 60));
-  $("passBtn").onclick = async () => { sessionStorage.setItem("fs_pass", $("passIn").value); $("passIn").value = ""; await loadState(); render(); $("histMsg").textContent = STATE.auth.role === "viewer" ? "That passcode was not recognised." : ""; };
+  $("passBtn").onclick = async () => { sessionStorage.setItem("fs_pass", $("passIn").value); $("passIn").value = ""; planMsg = ""; barMsg = ""; await loadState(); render(); $("histMsg").textContent = STATE.auth.role === "viewer" ? "That passcode was not recognised." : ""; };
 }
 
 function render() { const c = context(); renderStamp(c); renderHistory(); renderSim(c); renderAlert(c); renderChart(c); renderMap(c); renderPlan(c); renderSummary(c); }
@@ -887,10 +912,10 @@ function manualInputs() { const t = $("utype").value;
 function drawPreview() { const t = $("utype").value, cols = SCHEMA[t].cols;
   $("preview").innerHTML = pending.length ? `<p class="note">Check what was read. Edit any cell before confirming.</p><table><tr>${cols.map((k) => `<th>${k}</th>`).join("")}</tr>${pending.map((r, i) => `<tr>${cols.map((k) => `<td><input data-i="${i}" data-k="${k}" value="${esc(r[k])}"></td>`).join("")}</tr>`).join("")}</table>` : "";
   $("confirm").disabled = !pending.length; $("uerr").textContent = ""; }
-function validate(t, raw) {
+function validate(t, raw, own) {
   const errs = [], out = [], warns = [], num = (v) => (v === "" || v == null ? NaN : Number(v)), c = context(0);
   const ns = c.series.slice(-26).map((r) => r.n).sort((a, b) => a - b), usualN = ns[Math.floor(ns.length / 2)];
-  const ownNew = t === "lab" && $("ownSeries").checked;
+  const ownNew = t === "lab" && (own ?? $("ownSeries").checked);
   let prev = ownNew ? null : c.series[c.series.length - 1];
   raw.forEach((r, i) => { const L = `Row ${i + 1}: `;
     if (t === "lab") { const o = { year: num(r.year), week: num(r.week), n: num(r.samples_tested), pos: num(r.influenza_positive), h3: num(r.a_h3) || 0, h1: num(r.a_h1n1) || 0, b: num(r.b) || 0 };
@@ -968,7 +993,7 @@ function setupUpload() {
     if (warns.length && setupUpload.ack !== key) { setupUpload.ack = key; $("uerr").textContent = "Please check these unusual values:\n" + warns.join("\n") + "\nIf they are right, press Confirm again."; return; }
     setupUpload.ack = null; const ownNew = t === "lab" && $("ownSeries").checked;
     const failed = await saveUpload(t, out, ownNew);
-    if (failed) { $("uerr").textContent = failed + " Enter a passcode under Upload history."; return; }
+    if (failed) { $("uerr").textContent = failed + " Enter a passcode under Uploads, roles and history."; return; }
     render(); if (t === "clusters" || t === "clusterlist") zoomTo(boundsOf(GEO));
     if (setupUpload.nextFile()) return;
     $("dlg").close(); window.scrollTo({ top: 0, behavior: "smooth" }); };
@@ -984,14 +1009,17 @@ function setupUpload() {
   STGEO = await fetch("data/states_map.geojson").then((r) => r.json()).catch(() => null);
   EVID = await fetch("data/evidence.json").then((r) => r.json()).catch(() => null);
   STRESS = await fetch("data/stress_rise.json").then((r) => r.json()).catch(() => null);
-  await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupAtlas(); if (STATES) stMeasureOptions(); renderStates(); renderProof(); renderDengue(); renderTrust(); renderTrack();
+  await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupAtlas(); if (STATES) stMeasureOptions(); renderStates();
   // Folded sections: a link to one opens it, and charts inside are sized when it opens.
-  const openHash = () => { const el = location.hash && document.querySelector(location.hash); if (el && el.tagName === "DETAILS") { el.open = true; el.scrollIntoView(); } };
+  const openHash = () => { const el = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1))); if (el && el.tagName === "DETAILS") { el.open = true; el.scrollIntoView(); } };
   document.querySelectorAll("details.fold").forEach((d) => d.addEventListener("toggle", () => { if (d.open) [chart, stChart, dengueChartObj, evChart].forEach((ch) => ch && ch.resize()); }));
-  window.addEventListener("hashchange", openHash); openHash();
+  window.addEventListener("hashchange", openHash);
   $("adm").oninput = $("share").oninput = $("occ").oninput = () => renderPlan(context());
   $("mapMode").onchange = () => renderMap(context());
   $("aiOn").disabled = !SERVER; $("aiOn").onchange = () => renderSummary(context());
   if (!SERVER) $("aiNote").textContent = "AI wording needs the local server; this hosted copy shows the template.";
   render();
+  for (const [fn, id] of [[renderProof, "proof"], [renderDengue, "dengue"], [renderTrust, "trust"], [renderTrack, "track"]]) {
+    try { fn(); } catch (e) { console.error(id, e); $(id).hidden = true; } }
+  openHash();
 })();
