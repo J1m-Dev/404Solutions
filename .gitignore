@@ -6,3 +6,13 @@ __pycache__/
 data/store.json
 data/raw/opendengue/Temporal_extract_V1_3.csv
 data/raw/opendengue/*.zip
+!.env.example
+data/raw/population_state.csv
+data/raw/who_dengue/**/*.pdf
+data/raw/who_dengue/*.html
+# community-shared weekly dengue files with no stated licence: re-download with `py -3.13 pipeline/states.py fetch`
+data/raw/states/weekly_state_2010_2015.csv
+data/raw/states/weekly_state_2020_2022.csv
+data/raw/states/district_weekly_2022_2024.csv
+# large OpenStreetMap extract: `py -3.13 -I pipeline/private_hospitals.py --refresh` downloads it again
+data/raw/facilities/osm_health_malaysia_*.json

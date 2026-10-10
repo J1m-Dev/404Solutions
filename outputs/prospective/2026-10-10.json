@@ -1,0 +1,14 @@
+{
+ "made_on": "2026-10-10",
+ "data_file": "flunet_mys_2026-10-10.csv",
+ "newest_published_week": "2026-W37",
+ "newest_positivity_percent": 20.0,
+ "today_week_estimate": "2026-W41",
+ "alert_level_for_today": "green",
+ "alert_line_percent": 27.7,
+ "claim_alert": "Positivity in 2026-W41 will be at or below the alert line of 27.7%.",
+ "rapid_rise_probability": 0.166,
+ "rapid_rise_call": false,
+ "claim_rise": "Weekly positives will not reach 1.5 times their level four weeks earlier in any of 2026-W38 to 2026-W41.",
+ "status": "awaiting data"
+}

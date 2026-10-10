@@ -7,15 +7,11 @@ import numpy as np
 import core as c
 
 SITE = c.ROOT / "site"
+SCHOOL_DATE = "2025-06-30"
 REPLAY_CUT = (2025, 37)  # replay demo: public data ends here, later weeks arrive by upload
 DISTRICTS = {"Gombak": "Gombak", "Klang": "Klang", "Kuala Langat": "Kuala Langat",
              "Kuala Selangor": "Kuala Selangor", "Petaling": "Petaling", "Sabak Bernam": "Sabak Bernam",
              "Sepang": "Sepang", "Ulu Langat": "Hulu Langat", "Ulu Selangor": "Hulu Selangor"}
-# Government hospitals in Selangor (names as tagged in OpenStreetMap). Beds are SIMULATED placeholders.
-HOSPITALS = {"Hospital Tengku Ampuan Rahimah": 60, "Hospital Selayang": 50, "Hospital Sungai Buloh": 60,
-             "Hospital Sultan Idris Shah Serdang": 50, "Hospital Ampang": 45, "Hospital Shah Alam": 40,
-             "Hospital Kajang": 35, "Hospital Banting": 20, "Hospital Kuala Kubu Bharu": 15,
-             "Hospital Tanjong Karang": 15, "Hospital Tengku Ampuan Jemaah": 15, "Hospital Cyberjaya": 30}
 # Cumulative influenza cases to epi week 42/2025, Selangor State Assembly answer (Nov 2025)
 PUBLISHED_DISTRICT_CASES = {"Petaling": 534, "Hulu Langat": 487, "Gombak": 341, "Klang": 291}
 
@@ -106,6 +102,17 @@ def main():
     cross = next(i for i in range(split, N) if p[i] > th["orange"])
     first_yellow = next(t for t in range(cross - 8, cross + 1) if lv0[t] != "green")
     val["stress"] = stress(series, split, th)
+
+    def week_level(lag):
+        """Each unseen week: was the alert high (Orange or Red), and was positivity really above the alert line?"""
+        tp = fp = tn = fn = 0
+        for dd in range(split, N):
+            pred = levels(series, dd - lag, dd - lag, th, lag)[dd - lag] in ("orange", "red")
+            act = p[dd] > th["orange"]
+            tp += pred and act; fp += pred and not act; fn += (not pred) and act; tn += (not pred) and (not act)
+        return {"lag": lag, "tp": int(tp), "fp": int(fp), "tn": int(tn), "fn": int(fn),
+                "recall": round(tp / (tp + fn), 3), "precision": round(tp / (tp + fp), 3)}
+    val["week_level"] = [week_level(0), week_level(c.PUB_LAG)]
     val["descriptive_after_scoring"] = {
         "note": "Looked at after the test was scored; not a pre-registered result.",
         "first_non_green_week_before_2025_surge": f"{series[first_yellow]['year']}-W{series[first_yellow]['week']:02d}",
@@ -119,6 +126,10 @@ def main():
             "validation": val,
             "rise": {"current": rise_model(), "replay": rise_model(__import__("datetime").date.fromisoformat(series[cut]["start"])),
                      "test": json.loads((c.ROOT / "outputs" / "flu_cases.json").read_text())["same_test"]["outbreak"][1]}}
+    wf = c.ROOT / "outputs" / "walkforward.json"
+    if wf.exists():
+        site["rise"]["walk"] = json.loads(wf.read_text())
+    site["prospective"] = [json.loads(f.read_text()) for f in sorted((c.ROOT / "outputs" / "prospective").glob("*.json"))]
     c.dump(site, SITE / "data" / "site.json")
 
     # map: Selangor districts with latest population (thousands)
@@ -126,27 +137,30 @@ def main():
     for r in csv.DictReader(open(c.ROOT / "data/raw/population_district.csv", encoding="utf-8")):
         if r["state"] == "Selangor" and r["sex"] == "both" and r["age"] == "overall" and r["ethnicity"] == "overall":
             pop[r["district"]] = (r["date"], float(r["population"]))
+    # Government schools and pupils per district (Ministry of Education records via OpenDOSM, 30 June 2025).
+    sch, pup = {}, {}
+    for r in csv.DictReader(open(c.ROOT / "data/raw/schools_district.csv", encoding="utf-8-sig")):
+        if r["state"] == "Selangor" and r["date"] == SCHOOL_DATE and r["stage"] in ("primary", "secondary"):
+            sch[r["district"]] = sch.get(r["district"], 0) + int(float(r["schools"]))
+    for r in csv.DictReader(open(c.ROOT / "data/raw/enrolment_school_district.csv", encoding="utf-8-sig")):
+        if r["state"] == "Selangor" and r["date"] == SCHOOL_DATE and r["sex"] == "both" and r["stage"] in ("primary", "secondary"):
+            dn = "Petaling" if r["district"].startswith("Petaling") else r["district"]  # Petaling is reported as two education districts
+            pup[dn] = pup.get(dn, 0) + int(float(r["students"]))
     g = json.load(open(c.ROOT / "data/raw/mys_adm2.geojson", encoding="utf-8"))
     feats = []
     for f in g["features"]:
         nm = DISTRICTS.get(f["properties"]["shapeName"])
         if nm:
             d = pop.get(nm) or pop.get(f["properties"]["shapeName"]) or (None, None)
+            sn = f["properties"]["shapeName"]
             f["properties"] = {"name": nm, "pop_thousand": d[1], "pop_date": d[0],
+                               "schools": sch.get(nm, sch.get(sn)), "pupils": pup.get(nm, pup.get(sn)), "schools_date": SCHOOL_DATE,
                                "published_cases_w42_2025": PUBLISHED_DISTRICT_CASES.get(nm)}
             feats.append(f)
     c.dump({"type": "FeatureCollection", "features": feats}, SITE / "data" / "districts.geojson")
-    osm = json.load(open(c.ROOT / "data/raw/osm_hospitals_selangor.json", encoding="utf-8"))
-    hosp = []
-    for e in osm["elements"]:
-        nm = e.get("tags", {}).get("name", "")
-        key = next((k for k in HOSPITALS if nm.startswith(k)), None)
-        if key and not any(h["name"] == key for h in hosp):
-            hosp.append({"name": key, "lat": e.get("lat") or e["center"]["lat"], "lon": e.get("lon") or e["center"]["lon"],
-                         "beds_simulated": HOSPITALS[key]})
-    c.dump(hosp, SITE / "data" / "hospitals.json")
-    print("districts", [(f["properties"]["name"], f["properties"]["pop_thousand"]) for f in feats])
-    print("hospitals", len(hosp), sorted(set(HOSPITALS) - {h["name"] for h in hosp}))
+    # site/data/hospitals.json (the capacity table) and the beds template are written by beds.py, from real bed counts.
+    print("districts", [(f["properties"]["name"], f["properties"]["pop_thousand"], f["properties"]["schools"], f["properties"]["pupils"]) for f in feats])
+    print("schools total", sum(f["properties"]["schools"] for f in feats), "of", sch.get("All Districts"), "| pupils total", sum(f["properties"]["pupils"] for f in feats), "of", pup.get("All Districts"))
 
     # templates and demo files
     T = SITE / "templates"
@@ -156,7 +170,6 @@ def main():
     w("template_lab_counts.csv", [lab_head, [2026, 38, 900, 150, 30, 60, 60]])
     w("template_ili_rate.csv", [["year", "week", "ili_rate_percent"], [2026, 38, 6.5]])
     w("template_clusters.csv", [["year", "week", "district", "clusters"], [2026, 38, "Petaling", 3]])
-    w("template_beds.csv", [["hospital", "beds_available"]] + [[h["name"], h["beds_simulated"]] for h in hosp])
     w("demo_real_replay_2025_W38_W41.csv", [lab_head] + [
         [s["year"], s["week"], int(s["n"]), int(s["pos"]), int(s["h3"]), int(s["h1"]), int(s["b"])]
         for s in series[cut + 1: cut + 5]])

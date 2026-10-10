@@ -4,27 +4,67 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FluSentinel</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="vendor/leaflet.min.css">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <header class="top">
   <div class="brand">FluSentinel <span>influenza early warning for Selangor planners</span></div>
-  <nav><a href="#now">Now</a><a href="#forecast">Forecast</a><a href="#selangor">Selangor</a><a href="#dengue">Dengue</a><a href="#proof">Proof</a></nav>
+  <nav><a href="#stakes">Why</a><a href="#now">Now</a><a href="#history">History</a><a href="#sim">What-if</a><a href="#forecast">Forecast</a><a href="#atlas">Map</a><a href="#dengue">Dengue</a><a href="#proof">Proof</a></nav>
   <button id="uploadBtn" class="primary">Upload newest data</button>
 </header>
 <div id="stamp" class="stamp"></div>
 <div id="replayBar" class="replay" hidden></div>
 
 <main>
+<section class="card hero" id="hero">
+  <h1>Know an influenza surge has started in the week it starts, not four weeks later.</h1>
+  <p>Public influenza figures for Malaysia run about four weeks behind. FluSentinel takes a planner's own newer lab figures and returns an alert level, the kind of wave, a proposed action and the reason for it. A machine-learning classifier adds the chance of a rapid rise in the next four weeks. Every test result is shown, including the ones that failed.</p>
+  <p><a class="btn" href="?replay=1">Run the October 2025 replay</a> <a class="btn ghost" href="#proof">See the proof</a></p>
+</section>
 <section id="now" class="grid2">
   <div class="card" id="alertCard"></div>
   <div class="card">
     <h3>Summary <span class="chip ai" id="sumChip">Template</span></h3>
+    <label class="tog"><input type="checkbox" id="aiOn"><span class="sw"></span><span>AI wording (experimental)</span></label> <span class="note" id="aiNote">Off: the text below is a fixed template. On: an AI service rewords the same figures; its text is rejected if it contains any number not in them.</span>
     <p id="sumEn" class="summary"></p>
     <p id="sumBm" class="summary bm"></p>
     <h3>Proposed action <span class="chip exp">Proposal</span></h3>
     <div id="action"></div>
+  </div>
+</section>
+
+<section id="history" class="card">
+  <h2>Upload history <span class="chip ai" id="roleChip"></span></h2>
+  <p class="note" id="histNote"></p>
+  <div class="histctl">
+    <label>Your name or role, shown beside your uploads <input type="text" id="byIn" maxlength="60" placeholder="for example: District officer, Klang"></label>
+    <label id="passRow" hidden>Passcode <input type="password" id="passIn" autocomplete="off"> <button type="button" id="passBtn">Use passcode</button></label>
+  </div>
+  <div id="histBody"></div>
+  <p class="err" id="histMsg"></p>
+</section>
+
+<section id="sim" class="card">
+  <h2>What-if simulator <span class="chip sim">Simulated</span></h2>
+  <p class="note">Draw a possible outbreak and watch the alert, the classifier, the proposed action and the hospital plan respond. The factor effects are our own assumptions for illustration. They are not estimated from Malaysian data and this is not a forecast.</p>
+  <div class="grid2">
+    <div>
+      <label class="row"><input type="checkbox" id="simOn"> <b>Simulation on</b></label>
+      <label>Weeks from now: <b id="simWeekV"></b><input type="range" id="simWeek" min="0" max="11" step="1" value="0"></label>
+      <h3>Outbreak shape</h3>
+      <label>Base weekly growth: <b id="simBaseV"></b><input type="range" id="simBase" min="0" max="60" step="1" value="15"></label>
+      <label>Weeks of growth: <b id="simWeeksV"></b><input type="range" id="simWeeks" min="1" max="8" step="1" value="5"></label>
+      <h3>Factors <span class="chip exp">Assumed effects</span></h3>
+      <label class="row"><input type="checkbox" id="simSchool" checked> Schools in session</label>
+      <label>New strain meeting low immunity (0 to 100): <b id="simStrainV"></b><input type="range" id="simStrain" min="0" max="100" step="5" value="50"></label>
+      <label>Vaccination coverage: <b id="simVaxV"></b><input type="range" id="simVax" min="0" max="60" step="5" value="10"></label>
+      <label class="row"><input type="checkbox" id="simTravel"> Festive travel or mass gathering</label>
+      <label class="row"><input type="checkbox" id="simRain"> Rainy, humid season</label>
+      <p class="note" id="simGrowth"></p>
+    </div>
+    <div id="simOut"></div>
   </div>
 </section>
 
@@ -35,19 +75,88 @@
   <div id="signals" class="signals"></div>
 </section>
 
-<section id="selangor" class="card">
-  <h2>Selangor <span class="chip exp" id="mapChip">Exploratory</span></h2>
+<section id="atlas" class="card">
+  <h2>Map: Malaysia and Selangor <span class="chip real">State figures: real data</span> <span class="chip exp" id="mapChip">Exploratory</span></h2>
+  <p class="note" id="stSrc"></p>
   <p class="note" id="mapNote"></p>
+  <div class="histctl" id="stCtl">
+    <label>Disease <select id="stDisease"><option value="flu">Influenza</option><option value="dengue">Dengue</option></select></label>
+    <label>Shade states by <select id="stMeasure"></select></label>
+    <label id="stYearRow">Year: <b id="stYearV"></b> <input type="range" id="stYear" min="0" max="10" step="1" value="10"></label>
+    <button type="button" id="stPlay">Play years</button>
+  </div>
+  <div class="histctl">
+    <label id="mapModeRow">Selangor districts show <select id="mapMode"><option value="hot">Hotspots: where cases and clusters are</option><option value="pop">Population (exposure proxy)</option><option value="pupils">School pupils (exposure proxy)</option></select></label>
+    <span class="viewbtns"><button type="button" id="viewAll">Whole Malaysia</button> <button type="button" id="viewSel">Zoom to Selangor</button></span>
+  </div>
+  <div class="toggles" id="layerToggles">
+    <label class="tog"><input type="checkbox" id="ly_state" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#fdd0a2,#8c2d04)"></i>State shading</label>
+    <label class="tog"><input type="checkbox" id="ly_shade" checked><span class="sw"></span>District shading</label>
+    <label class="tog"><input type="checkbox" id="ly_heat" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#ffe08a,#e31a1c)"></i>Cluster heat</label>
+    <label class="tog"><input type="checkbox" id="ly_hot" checked><span class="sw"></span><i class="dot" style="background:#e0393f"></i>Hotspot circles</label>
+    <label class="tog"><input type="checkbox" id="ly_government" checked><span class="sw"></span><i class="dot" style="background:#0b6e6e"></i><span>Public hospitals (<span id="n_government"></span>)</span></label>
+    <label class="tog"><input type="checkbox" id="ly_private" checked><span class="sw"></span><i class="dot" style="background:#b5179e"></i><span>Private hospitals (<span id="n_private"></span>)</span></label>
+    <label class="tog"><input type="checkbox" id="ly_clinic" checked><span class="sw"></span><i class="dot" style="background:#e07a00"></i><span>Health clinics (<span id="n_clinic"></span>)</span></label>
+    <button type="button" id="lyAll">All on</button><button type="button" id="lyNone">All off</button>
+  </div>
+  <p class="note" id="mapHint"></p>
+  <div id="map"></div>
+  <p class="legend" id="stLegend"></p>
   <div class="grid2">
-    <div id="map"></div>
     <div>
-      <h3>Capacity planner <span class="chip sim" id="bedChip">Simulated</span></h3>
+      <h3>Selangor districts: influenza</h3>
+      <div id="hotRank"></div>
+    </div>
+    <div>
+      <h3>Exploratory capacity heuristic <span class="chip est" id="bedChip"></span></h3>
       <label>Baseline weekly respiratory admissions, Selangor (assumption): <b id="admV"></b>
         <input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
-      <label>Share of listed beds available for flu: <b id="shareV"></b>
-        <input type="range" id="share" min="20" max="100" step="5" value="100"></label>
+      <label>Occupancy assumed where none is reported: <b id="occV"></b>
+        <input type="range" id="occ" min="40" max="95" step="5" value="70"></label>
+      <label>Share of free beds usable for flu (assumption): <b id="shareV"></b>
+        <input type="range" id="share" min="5" max="100" step="5" value="25"></label>
       <p class="note" id="planNote"></p>
       <div id="plan"></div>
+    </div>
+  </div>
+  <div id="trendBox">
+    <h3>Trend by state <span class="chip est">Projections estimated</span></h3>
+    <p class="note" id="stNote"></p>
+    <div class="histctl">
+      <label id="stViewRow">View <select id="stView"><option value="weekly">Weekly by state, 2010 to 2015 and 2020 to 2024</option><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 1999 to 2023</option></select></label>
+    </div>
+    <div class="toggles" id="stToggles"></div>
+    <div class="chartbox"><canvas id="stChart"></canvas></div>
+    <div id="stBody"></div>
+  </div>
+</section>
+
+<section id="stakes" class="card">
+  <h2>Who this is for, and what is at stake</h2>
+  <div class="grid2">
+    <div>
+      <h3>The user <span class="chip exp">Hypothesis</span></h3>
+      <p>A planner who must act on influenza but does not see the Ministry of Health's internal figures: for example the infection-control lead of a private hospital group, or a state-government public-health planner.</p>
+      <p><b>The decision:</b> when to start school-cluster response and vaccination outreach, and which hospitals to put on standby.</p>
+      <p class="note">Not yet tested with a person in this role. The tested alert thresholds come from the national sentinel series; a planner's own series would need its own thresholds.</p>
+      <h3>Published costs <span class="chip real">Published figures</span></h3>
+      <ul class="why">
+        <li>Direct medical cost of influenza in Malaysia: MYR 310.9 million over 2016 to 2018, almost all of it hospital admissions.</li>
+        <li>One admission for severe respiratory infection: about MYR 3,900 to 5,400. One clinic visit: about MYR 43 to 60.</li>
+      </ul>
+      <p class="note">Source: "Cross-sectional study of influenza trends and costs in Malaysia between 2016 and 2018", PLOS ONE, 2024. Direct medical costs only. We claim no savings: that needs a user's own admission counts, response costs and what they would do differently.</p>
+    </div>
+    <div>
+      <h3>The 2025 surge, week by week <span class="chip real">Real data</span></h3>
+      <table>
+        <tr><th>When</th><th>What happened</th><th>Source</th></tr>
+        <tr><td>Week ending 27 Sep</td><td>Selangor's surge period begins (week 39)</td><td>Selangor State Assembly answer, Nov 2025</td></tr>
+        <tr><td>9 Oct</td><td>Ministry reports clusters up from 14 to 97 in one week; 43 are in Selangor</td><td>Ministry of Health statement, reported by Bernama</td></tr>
+        <tr><td>5 to 11 Oct</td><td>National sentinel positivity reaches 37%, above our alert line</td><td>WHO FluNet</td></tr>
+        <tr><td>25 Oct</td><td>Selangor total reaches 3,239 cases in 268 clusters; 81% of clusters are in institutions</td><td>Selangor State Assembly answer</td></tr>
+        <tr><td>10 Nov</td><td>Selangor's school vaccination programme starts in four districts</td><td>Selangor State Assembly answer</td></tr>
+      </table>
+      <p class="note">This shows how fast a surge moves compared with public reporting. It does not show that this tool would have changed any decision.</p>
     </div>
   </div>
 </section>
@@ -65,7 +174,7 @@
 </section>
 
 <section id="dengue" class="card">
-  <h2>Dengue (second disease) <span class="chip real">Real data</span> <span class="chip est">Estimated</span></h2>
+  <h2>Dengue: second-disease experiment, rebuilt to August 2026 <span class="chip real">Real data</span> <span class="chip est">Some weeks estimated</span></h2>
   <p class="note" id="dengueNote"></p>
   <div class="chartbox"><canvas id="dengueChart"></canvas></div>
   <div id="dengueBody"></div>
@@ -77,19 +186,21 @@
 </section>
 </main>
 
-<footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
+<footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, WHO dengue situation updates, Ministry of Health Malaysia open data and facility registry, OpenDengue, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
 
 <dialog id="dlg">
   <form method="dialog" id="dlgForm">
     <h2>Upload newest data</h2>
-    <p class="note">Uploads are saved, shared with everyone using this site, and marked "Uploaded, not verified".</p>
+    <p class="note" id="upNote"></p>
     <label>Data type
       <select id="utype">
         <option value="lab">Weekly lab counts (updates the forecast and alert)</option>
         <option value="ili">Weekly ILI clinic rate (supporting signal)</option>
         <option value="clusters">Cluster counts by district (map)</option>
+        <option value="clusterlist">Cluster list with sizes and locations (map hotspots)</option>
         <option value="beds">Hospital beds available (planner)</option>
       </select></label>
+    <label class="row" id="ownRow"><input type="checkbox" id="ownSeries"> <span>These figures are from <b>my own lab network</b>, not the national sentinel system. They replace the national series on screen (at least 12 weeks in a row; 52 or more to get alert lines fitted to your data).</span></label>
     <p>Template: <a id="tpl" download></a></p>
     <div id="drop" class="drop" role="button" tabindex="0">
       <b>Drag and drop files or a folder here</b>
@@ -110,9 +221,10 @@
   </form>
 </dialog>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="vendor/chart.umd.min.js"></script>
+<script src="vendor/leaflet.min.js"></script>
+<script src="vendor/leaflet-heat.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
 <script src="assets/model.js"></script>
 <script src="assets/app.js"></script>
 </body>

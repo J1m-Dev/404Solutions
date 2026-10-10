@@ -71,7 +71,7 @@ def confusion(pred, act):
             "precision": round(tp / (tp + fp), 3) if tp + fp else None}
 
 
-def main(rows=None, tag="national", source="OpenDengue V1.3 temporal extract, Malaysia national weekly (MOH / WHO reports)", site_file="dengue.json", test_from=None):
+def main(rows=None, tag="national", source="OpenDengue V1.3 temporal extract, Malaysia national weekly (MOH / WHO reports)", site_file="dengue.json", test_from=None, score_mask=None):
     rows = rows or load()
     N = len(rows)
     split = int(N * 0.70) if test_from is None else next(i for i, r in enumerate(rows) if r["start"] >= test_from)
@@ -90,7 +90,8 @@ def main(rows=None, tag="national", source="OpenDengue V1.3 temporal extract, Ma
     # A) forecast
     for h in H:
         tr = [i for i in range(split) if usable(rows, i, h) and i + h < split]
-        te = [i for i in range(N) if usable(rows, i, h) and i + h >= split]
+        # score_mask: optional list saying which weeks may be used as test targets (for example, not estimated ones)
+        te = [i for i in range(N) if usable(rows, i, h) and i + h >= split and (score_mask is None or score_mask[i + h])]
         Xtr, Xte = np.array([feats(rows, y, i, h) for i in tr]), np.array([feats(rows, y, i, h) for i in te])
         dtr = np.array([y[i + h] - y[i] for i in tr])
         actual = np.array([c[i + h] for i in te])

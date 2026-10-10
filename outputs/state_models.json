@@ -1,0 +1,1289 @@
+{
+ "monthly": [
+  {
+   "state": "Johor",
+   "months": 216,
+   "train_end": "2005-07",
+   "test_start": "2005-08",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 65,
+     "mean_actual": 287.5,
+     "mae": {
+      "last_value": 66.5,
+      "same_month_average": 125.4,
+      "ridge": 67.5,
+      "gradient_boosted": 66.1
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 0.6
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 65,
+     "mean_actual": 287.5,
+     "mae": {
+      "last_value": 87.8,
+      "same_month_average": 125.4,
+      "ridge": 83.7,
+      "gradient_boosted": 82.9
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 5.6
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 65,
+     "mean_actual": 287.5,
+     "mae": {
+      "last_value": 84.9,
+      "same_month_average": 125.4,
+      "ridge": 86.7,
+      "gradient_boosted": 84.2
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 0.8
+    }
+   ],
+   "projection": [
+    241,
+    191,
+    155
+   ]
+  },
+  {
+   "state": "Negeri Sembilan",
+   "months": 216,
+   "train_end": "2005-07",
+   "test_start": "2005-08",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 65,
+     "mean_actual": 110.1,
+     "mae": {
+      "last_value": 35.2,
+      "same_month_average": 46.4,
+      "ridge": 31.2,
+      "gradient_boosted": 31.8
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 11.4
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 65,
+     "mean_actual": 110.1,
+     "mae": {
+      "last_value": 44.0,
+      "same_month_average": 46.4,
+      "ridge": 38.1,
+      "gradient_boosted": 39.3
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 13.4
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 65,
+     "mean_actual": 110.1,
+     "mae": {
+      "last_value": 49.6,
+      "same_month_average": 46.4,
+      "ridge": 41.3,
+      "gradient_boosted": 41.5
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 16.7
+    }
+   ],
+   "projection": [
+    38,
+    35,
+    33
+   ]
+  },
+  {
+   "state": "Pahang",
+   "months": 216,
+   "train_end": "2005-07",
+   "test_start": "2005-08",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 65,
+     "mean_actual": 131.4,
+     "mae": {
+      "last_value": 41.6,
+      "same_month_average": 57.8,
+      "ridge": 36.7,
+      "gradient_boosted": 38.5
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 11.8
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 65,
+     "mean_actual": 131.4,
+     "mae": {
+      "last_value": 49.4,
+      "same_month_average": 57.8,
+      "ridge": 40.0,
+      "gradient_boosted": 44.0
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 19.0
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 65,
+     "mean_actual": 131.4,
+     "mae": {
+      "last_value": 53.4,
+      "same_month_average": 57.8,
+      "ridge": 42.5,
+      "gradient_boosted": 46.5
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 20.4
+    }
+   ],
+   "projection": [
+    167,
+    132,
+    111
+   ]
+  },
+  {
+   "state": "Perak",
+   "months": 192,
+   "train_end": "2006-02",
+   "test_start": "2006-03",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 58,
+     "mean_actual": 237.2,
+     "mae": {
+      "last_value": 63.4,
+      "same_month_average": 102.6,
+      "ridge": 55.2,
+      "gradient_boosted": 56.3
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 12.9
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 58,
+     "mean_actual": 237.2,
+     "mae": {
+      "last_value": 84.2,
+      "same_month_average": 102.6,
+      "ridge": 68.3,
+      "gradient_boosted": 73.4
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 18.9
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 58,
+     "mean_actual": 237.2,
+     "mae": {
+      "last_value": 92.9,
+      "same_month_average": 102.6,
+      "ridge": 75.5,
+      "gradient_boosted": 80.8
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 18.7
+    }
+   ],
+   "projection": [
+    183,
+    175,
+    162
+   ]
+  },
+  {
+   "state": "Perlis",
+   "months": 216,
+   "train_end": "2005-07",
+   "test_start": "2005-08",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 65,
+     "mean_actual": 19.3,
+     "mae": {
+      "last_value": 6.8,
+      "same_month_average": 12.0,
+      "ridge": 6.7,
+      "gradient_boosted": 6.4
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 5.9
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 65,
+     "mean_actual": 19.3,
+     "mae": {
+      "last_value": 9.3,
+      "same_month_average": 12.0,
+      "ridge": 8.5,
+      "gradient_boosted": 8.5
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 8.6
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 65,
+     "mean_actual": 19.3,
+     "mae": {
+      "last_value": 10.7,
+      "same_month_average": 12.0,
+      "ridge": 9.5,
+      "gradient_boosted": 9.3
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 13.1
+    }
+   ],
+   "projection": [
+    13,
+    11,
+    11
+   ]
+  },
+  {
+   "state": "Pulau Pinang",
+   "months": 204,
+   "train_end": "2005-10",
+   "test_start": "2005-11",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 62,
+     "mean_actual": 207.4,
+     "mae": {
+      "last_value": 66.6,
+      "same_month_average": 120.9,
+      "ridge": 67.0,
+      "gradient_boosted": 68.6
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 62,
+     "mean_actual": 207.4,
+     "mae": {
+      "last_value": 98.1,
+      "same_month_average": 120.9,
+      "ridge": 81.3,
+      "gradient_boosted": 77.4
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 21.1
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 62,
+     "mean_actual": 207.4,
+     "mae": {
+      "last_value": 111.3,
+      "same_month_average": 120.9,
+      "ridge": 87.1,
+      "gradient_boosted": 85.0
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 23.6
+    }
+   ],
+   "projection": [
+    162,
+    115,
+    94
+   ]
+  },
+  {
+   "state": "Selangor",
+   "months": 192,
+   "train_end": "2006-02",
+   "test_start": "2006-03",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 58,
+     "mean_actual": 1085.6,
+     "mae": {
+      "last_value": 252.6,
+      "same_month_average": 696.1,
+      "ridge": 287.5,
+      "gradient_boosted": 280.1
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 58,
+     "mean_actual": 1085.6,
+     "mae": {
+      "last_value": 369.2,
+      "same_month_average": 696.1,
+      "ridge": 433.1,
+      "gradient_boosted": 399.5
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 58,
+     "mean_actual": 1085.6,
+     "mae": {
+      "last_value": 477.1,
+      "same_month_average": 696.1,
+      "ridge": 499.7,
+      "gradient_boosted": 499.4
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    }
+   ],
+   "projection": [
+    993,
+    884,
+    785
+   ]
+  },
+  {
+   "state": "All ten states together",
+   "months": 156,
+   "train_end": "2007-01",
+   "test_start": "2007-02",
+   "test_end": "2010-12",
+   "results": [
+    {
+     "months_ahead": 1,
+     "n_test": 47,
+     "mean_actual": 2617.1,
+     "mae": {
+      "last_value": 539.9,
+      "same_month_average": 1187.8,
+      "ridge": 494.5,
+      "gradient_boosted": 497.4
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 8.4
+    },
+    {
+     "months_ahead": 2,
+     "n_test": 47,
+     "mean_actual": 2617.1,
+     "mae": {
+      "last_value": 739.1,
+      "same_month_average": 1187.8,
+      "ridge": 661.1,
+      "gradient_boosted": 668.8
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 10.6
+    },
+    {
+     "months_ahead": 3,
+     "n_test": 47,
+     "mean_actual": 2617.1,
+     "mae": {
+      "last_value": 818.1,
+      "same_month_average": 1187.8,
+      "ridge": 736.0,
+      "gradient_boosted": 710.6
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 13.1
+    }
+   ],
+   "projection": [
+    2219,
+    1995,
+    1860
+   ]
+  }
+ ],
+ "weekly": [
+  {
+   "state": "Johor",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 176.8,
+     "mae": {
+      "last_value": 20.2,
+      "same_week_average": 104.7,
+      "ridge": 20.2,
+      "gradient_boosted": 20.2
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 176.8,
+     "mae": {
+      "last_value": 23.6,
+      "same_week_average": 104.7,
+      "ridge": 24.4,
+      "gradient_boosted": 24.2
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 176.8,
+     "mae": {
+      "last_value": 26.8,
+      "same_week_average": 104.7,
+      "ridge": 28.7,
+      "gradient_boosted": 27.9
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 176.8,
+     "mae": {
+      "last_value": 30.4,
+      "same_week_average": 104.7,
+      "ridge": 31.4,
+      "gradient_boosted": 31.3
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    }
+   ]
+  },
+  {
+   "state": "Kedah",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 69.8,
+     "mae": {
+      "last_value": 13.1,
+      "same_week_average": 55.7,
+      "ridge": 25.6,
+      "gradient_boosted": 13.8
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 69.8,
+     "mae": {
+      "last_value": 15.9,
+      "same_week_average": 55.7,
+      "ridge": 32.2,
+      "gradient_boosted": 18.5
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 69.8,
+     "mae": {
+      "last_value": 18.9,
+      "same_week_average": 55.7,
+      "ridge": 35.7,
+      "gradient_boosted": 21.8
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 69.8,
+     "mae": {
+      "last_value": 20.9,
+      "same_week_average": 55.7,
+      "ridge": 39.9,
+      "gradient_boosted": 34.4
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    }
+   ]
+  },
+  {
+   "state": "Kelantan",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 46.6,
+     "mae": {
+      "last_value": 9.8,
+      "same_week_average": 33.7,
+      "ridge": 9.6,
+      "gradient_boosted": 9.5
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 3.1
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 46.6,
+     "mae": {
+      "last_value": 12.1,
+      "same_week_average": 33.7,
+      "ridge": 11.0,
+      "gradient_boosted": 11.2
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 9.1
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 46.6,
+     "mae": {
+      "last_value": 13.1,
+      "same_week_average": 33.7,
+      "ridge": 12.3,
+      "gradient_boosted": 11.8
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 9.9
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 46.6,
+     "mae": {
+      "last_value": 15.3,
+      "same_week_average": 33.7,
+      "ridge": 13.7,
+      "gradient_boosted": 13.7
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 10.5
+    }
+   ]
+  },
+  {
+   "state": "Kuala Lumpur",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 210.4,
+     "mae": {
+      "last_value": 25.1,
+      "same_week_average": 132.5,
+      "ridge": 25.6,
+      "gradient_boosted": 23.8
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 5.2
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 210.4,
+     "mae": {
+      "last_value": 29.4,
+      "same_week_average": 132.5,
+      "ridge": 32.5,
+      "gradient_boosted": 28.9
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 1.7
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 210.4,
+     "mae": {
+      "last_value": 34.4,
+      "same_week_average": 132.5,
+      "ridge": 38.4,
+      "gradient_boosted": 35.3
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 210.4,
+     "mae": {
+      "last_value": 39.0,
+      "same_week_average": 132.5,
+      "ridge": 43.4,
+      "gradient_boosted": 38.2
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 2.1
+    }
+   ]
+  },
+  {
+   "state": "Labuan",
+   "weeks": 408,
+   "skipped": "too few cases to model (under 3 a week on average)"
+  },
+  {
+   "state": "Melaka",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 25.8,
+     "mae": {
+      "last_value": 5.8,
+      "same_week_average": 14.3,
+      "ridge": 5.7,
+      "gradient_boosted": 5.8
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 1.7
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 25.8,
+     "mae": {
+      "last_value": 7.1,
+      "same_week_average": 14.3,
+      "ridge": 6.7,
+      "gradient_boosted": 6.6
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 7.0
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 25.8,
+     "mae": {
+      "last_value": 7.3,
+      "same_week_average": 14.3,
+      "ridge": 7.4,
+      "gradient_boosted": 6.9
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 5.5
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 25.8,
+     "mae": {
+      "last_value": 8.3,
+      "same_week_average": 14.3,
+      "ridge": 8.0,
+      "gradient_boosted": 7.6
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 8.4
+    }
+   ]
+  },
+  {
+   "state": "Negeri Sembilan",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 89.0,
+     "mae": {
+      "last_value": 16.9,
+      "same_week_average": 62.4,
+      "ridge": 16.0,
+      "gradient_boosted": 15.8
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 6.5
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 89.0,
+     "mae": {
+      "last_value": 17.9,
+      "same_week_average": 62.4,
+      "ridge": 19.4,
+      "gradient_boosted": 20.7
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 89.0,
+     "mae": {
+      "last_value": 23.3,
+      "same_week_average": 62.4,
+      "ridge": 23.4,
+      "gradient_boosted": 22.6
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 3.0
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 89.0,
+     "mae": {
+      "last_value": 24.9,
+      "same_week_average": 62.4,
+      "ridge": 26.7,
+      "gradient_boosted": 27.0
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    }
+   ]
+  },
+  {
+   "state": "Pahang",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 28.5,
+     "mae": {
+      "last_value": 7.1,
+      "same_week_average": 11.3,
+      "ridge": 6.6,
+      "gradient_boosted": 6.8
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 7.0
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 28.5,
+     "mae": {
+      "last_value": 8.7,
+      "same_week_average": 11.3,
+      "ridge": 7.3,
+      "gradient_boosted": 7.7
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 16.1
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 28.5,
+     "mae": {
+      "last_value": 9.0,
+      "same_week_average": 11.3,
+      "ridge": 7.6,
+      "gradient_boosted": 8.0
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 15.6
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 28.5,
+     "mae": {
+      "last_value": 9.3,
+      "same_week_average": 11.3,
+      "ridge": 7.9,
+      "gradient_boosted": 8.4
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 15.1
+    }
+   ]
+  },
+  {
+   "state": "Perak",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 80.2,
+     "mae": {
+      "last_value": 11.7,
+      "same_week_average": 51.2,
+      "ridge": 12.0,
+      "gradient_boosted": 11.8
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 80.2,
+     "mae": {
+      "last_value": 13.3,
+      "same_week_average": 51.2,
+      "ridge": 13.9,
+      "gradient_boosted": 12.9
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 3.0
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 80.2,
+     "mae": {
+      "last_value": 15.1,
+      "same_week_average": 51.2,
+      "ridge": 15.7,
+      "gradient_boosted": 15.0
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 0.7
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 80.2,
+     "mae": {
+      "last_value": 17.8,
+      "same_week_average": 51.2,
+      "ridge": 17.2,
+      "gradient_boosted": 17.2
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 3.4
+    }
+   ]
+  },
+  {
+   "state": "Perlis",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 7.7,
+     "mae": {
+      "last_value": 2.9,
+      "same_week_average": 6.1,
+      "ridge": 3.0,
+      "gradient_boosted": 2.8
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 3.4
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 7.7,
+     "mae": {
+      "last_value": 3.7,
+      "same_week_average": 6.1,
+      "ridge": 3.4,
+      "gradient_boosted": 3.4
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 8.1
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 7.7,
+     "mae": {
+      "last_value": 4.1,
+      "same_week_average": 6.1,
+      "ridge": 3.7,
+      "gradient_boosted": 3.6
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 12.2
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 7.7,
+     "mae": {
+      "last_value": 4.5,
+      "same_week_average": 6.1,
+      "ridge": 4.0,
+      "gradient_boosted": 3.8
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 15.6
+    }
+   ]
+  },
+  {
+   "state": "Pulau Pinang",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 83.5,
+     "mae": {
+      "last_value": 13.8,
+      "same_week_average": 61.6,
+      "ridge": 16.4,
+      "gradient_boosted": 13.7
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 0.7
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 83.5,
+     "mae": {
+      "last_value": 16.9,
+      "same_week_average": 61.6,
+      "ridge": 20.3,
+      "gradient_boosted": 17.0
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 83.5,
+     "mae": {
+      "last_value": 18.9,
+      "same_week_average": 61.6,
+      "ridge": 23.9,
+      "gradient_boosted": 20.6
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 83.5,
+     "mae": {
+      "last_value": 22.5,
+      "same_week_average": 61.6,
+      "ridge": 28.6,
+      "gradient_boosted": 23.8
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    }
+   ]
+  },
+  {
+   "state": "Sabah",
+   "weeks": 408,
+   "train_end": "2020-03-29",
+   "test_start": "2020-04-05",
+   "test_end": "2022-08-07",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 123,
+     "mean_actual": 55.7,
+     "mae": {
+      "last_value": 9.8,
+      "same_week_average": 33.1,
+      "ridge": 10.7,
+      "gradient_boosted": 11.5
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 123,
+     "mean_actual": 55.7,
+     "mae": {
+      "last_value": 11.1,
+      "same_week_average": 33.1,
+      "ridge": 13.9,
+      "gradient_boosted": 15.5
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 123,
+     "mean_actual": 55.7,
+     "mae": {
+      "last_value": 13.5,
+      "same_week_average": 33.1,
+      "ridge": 16.5,
+      "gradient_boosted": 18.6
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 123,
+     "mean_actual": 55.7,
+     "mae": {
+      "last_value": 16.7,
+      "same_week_average": 33.1,
+      "ridge": 18.8,
+      "gradient_boosted": 20.2
+     },
+     "best": "last_value",
+     "gain_vs_last_value_pct": 0.0
+    }
+   ]
+  },
+  {
+   "state": "Sarawak",
+   "weeks": 408,
+   "train_end": "2020-03-29",
+   "test_start": "2020-04-05",
+   "test_end": "2022-08-07",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 123,
+     "mean_actual": 12.2,
+     "mae": {
+      "last_value": 3.9,
+      "same_week_average": 26.4,
+      "ridge": 3.5,
+      "gradient_boosted": 3.8
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 10.3
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 123,
+     "mean_actual": 12.2,
+     "mae": {
+      "last_value": 4.1,
+      "same_week_average": 26.4,
+      "ridge": 3.8,
+      "gradient_boosted": 4.2
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 7.3
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 123,
+     "mean_actual": 12.2,
+     "mae": {
+      "last_value": 4.4,
+      "same_week_average": 26.3,
+      "ridge": 3.9,
+      "gradient_boosted": 4.3
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 11.4
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 123,
+     "mean_actual": 12.2,
+     "mae": {
+      "last_value": 4.6,
+      "same_week_average": 26.3,
+      "ridge": 4.1,
+      "gradient_boosted": 4.2
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 10.9
+    }
+   ]
+  },
+  {
+   "state": "Selangor",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 998.0,
+     "mae": {
+      "last_value": 96.9,
+      "same_week_average": 545.0,
+      "ridge": 96.0,
+      "gradient_boosted": 93.9
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 3.1
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 998.0,
+     "mae": {
+      "last_value": 117.1,
+      "same_week_average": 545.0,
+      "ridge": 114.0,
+      "gradient_boosted": 108.4
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 7.4
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 998.0,
+     "mae": {
+      "last_value": 140.9,
+      "same_week_average": 545.0,
+      "ridge": 134.5,
+      "gradient_boosted": 128.0
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 9.2
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 998.0,
+     "mae": {
+      "last_value": 170.6,
+      "same_week_average": 545.0,
+      "ridge": 155.3,
+      "gradient_boosted": 156.1
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 9.0
+    }
+   ]
+  },
+  {
+   "state": "Terengganu",
+   "weeks": 532,
+   "train_end": "2021-11-28",
+   "test_start": "2021-12-05",
+   "test_end": "2024-12-22",
+   "results": [
+    {
+     "weeks_ahead": 1,
+     "n_test": 160,
+     "mean_actual": 5.0,
+     "mae": {
+      "last_value": 2.6,
+      "same_week_average": 11.3,
+      "ridge": 2.4,
+      "gradient_boosted": 2.3
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 11.5
+    },
+    {
+     "weeks_ahead": 2,
+     "n_test": 160,
+     "mean_actual": 5.0,
+     "mae": {
+      "last_value": 3.0,
+      "same_week_average": 11.3,
+      "ridge": 2.6,
+      "gradient_boosted": 2.6
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 13.3
+    },
+    {
+     "weeks_ahead": 3,
+     "n_test": 160,
+     "mean_actual": 5.0,
+     "mae": {
+      "last_value": 3.1,
+      "same_week_average": 11.3,
+      "ridge": 2.6,
+      "gradient_boosted": 2.6
+     },
+     "best": "ridge",
+     "gain_vs_last_value_pct": 16.1
+    },
+    {
+     "weeks_ahead": 4,
+     "n_test": 160,
+     "mean_actual": 5.0,
+     "mae": {
+      "last_value": 3.1,
+      "same_week_average": 11.3,
+      "ridge": 2.7,
+      "gradient_boosted": 2.6
+     },
+     "best": "gradient_boosted",
+     "gain_vs_last_value_pct": 16.1
+    }
+   ]
+  }
+ ]
+}

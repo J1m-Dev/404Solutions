@@ -1,0 +1,169 @@
+{
+ "source": "2011 to 2022: OpenDengue V1.3. 2023 to 2026: rebuilt by us from 80 WHO Western Pacific Dengue Situation Updates (figures from the Ministry of Health)",
+ "weeks": 811,
+ "segments": [
+  [
+   "2011-01-02",
+   "2014-12-21"
+  ],
+  [
+   "2015-01-04",
+   "2020-12-20"
+  ],
+  [
+   "2021-01-03",
+   "2025-11-30"
+  ],
+  [
+   "2026-01-04",
+   "2026-08-23"
+  ]
+ ],
+ "train_end": "2021-11-21",
+ "test_start": "2021-11-28",
+ "test_end": "2026-08-23",
+ "train_years": [
+  2010,
+  2011,
+  2012,
+  2013,
+  2014,
+  2015,
+  2016,
+  2017,
+  2018,
+  2019,
+  2020,
+  2021
+ ],
+ "forecast": [
+  {
+   "weeks_ahead": 1,
+   "n_train": 543,
+   "n_test": 236,
+   "mean_actual": 1775.9,
+   "mae": {
+    "last_value": 125.4,
+    "same_week_average": 683.0,
+    "ridge": 127.7,
+    "gradient_boosted": 122.3
+   },
+   "best": "gradient_boosted"
+  },
+  {
+   "weeks_ahead": 2,
+   "n_train": 540,
+   "n_test": 235,
+   "mean_actual": 1778.7,
+   "mae": {
+    "last_value": 156.1,
+    "same_week_average": 684.1,
+    "ridge": 160.5,
+    "gradient_boosted": 151.5
+   },
+   "best": "gradient_boosted"
+  },
+  {
+   "weeks_ahead": 3,
+   "n_train": 537,
+   "n_test": 234,
+   "mean_actual": 1781.4,
+   "mae": {
+    "last_value": 196.2,
+    "same_week_average": 685.7,
+    "ridge": 192.3,
+    "gradient_boosted": 184.5
+   },
+   "best": "gradient_boosted"
+  },
+  {
+   "weeks_ahead": 4,
+   "n_train": 534,
+   "n_test": 233,
+   "mean_actual": 1784.2,
+   "mae": {
+    "last_value": 240.0,
+    "same_week_average": 687.9,
+    "ridge": 222.9,
+    "gradient_boosted": 218.0
+   },
+   "best": "gradient_boosted"
+  }
+ ],
+ "outbreak": [
+  {
+   "definition": "usual",
+   "n_train": 534,
+   "train_outbreak_weeks": 0,
+   "n_test": 229,
+   "test_outbreak_weeks": 19,
+   "models": {
+    "already_in_outbreak_now": {
+     "tp": 6,
+     "fp": 3,
+     "tn": 207,
+     "fn": 13,
+     "recall": 0.316,
+     "precision": 0.667
+    }
+   },
+   "note": "Training weeks contain only one class, so no classifier could be trained."
+  },
+  {
+   "definition": "rising",
+   "n_train": 534,
+   "train_outbreak_weeks": 57,
+   "n_test": 229,
+   "test_outbreak_weeks": 13,
+   "models": {
+    "already_in_outbreak_now": {
+     "tp": 1,
+     "fp": 3,
+     "tn": 213,
+     "fn": 12,
+     "recall": 0.077,
+     "precision": 0.25
+    },
+    "logistic_regression": {
+     "tp": 8,
+     "fp": 75,
+     "tn": 141,
+     "fn": 5,
+     "recall": 0.615,
+     "precision": 0.096
+    },
+    "gradient_boosted": {
+     "tp": 3,
+     "fp": 0,
+     "tn": 216,
+     "fn": 10,
+     "recall": 0.231,
+     "precision": 1.0
+    }
+   }
+  }
+ ],
+ "extrapolation": [
+  {
+   "weeks_ahead": 1,
+   "start": "2026-08-30",
+   "cases": 2547
+  },
+  {
+   "weeks_ahead": 2,
+   "start": "2026-09-06",
+   "cases": 2514
+  },
+  {
+   "weeks_ahead": 3,
+   "start": "2026-09-13",
+   "cases": 2421
+  },
+  {
+   "weeks_ahead": 4,
+   "start": "2026-09-20",
+   "cases": 2352
+  }
+ ],
+ "split_index": 567
+}

@@ -9,7 +9,7 @@ const SITE = path.join(ROOT, "site");
 const STORE = path.join(ROOT, "data", "store.json");
 const PORT = process.env.PORT || 5173;
 
-// .env.local holds GEMINI_API_KEY (never committed, never sent to the browser)
+// .env.local holds the passcodes and GEMINI_API_KEY (never committed, never sent to the browser)
 try {
   for (const line of fs.readFileSync(path.join(ROOT, ".env.local"), "utf8").split(/\r?\n/)) {
     const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*)\s*$/);
@@ -17,9 +17,31 @@ try {
   }
 } catch {}
 
-const empty = () => ({ lab: [], ili: [], clusters: [], beds: [], stamp: null });
+const crypto = require("crypto");
+const { reduceLog } = require("./site/assets/model.js");
+
+// Uploads are kept as a history that is never deleted; the current data is rebuilt from it.
 const readStore = () => { try { return JSON.parse(fs.readFileSync(STORE, "utf8")); } catch { return {}; } };
 const writeStore = (s) => fs.writeFileSync(STORE, JSON.stringify(s, null, 1));
+const logOf = (store, mode) => (store[mode] && Array.isArray(store[mode].log) ? store[mode].log : []);
+
+// Roles: viewer (read), uploader (upload, undo one upload), admin (also restore and reset everything).
+// Passcodes come from .env.local. With none set, the server is in open mode and everyone is admin.
+const same = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
+const authRequired = () => !!(process.env.UPLOAD_PASSCODE || process.env.ADMIN_PASSCODE);
+const fails = new Map();
+function roleOf(req) {
+  if (!authRequired()) return "admin";
+  const p = req.headers["x-passcode"] || "", ip = req.socket.remoteAddress, now = Date.now();
+  const f = (fails.get(ip) || []).filter((t) => now - t < 600e3);
+  if (f.length >= 10) return "locked";
+  if (process.env.ADMIN_PASSCODE && same(p, process.env.ADMIN_PASSCODE)) return "admin";
+  if (process.env.UPLOAD_PASSCODE && same(p, process.env.UPLOAD_PASSCODE)) return "uploader";
+  if (p) { f.push(now); fails.set(ip, f); }
+  return "viewer";
+}
+const view = (store, mode, role) => { const log = logOf(store, mode);
+  return { ...reduceLog(log), log: log.map(({ rows, ...e }) => ({ ...e, n: rows.length })), auth: { required: authRequired(), role } }; };
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json",
   ".geojson": "application/json", ".csv": "text/csv", ".svg": "image/svg+xml" };
 
@@ -62,20 +84,31 @@ FIGURES: ${JSON.stringify(fig)}`;
 http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");
   try {
-    if (url.pathname === "/api/state") {
+    if (url.pathname === "/api/state" || url.pathname === "/api/undo") {
       const mode = url.searchParams.get("mode") === "replay" ? "replay" : "live";
-      const store = readStore();
-      if (req.method === "GET") return send(res, 200, store[mode] || empty());
-      if (req.method === "POST") {
+      const store = readStore(), role = roleOf(req), log = logOf(store, mode);
+      const deny = () => send(res, role === "locked" ? 429 : 401, { error: role === "locked" ? "too many wrong passcodes" : "passcode" });
+      const save = () => { store[mode] = { log }; writeStore(store); return send(res, 200, view(store, mode, role)); };
+      if (url.pathname === "/api/state" && req.method === "GET") return send(res, 200, view(store, mode, role === "locked" ? "viewer" : role));
+      if (url.pathname === "/api/state" && req.method === "POST") {
+        if (role !== "uploader" && role !== "admin") return deny();
         const b = await body(req);
-        const cur = store[mode] || empty();
-        if (!["lab", "ili", "clusters", "beds"].includes(b.type) || !Array.isArray(b.rows) || b.rows.length > 500) return send(res, 400, { error: "bad upload" });
-        cur[b.type] = b.type === "beds" ? b.rows : cur[b.type].concat(b.rows);
-        cur.stamp = new Date().toISOString();
-        store[mode] = cur; writeStore(store);
-        return send(res, 200, cur);
+        if (!["lab", "ili", "clusters", "beds", "clusterlist"].includes(b.type) || !Array.isArray(b.rows) || !b.rows.length || b.rows.length > 500) return send(res, 400, { error: "bad upload" });
+        log.push({ id: crypto.randomUUID(), at: new Date().toISOString(), by: String(b.by || "").slice(0, 60) || "unnamed", role, type: b.type, own: !!b.own, rows: b.rows });
+        return save();
       }
-      if (req.method === "DELETE") { store[mode] = empty(); writeStore(store); return send(res, 200, store[mode]); }
+      if (url.pathname === "/api/undo" && req.method === "POST") {
+        const b = await body(req), e = log.find((x) => x.id === b.id);
+        if (!e) return send(res, 404, { error: "no such upload" });
+        if (b.restore ? role !== "admin" : role !== "uploader" && role !== "admin") return deny();
+        e.undone = !b.restore; e.changedAt = new Date().toISOString(); e.changedBy = role;
+        return save();
+      }
+      if (url.pathname === "/api/state" && req.method === "DELETE") { // reset: every upload is marked undone, none is erased
+        if (role !== "admin") return deny();
+        log.forEach((e) => { if (!e.undone) { e.undone = true; e.changedAt = new Date().toISOString(); e.changedBy = role; } });
+        return save();
+      }
     }
     if (url.pathname === "/api/summary" && req.method === "POST") return send(res, 200, await summary(await body(req)));
     let p = path.normalize(path.join(SITE, url.pathname === "/" ? "index.html" : decodeURIComponent(url.pathname)));

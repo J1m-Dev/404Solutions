@@ -93,7 +93,20 @@
     return { prob: p, yes: p >= 0.5 };
   }
 
-  const api = { elogit, inv, pct, weekAfter, forecast, aheadHorizons, alertLevel, assess, riseSignal };
+  // Rebuilds the current uploaded data from the upload history, skipping uploads that were undone.
+  function reduceLog(log) {
+    const s = { lab: [], ili: [], clusters: [], beds: [], clusterlist: [], own: false, stamp: null };
+    for (const e of log) {
+      if (e.undone) continue;
+      if (e.type === "lab" && e.own) { s.lab = e.rows.slice(); s.own = true; }
+      else if (e.type === "beds" || e.type === "clusterlist") s[e.type] = e.rows.slice();
+      else s[e.type] = s[e.type].concat(e.rows);
+      s.stamp = e.at;
+    }
+    return s;
+  }
+
+  const api = { elogit, inv, pct, weekAfter, forecast, aheadHorizons, alertLevel, assess, riseSignal, reduceLog };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.FluModel = api;
 })(typeof window !== "undefined" ? window : globalThis);

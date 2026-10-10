@@ -1,0 +1,1915 @@
+{
+"{\"q\": \"HOSPITAL PAKAR SKUDAI\"}": [],
+"{\"q\": \"KEMPAS MEDICAL CENTRE\"}": [],
+"{\"q\": \"KENSINGTON GREEN SPECIALIST CENTRE\"}": [],
+"{\"q\": \"KLUANG SPECIALIST MATERNITY CENTRE\"}": [],
+"{\"q\": \"KPJ BANDAR MAHARANI SPECIALIST HOSPITAL\"}": [],
+"{\"q\": \"LANDMARK MEDICAL CENTRE\"}": [],
+"{\"q\": \"PUSAT PAKAR PERBIDANAN, SAKIT PUAN DAN KANAK- KANAK\"}": [],
+"{\"q\": \"PUSAT PAKAR WANITA DAN PERBIDANAN JOHOR\"}": [],
+"{\"q\": \"KEDAH MEDICAL CENTRE\"}": [
+[
+6.148906,
+100.3693877,
+"building",
+"hospital",
+"Kedah Medical Centre, Lebuhraya Darul Aman, Kampung Lubuk Peringgi, Pumpong, Kota Setar, Kedah, 05350, Malaysia"
+]
+],
+"{\"q\": \"MAHSURI MEDICAL CENTRE\"}": [],
+"{\"q\": \"PANTAI HOSPITAL LAGUNA MERBOK\"}": [
+[
+5.6830211,
+100.4949801,
+"amenity",
+"hospital",
+"Pantai Hospital Laguna Merbok, Lorong BLM 1/9, Laguna Merbok Business Park, Bandar Laguna Merbok, Carpenter River, Kuala Muda, Kedah, 08000, Malaysia"
+]
+],
+"{\"q\": \"PUTERI AYU MATERNITY CENTRE\"}": [],
+"{\"q\": \"UCSI HOSPITAL\"}": [],
+"{\"q\": \"DARUL MAKMUR MEDICAL CENTRE\"}": [
+[
+3.829548,
+103.2993962,
+"amenity",
+"hospital",
+"KMI Kuantan Medical Centre, Jalan Al-Sultan Abdullah, Indera Mahkota 6, Indera Mahkota, Kuantan, Pahang, 25100, Malaysia"
+],
+[
+3.8369014,
+103.3050204,
+"amenity",
+"hospital",
+"International Islamic University of Malaysia Medical Centre, Jalan Sultan Ahmad Shah, Indera Mahkota 8, Indera Mahkota, Kuantan, Pahang, 25300, Malaysia"
+],
+[
+3.8297948,
+103.2992823,
+"building",
+"hospital",
+"KMI Kuantan Medical Centre, Jalan Al-Sultan Abdullah, Indera Mahkota 6, Indera Mahkota, Kuantan, Pahang, 25100, Malaysia"
+],
+[
+3.8218548,
+103.3246022,
+"amenity",
+"hospital",
+"Kuantan Medical Diagnostic Centre, Jalan Bukit Sekilau, Kuantan, Pahang, 25000, Malaysia"
+]
+],
+"{\"q\": \"KPJ PAHANG SPECIALIST HOSPITAL\"}": [
+[
+3.7995572,
+103.3365673,
+"building",
+"hospital",
+"KPJ Pahang Specialist Hospital, Jalan Kampung Kempadang Soi, Tanjung Lumpur, Kuantan, Pahang, 25503, Malaysia"
+]
+],
+"{\"q\": \"AURELIUS HOSPITAL PAHANG\"}": [
+[
+3.8080621,
+103.3244464,
+"building",
+"hospital",
+"Aurelius Hospital (Pahang), Lorong Tun Ismail 2, Kuantan, Pahang, 25503, Malaysia"
+]
+],
+"{\"q\": \"IIUM MEDICAL SPECIALIST CENTRE\"}": [],
+"{\"q\": \"HOPE CHILDREN HOSPITAL \\u2013 GOTTLIEB\"}": [],
+"{\"q\": \"KS WAN & LIOW SPECIALIST MATERNITY CENTRE\"}": [],
+"{\"q\": \"PEACE MEDICAL CENTRE\"}": [],
+"{\"q\": \"QUESTRA BIO - CLINICAL RESEARCH CENTRE\"}": [],
+"{\"q\": \"DBM HOSPITAL\"}": [],
+"{\"q\": \"NORTHERN HEART HOSPITAL PENANG\"}": [
+[
+5.4244421,
+100.316119,
+"building",
+"hospital",
+"Northern Heart Hospital, Lebuhraya Peel, Kampung Sireh, Pulau Tikus, Central George Town, Timur Laut, George Town, Pulau Pinang, 10450, Malaysia"
+]
+],
+"{\"q\": \"APOLLO MEDICAL CENTRE\"}": [],
+"{\"q\": \"BERNAM RIVER ULU GROUP HOSPITAL\"}": [],
+"{\"q\": \"COLUMBIA ASIA HOSPITAL \\u2013 TAIPING\"}": [
+[
+4.8657035,
+100.7341557,
+"building",
+"hospital",
+"Columbia Asia Hospital - Taiping, Jalan Perwira, Kampung Melayu Assam Kumbang, Taiping, Larut, Matang dan Selama, Perak, 34000, Malaysia"
+]
+],
+"{\"q\": \"HOSPITAL AR- RIDZUAN\"}": [
+[
+4.5878653,
+101.0914577,
+"amenity",
+"hospital",
+"Ar-Ridzuan Medical Center, Jalan Chamberlain, Kampung Kuchai, Majlis Bandaraya Ipoh, Kinta, Perak, 30250, Malaysia"
+]
+],
+"{\"q\": \"JENDARATA GROUP HOSPITAL\"}": [],
+"{\"q\": \"KLINIK BERSALIN YASMIN\"}": [],
+"{\"q\": \"KPJ SRI MANJUNG SPECIALIST HOSPITAL\"}": [],
+"{\"q\": \"PUSAT PAKAR PERMATA RAOOFAH\"}": [],
+"{\"q\": \"SEJATI MATERNITY & SPECIALIST CENTRE\"}": [],
+"{\"q\": \"HOPSITAL DBM PUSRAWI\"}": [],
+"{\"q\": \"HOSPITAL BERSALIN RAZIF\"}": [],
+"{\"q\": \"HOSPITAL PAKAR AN-NUR SPECIALIST HOSPITAL\"}": [],
+"{\"q\": \"HOSPITAL RAWATAN LANJUTAN COLUMBIA ASIA\"}": [],
+"{\"q\": \"HOSPITAL WANITA METRO\"}": [
+[
+2.822678,
+101.5313989,
+"amenity",
+"hospital",
+"Hospital Wanita Metro, Bandar Sungai Emas, Teluk Datok, Banting, Kuala Langat, Selangor, 42700, Malaysia"
+]
+],
+"{\"q\": \"JMC SPECIALIST MEDICAL CENTRE\"}": [],
+"{\"q\": \"KLINIK PAKAR WANITA DAN BERSALIN SUBANG PERMAI\"}": [],
+"{\"q\": \"KLINIK PAKAR WANITA DAN KELUARGA KAPAR INDAH\"}": [],
+"{\"q\": \"KLINIK PAKAR WANITA SHEELA\"}": [],
+"{\"q\": \"KO SPECIALIST MEDICAL CENTRE\"}": [],
+"{\"q\": \"PUSAT PAKAR ORTOPEDIK OSC ORTHOPAEDIC SPECIALIST CENTRE\"}": [],
+"{\"q\": \"SUNGAI LONG SPECIALIST HOSPITAL\"}": [
+[
+3.0396483,
+101.7951177,
+"amenity",
+"hospital",
+"Sungai Long Specialist Hospital, PT 21147, Persiaran SL 1, Bandar Sungai Long, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43000, Malaysia"
+]
+],
+"{\"q\": \"UITM PRIVATE SPECIALIST CENTRE\"}": [],
+"{\"q\": \"KMI KUALA TERENGGANU MEDICAL CENTRE\"}": [
+[
+5.3139123,
+103.1560252,
+"amenity",
+"hospital",
+"KMI Kuala Terengganu Medical Centre, Jalan Sultan Mahmud, Batu Buruk, Kuala Terengganu, Terengganu, 20400, Malaysia"
+]
+],
+"{\"q\": \"JESSELTON MEDICAL CENTRE\"}": [],
+"{\"q\": \"KPJ SABAH SPECIALIST HOSPITAL\"}": [
+[
+5.967049,
+116.0929883,
+"building",
+"hospital",
+"KPJ Sabah Specialist Hospital, Jalan Damai, Taman Seputeh, Luyang, Kota Kinabalu, Bahagian Pantai Barat, Sabah, 88902, Malaysia"
+]
+],
+"{\"q\": \"KEMENA PACIFIC HOSPITAL\"}": [],
+"{\"q\": \"KUCHING SPECIALIST HOSPITAL\"}": [
+[
+1.2368545,
+111.4640946,
+"amenity",
+"clinic",
+"Kuching Specialist Hospital, Jalan Main Bazaar, Kampung Tengah, Taman Pasir Panas, Kampung Hulu, Simanggang, Sri Aman, Bahagian Sri Aman, Sarawak, 95000, Malaysia"
+]
+],
+"{\"q\": \"KPJ MIRI SPECIALIST HOSPITAL\"}": [
+[
+4.4475933,
+114.0339368,
+"amenity",
+"hospital",
+"KPJ Miri Specialist Hospital, 8836, Jalan Dato Seri Joseph Balan Seling, Pujut, Miri, Bahagian Miri, Sarawak, 98000, Malaysia"
+]
+],
+"{\"q\": \"REJANG MEDICAL CENTRE\"}": [
+[
+2.2926134,
+111.8369406,
+"building",
+"commercial",
+"Rejang Medical Centre, Jalan Dr. Wong Soon Kai, Sibu, Bahagian Sibu, Sarawak, 96000, Malaysia"
+]
+],
+"{\"q\": \"BEVERLY WILSHIRE MEDICAL CENTRE\"}": [],
+"{\"q\": \"CENGILD G.I MEDICAL CENTRE\"}": [],
+"{\"q\": \"CHAUDHURY MEDICAL CENTRE\"}": [],
+"{\"q\": \"GLENEAGLES HOSPITAL KUALA LUMPUR\"}": [
+[
+3.1619033,
+101.7391744,
+"amenity",
+"hospital",
+"Gleneagles\u00a0Kuala Lumpur, Jalan Ampang, Ampang Hilir, Kampung Datuk Keramat, Kuala Lumpur, 50538, Malaysia"
+]
+],
+"{\"q\": \"HOSPITAL PAKAR WANITA SARMUKH\"}": [],
+"{\"q\": \"KLINIK PAKAR WANITA KEPONG DAN PUSAT BERSALIN\"}": [],
+"{\"q\": \"PUSAT DIAGNOSTIK JANTUNG MAA MEDICARE CARDIAC DIAGNOSTIC CENTRE\"}": [],
+"{\"q\": \"PUSAT PAKAR ORTOPEDIK QUILL ORTHOPAEDIC SPECIALIST CENTRE\"}": [],
+"{\"q\": \"PUSAT PERUBATAN ROOPI MEDICAL CENTRE\"}": [],
+"{\"q\": \"STELLA KASIH MEDICAL CENTRE\"}": [],
+"{\"q\": \"JOHOR BAHRU, Johor, Malaysia\"}": [
+[
+1.4581986,
+103.7649059,
+"place",
+"city",
+"Johor Bahru, Johor, 80730, Malaysia"
+],
+[
+1.5366667,
+103.7205556,
+"boundary",
+"administrative",
+"Johor Bahru, Johor, Malaysia"
+]
+],
+"{\"q\": \"ISKANDAR PUTERI, Johor, Malaysia\"}": [
+[
+1.4522711,
+103.6144729,
+"boundary",
+"administrative",
+"Iskandar Puteri, Johor Bahru, Johor, Malaysia"
+]
+],
+"{\"q\": \"PASIR GUDANG, Johor, Malaysia\"}": [
+[
+1.4953437,
+103.9207048,
+"place",
+"city",
+"Pasir Gudang, Johor Bahru, Johor, 81700, Malaysia"
+]
+],
+"{\"q\": \"KLUANG, Johor, Malaysia\"}": [
+[
+2.0323472,
+103.3190766,
+"boundary",
+"administrative",
+"Kluang, Johor, Malaysia"
+],
+[
+2.0322421,
+103.3190922,
+"place",
+"city",
+"Kluang, Johor, 86000, Malaysia"
+]
+],
+"{\"q\": \"MUAR, Johor, Malaysia\"}": [
+[
+2.05,
+102.5666667,
+"boundary",
+"administrative",
+"Muar, Johor, Malaysia"
+],
+[
+2.0425046,
+102.5658852,
+"place",
+"city",
+"Muar, Johor, 84000, Malaysia"
+]
+],
+"{\"q\": \"BATU PAHAT, Johor, Malaysia\"}": [
+[
+1.933333,
+103.0,
+"boundary",
+"administrative",
+"Batu Pahat, Johor, Malaysia"
+],
+[
+1.8472584,
+102.9346697,
+"place",
+"city",
+"Batu Pahat, Johor, 83000, Malaysia"
+]
+],
+"{\"q\": \"SKUDAI, Johor, Malaysia\"}": [
+[
+1.5369721,
+103.662103,
+"place",
+"town",
+"Skudai, Iskandar Puteri, Johor Bahru, Johor, 81210, Malaysia"
+]
+],
+"{\"q\": \"MASAI, Johor, Malaysia\"}": [
+[
+1.4865019,
+103.8854334,
+"place",
+"town",
+"Masai, Johor Bahru, Johor, 81750, Malaysia"
+]
+],
+"{\"q\": \"SENA SPEACIALIST HOSPITAL SEGAMAT, Johor, Malaysia\"}": [],
+"{\"q\": \"SEGAMAT, Johor, Malaysia\"}": [
+[
+2.4922096,
+102.8449219,
+"boundary",
+"administrative",
+"Segamat, Johor, Malaysia"
+],
+[
+2.5124036,
+102.8137391,
+"place",
+"city",
+"Segamat, Johor, 85000, Malaysia"
+]
+],
+"{\"q\": \"JALAN UTAMA 3/10, SEGAMAT\"}": [
+[
+2.5154591,
+102.8208666,
+"highway",
+"unclassified",
+"Jalan Utama 3/10, Segamat, Johor, 85000, Malaysia"
+]
+],
+"{\"q\": \"ALOR SETAR, Kedah, Malaysia\"}": [
+[
+6.1231908,
+100.3683962,
+"place",
+"city",
+"Alor Setar, Kota Setar, Kedah, 05100, Malaysia"
+]
+],
+"{\"q\": \"JITRA, Kedah, Malaysia\"}": [
+[
+6.2667849,
+100.4197465,
+"place",
+"city",
+"Jitra, Kubang Pasu, Kedah, 06000, Malaysia"
+]
+],
+"{\"q\": \"SUNGAI PETANI, Kedah, Malaysia\"}": [
+[
+5.6435195,
+100.4869513,
+"place",
+"city",
+"Sungai Petani, Kuala Muda, Kedah, 08000, Malaysia"
+],
+[
+5.6429004,
+100.4709806,
+"waterway",
+"river",
+"Sungai Petani, Kuala Muda, Kedah, Malaysia"
+],
+[
+5.6316331,
+100.5024016,
+"waterway",
+"river",
+"Sungai Petani, Kampung Baru, Kampung Raja, Kuala Muda, Kedah, Malaysia"
+],
+[
+5.636106,
+100.494703,
+"waterway",
+"river",
+"Sungai Petani, Kampung Baru, Sungai Petani, Kuala Muda, Kedah, 08000, Malaysia"
+]
+],
+"{\"q\": \"KOTA BHARU, Kelantan, Malaysia\"}": [
+[
+6.1247911,
+102.2378065,
+"boundary",
+"administrative",
+"Kota Bharu, Kelantan, Malaysia"
+],
+[
+6.0389924,
+102.2588546,
+"boundary",
+"administrative",
+"Kota Bharu, Kelantan, Malaysia"
+]
+],
+"{\"q\": \"MELAKA, Melaka, Malaysia\"}": [
+[
+2.1942647,
+102.2486651,
+"place",
+"city",
+"Bandaraya Melaka, Melaka Tengah, Melaka, 75100, Malaysia"
+]
+],
+"{\"q\": \"NILAI, Negeri Sembilan, Malaysia\"}": [
+[
+2.8029227,
+101.8001051,
+"railway",
+"station",
+"KB10 Nilai, 3265, Taman Nilai Perdana, Kampung Momo, Nilai, Seremban, Negeri Sembilan, 71800, Malaysia"
+],
+[
+2.8020988,
+101.7981676,
+"place",
+"town",
+"Nilai, Seremban, Negeri Sembilan, 71800, Malaysia"
+]
+],
+"{\"q\": \"SEREMBAN, Negeri Sembilan, Malaysia\"}": [
+[
+2.723099,
+101.9400601,
+"place",
+"city",
+"Seremban, Negeri Sembilan, 70000, Malaysia"
+],
+[
+2.7442928,
+101.9264418,
+"boundary",
+"administrative",
+"Seremban, Negeri Sembilan, Malaysia"
+]
+],
+"{\"q\": \"SENAWANG, Negeri Sembilan, Malaysia\"}": [
+[
+2.6906659,
+101.9716587,
+"railway",
+"station",
+"Senawang, Lorong Sri Mawar 13/3, Taman Bukit Emas, Senawang, Seremban, Negeri Sembilan, 70990, Malaysia"
+],
+[
+2.6906129,
+101.9717524,
+"railway",
+"stop",
+"KB14 Senawang, Lorong Sri Mawar 13/3, Taman Bukit Emas, Senawang, Seremban, Negeri Sembilan, 70990, Malaysia"
+],
+[
+2.6942861,
+101.9793528,
+"place",
+"suburb",
+"Senawang, Seremban, Negeri Sembilan, 70990, Malaysia"
+]
+],
+"{\"q\": \"PORT DICKSON, Negeri Sembilan, Malaysia\"}": [
+[
+2.5262491,
+101.8106156,
+"place",
+"city",
+"Port Dickson, Negeri Sembilan, 71000, Malaysia"
+],
+[
+2.5152478,
+101.8996104,
+"boundary",
+"administrative",
+"Port Dickson, Negeri Sembilan, Malaysia"
+]
+],
+"{\"q\": \"KUANTAN, Pahang, Malaysia\"}": [
+[
+3.7974493,
+103.3219191,
+"place",
+"city",
+"Kuantan, Pahang, Malaysia"
+],
+[
+3.8560694,
+103.039502,
+"boundary",
+"administrative",
+"Kuantan, Pahang, Malaysia"
+]
+],
+"{\"q\": \"BUTTERWORTH, Pulau Pinang, Malaysia\"}": [
+[
+5.4082015,
+100.3697208,
+"boundary",
+"administrative",
+"Bandar Butterworth, Seberang Perai Utara, Seberang Perai, Pulau Pinang, Malaysia"
+]
+],
+"{\"q\": \"GEORGETOWN, Pulau Pinang, Malaysia\"}": [
+[
+5.4025526,
+100.3035505,
+"amenity",
+"hospital",
+"Hospital Pakar Georgetown, 12A, Jalan Masjid Negeri, Kampung Baru, Batu Lanchang, Timur Laut, George Town, Pulau Pinang, 11600, Malaysia"
+],
+[
+5.3150918,
+100.4786166,
+"amenity",
+"pharmacy",
+"Georgetown Pharmacy, Jalan Rozhan, Taman Impian, Permatang Tinggi, Seberang Perai Tengah, Seberang Perai, Pulau Pinang, 14000, Malaysia"
+],
+[
+5.4164514,
+100.3228351,
+"tourism",
+"hotel",
+"Travelodge Georgetown, Lebuh Nanning, Dato Keramat, Central George Town, Timur Laut, George Town, Pulau Pinang, 10400, Malaysia"
+],
+[
+5.4230727,
+100.3349341,
+"tourism",
+"hotel",
+"lyf Georgetown Penang by The Ascott Limited, No. 2A, Jalan Penang, Central George Town, Timur Laut, George Town, Pulau Pinang, 10000, Malaysia"
+],
+[
+5.4219534,
+100.3398263,
+"amenity",
+"courthouse",
+"Mahkamah Sesyen dan Majistert Sivil Georgetown, Jalan Green Hall, Little India, Central George Town, Timur Laut, George Town, Pulau Pinang, 10200, Malaysia"
+],
+[
+5.4226844,
+100.3258664,
+"tourism",
+"hotel",
+"Georgetown Hotel, Solok Larut, Central George Town, Timur Laut, George Town, Pulau Pinang, 10050, Malaysia"
+],
+[
+5.4196335,
+100.3265238,
+"shop",
+"car",
+"Maxus Georgetown, No.165,, Jalan Burma, Central George Town, Timur Laut, George Town, Pulau Pinang, 10050, Malaysia"
+],
+[
+5.4191159,
+100.334613,
+"tourism",
+"artwork",
+"Marking Georgetown \"Report Card\", Lebuh Chulia, Little India, Central George Town, Timur Laut, George Town, Pulau Pinang, 10200, Malaysia"
+],
+[
+5.4649208,
+100.284175,
+"shop",
+"chemist",
+"Georgetown Pharmacy, 598, Lebuh Sungai Kelian, Tanjong Bungah, Timur Laut, George Town, Pulau Pinang, 11200, Malaysia"
+],
+[
+5.3965624,
+100.2865646,
+"amenity",
+"pharmacy",
+"Georgetown Pharmacy, Jalan Pisang Berangan, Farlim Square, Farlim, Bukit Jambul, Timur Laut, George Town, Pulau Pinang, 11500, Malaysia"
+]
+],
+"{\"q\": \"PULAU PINANG, Pulau Pinang, Malaysia\"}": [
+[
+5.3701884,
+100.2532999,
+"place",
+"island",
+"Pulau Pinang, Malaysia"
+]
+],
+"{\"q\": \"BUKIT MERTAJAM, Pulau Pinang, Malaysia\"}": [
+[
+5.3642519,
+100.4609867,
+"boundary",
+"administrative",
+"Bukit Mertajam, Seberang Perai Tengah, Seberang Perai, Pulau Pinang, Malaysia"
+],
+[
+5.3663315,
+100.4476634,
+"railway",
+"station",
+"Bukit Mertajam, Jalan Permatang Rawa, Bandar Perda, Bukit Mertajam, Seberang Perai Tengah, Seberang Perai, Pulau Pinang, 14000, Malaysia"
+],
+[
+5.3672237,
+100.4843711,
+"natural",
+"peak",
+"Bukit Mertajam, Perkampungan Berapit, Seberang Perai Tengah, Seberang Perai, Pulau Pinang, 14000, Malaysia"
+]
+],
+"{\"q\": \"TANJUNG BUNGAH, Pulau Pinang, Malaysia\"}": [
+[
+5.4647757,
+100.284463,
+"boundary",
+"administrative",
+"Tanjong Bungah, Timur Laut, George Town, Pulau Pinang, 11200, Malaysia"
+]
+],
+"{\"q\": \"BAYAN LEPAS, Pulau Pinang, Malaysia\"}": [
+[
+5.2948137,
+100.2595968,
+"boundary",
+"administrative",
+"Bayan Lepas, Barat Daya, George Town, Pulau Pinang, Malaysia"
+]
+],
+"{\"q\": \"PERMATANG PAUH, Pulau Pinang, Malaysia\"}": [
+[
+5.4124702,
+100.4125105,
+"place",
+"town",
+"Permatang Pauh, Seberang Perai Tengah, Seberang Perai, Pulau Pinang, 13500, Malaysia"
+]
+],
+"{\"q\": \"PERAI, Pulau Pinang, Malaysia\"}": [
+[
+5.3870844,
+100.3821843,
+"place",
+"suburb",
+"Perai, Permatang Pauh, Seberang Perai Tengah, Seberang Perai, Pulau Pinang, 12100, Malaysia"
+]
+],
+"{\"q\": \"SEBERANG PERAI, Pulau Pinang, Malaysia\"}": [
+[
+5.3538818,
+100.4572371,
+"boundary",
+"administrative",
+"Seberang Perai, Pulau Pinang, Malaysia"
+]
+],
+"{\"q\": \"TELUK INTAN, Perak, Malaysia\"}": [
+[
+4.023176,
+101.026184,
+"place",
+"city",
+"Teluk Intan, Hilir Perak, Perak, 36000, Malaysia"
+]
+],
+"{\"q\": \"TAIPING, Perak, Malaysia\"}": [
+[
+4.8546772,
+100.7438831,
+"place",
+"city",
+"Taiping, Larut, Matang dan Selama, Perak, 34000, Malaysia"
+]
+],
+"{\"q\": \"ULU BERNAM, Perak, Malaysia\"}": [
+[
+3.7567337,
+101.287988,
+"boundary",
+"administrative",
+"Hulu Bernam Barat, Muallim, Perak, Malaysia"
+],
+[
+3.7462634,
+101.1471641,
+"place",
+"village",
+"Ladang Ulu Bernam, Bagan Datuk, Perak, Malaysia"
+]
+],
+"{\"lat\": 4.60205, \"lon\": 101.09653}": {
+"amenity": "AmBank",
+"road": "Jalan Dato Seri Ahmad Said",
+"quarter": "Fair Park",
+"suburb": "Taman Ipoh",
+"city": "Majlis Bandaraya Ipoh",
+"district": "Kinta",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "30450",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 4.58787, \"lon\": 101.09146}": {
+"amenity": "Ar-Ridzuan Medical Center",
+"road": "Jalan Chamberlain",
+"hamlet": "Kampung Kuchai",
+"city": "Majlis Bandaraya Ipoh",
+"district": "Kinta",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "30250",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"q\": \"IPOH, Perak, Malaysia\"}": [
+[
+4.5986817,
+101.0900236,
+"boundary",
+"administrative",
+"Majlis Bandaraya Ipoh, Kinta, Perak, Malaysia"
+]
+],
+"{\"q\": \"KAMPAR, Perak, Malaysia\"}": [
+[
+4.3,
+101.15,
+"boundary",
+"administrative",
+"Kampar, Perak, Malaysia"
+],
+[
+4.30066,
+101.1614462,
+"place",
+"town",
+"Kampar, Perak, 31900, Malaysia"
+]
+],
+"{\"q\": \"LUMUT, Perak, Malaysia\"}": [
+[
+4.2246469,
+100.6211525,
+"place",
+"town",
+"Lumut, Manjung, Perak, 32200, Malaysia"
+]
+],
+"{\"q\": \"SITIAWAN, Perak, Malaysia\"}": [
+[
+4.2162318,
+100.6951901,
+"place",
+"city",
+"Sitiawan, Manjung, Perak, 32000, Malaysia"
+]
+],
+"{\"q\": \"SERI MANJUNG, Perak, Malaysia\"}": [
+[
+4.1912768,
+100.6592247,
+"place",
+"town",
+"Seri Manjung, Manjung, Perak, 32040, Malaysia"
+]
+],
+"{\"q\": \"SETIAWAN, Perak, Malaysia\"}": [
+[
+4.2239978,
+100.7036398,
+"landuse",
+"military",
+"Askar Wataniah Batalion 1 Rejimen 503 Charlie Kompeni, Setiawan, Sitiawan, Manjung, Perak, Malaysia"
+],
+[
+4.2155024,
+100.696151,
+"shop",
+"bakery",
+"Cheong Pia, 12, Lorong Tok Perdana, Pekan Sitiawan, Sitiawan, Manjung, Perak, 32000, Malaysia"
+]
+],
+"{\"q\": \"KANGAR, Perlis, Malaysia\"}": [
+[
+6.4389312,
+100.1944838,
+"place",
+"city",
+"Kangar, Perlis, 01000, Malaysia"
+]
+],
+"{\"q\": \"SHAH ALAM, Selangor, Malaysia\"}": [
+[
+3.0739429,
+101.5185278,
+"boundary",
+"administrative",
+"Shah Alam, Petaling, Selangor, Malaysia"
+]
+],
+"{\"q\": \"PETALING JAYA, Selangor, Malaysia\"}": [
+[
+3.0988792,
+101.6454202,
+"boundary",
+"administrative",
+"Petaling Jaya, Petaling, Selangor, Malaysia"
+]
+],
+"{\"q\": \"KAJANG, Selangor, Malaysia\"}": [
+[
+2.9948437,
+101.7896595,
+"boundary",
+"administrative",
+"Majlis Perbandaran Kajang, Hulu Langat, Selangor, Malaysia"
+]
+],
+"{\"q\": \"KLANG, Selangor, Malaysia\"}": [
+[
+3.0448394,
+101.4447363,
+"boundary",
+"administrative",
+"Bandaraya Klang, Klang, Selangor, Malaysia"
+],
+[
+3.083333,
+101.416667,
+"boundary",
+"administrative",
+"Klang, Selangor, Malaysia"
+]
+],
+"{\"q\": \"CHERAS, Selangor, Malaysia\"}": [
+[
+3.073076,
+101.7626851,
+"place",
+"suburb",
+"Cheras, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+],
+[
+3.0769542,
+101.7538755,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Cheras, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+],
+[
+3.0293819,
+101.7695903,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Kampung Bukit Dukung, Cheras, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+],
+[
+3.0179116,
+101.7731524,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Taman Sekamat Indah, Kampung Bukit Dukung, Kampung Sungai Sekamat, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+],
+[
+3.0255998,
+101.7711263,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Taman Koperasi Cuepacs, Kampung Bukit Dukung, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+],
+[
+3.0123332,
+101.7749358,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Kampung Batu 13, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43000, Malaysia"
+],
+[
+3.0514068,
+101.775005,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Kampung Batu 10, Cheras, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+],
+[
+3.0242613,
+101.7714898,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Taman Koperasi Cuepacs, Kampung Bukit Dukung, Kampung Sungai Sekamat, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+],
+[
+3.0156329,
+101.7734162,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Taman Desa Muhibbah, Kampung Bukit Dukung, Kampung Sungai Sekamat, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43000, Malaysia"
+],
+[
+3.0227346,
+101.7720939,
+"highway",
+"motorway",
+"Lebuhraya Cheras\u2013Kajang, Kampung Bukit Dukung, Kampung Sungai Sekamat, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43200, Malaysia"
+]
+],
+"{\"q\": \"PUCHONG, Selangor, Malaysia\"}": [
+[
+3.0342324,
+101.6170345,
+"place",
+"town",
+"Puchong, Majlis Bandaraya Subang Jaya, Petaling, Selangor, 47160, Malaysia"
+]
+],
+"{\"q\": \"BANDAR BARU BANGI, Selangor, Malaysia\"}": [
+[
+2.9540793,
+101.7810018,
+"boundary",
+"administrative",
+"Bandar Baru Bangi, Majlis Perbandaran Kajang, Hulu Langat, Selangor, 43650, Malaysia"
+]
+],
+"{\"q\": \"SERI KEMBANGAN, Selangor, Malaysia\"}": [
+[
+3.0340649,
+101.7055684,
+"place",
+"town",
+"Seri Kembangan, Majlis Bandaraya Subang Jaya, Petaling, Selangor, 43300, Malaysia"
+]
+],
+"{\"q\": \"BANTING, Selangor, Malaysia\"}": [
+[
+2.8027574,
+101.4956767,
+"landuse",
+"residential",
+"Banting, Kuala Langat, Selangor, Malaysia"
+]
+],
+"{\"q\": \"AMPANG, Selangor, Malaysia\"}": [
+[
+3.1502555,
+101.7602101,
+"railway",
+"station",
+"AG18 Ampang, Lebuhraya Bertingkat Sungai Besi\u2013Ulu Klang, Taman Dagang, Kampung Indah Permai, Kampung Tasik Permai, Ampang, Majlis Perbandaran Ampang Jaya, Hulu Langat, Selangor, 68000, Malaysia"
+],
+[
+3.1505103,
+101.7601684,
+"railway",
+"stop",
+"Ampang, Lebuhraya Bertingkat Sungai Besi\u2013Ulu Klang, Taman Dagang, Kampung Indah Permai, Kampung Tasik Permai, Ampang, Majlis Perbandaran Ampang Jaya, Hulu Langat, Selangor, 68000, Malaysia"
+],
+[
+3.1505141,
+101.7600712,
+"railway",
+"stop",
+"Ampang, Jalan Dagang 1/8, Taman Dagang, Pandan Indah, Ampang, Majlis Perbandaran Ampang Jaya, Hulu Langat, Selangor, 68000, Malaysia"
+],
+[
+3.1220456,
+101.7635001,
+"boundary",
+"administrative",
+"Ampang, Majlis Perbandaran Ampang Jaya, Hulu Langat, Selangor, 55300, Malaysia"
+]
+],
+"{\"q\": \"RAWANG, Selangor, Malaysia\"}": [
+[
+3.3189044,
+101.5750187,
+"railway",
+"station",
+"KA10 Rawang, Lebuhraya Rawang, Pekan Lama Rawang, Kampung Melayu Pekan Rawang, Rawang, Majlis Perbandaran Selayang, Gombak, Selangor, 48000, Malaysia"
+],
+[
+3.3194651,
+101.5747699,
+"railway",
+"stop",
+"Rawang, Lebuhraya Rawang, Pekan Lama Rawang, Kampung Melayu Pekan Rawang, Rawang, Majlis Perbandaran Selayang, Gombak, Selangor, 48000, Malaysia"
+],
+[
+3.3197692,
+101.5773144,
+"place",
+"town",
+"Rawang, Majlis Perbandaran Selayang, Gombak, Selangor, 48000, Malaysia"
+]
+],
+"{\"q\": \"KUALA SELANGOR, Selangor, Malaysia\"}": [
+[
+3.3621022,
+101.3455503,
+"boundary",
+"administrative",
+"Kuala Selangor, Selangor, Malaysia"
+],
+[
+3.3314558,
+101.2513058,
+"place",
+"city",
+"Kuala Selangor, Selangor, 45000, Malaysia"
+]
+],
+"{\"q\": \"SUBANG JAYA, Selangor, Malaysia\"}": [
+[
+3.051487,
+101.5823339,
+"boundary",
+"administrative",
+"Majlis Bandaraya Subang Jaya, Petaling, Selangor, Malaysia"
+]
+],
+"{\"q\": \"UEP SUBANG JAYA, Selangor, Malaysia\"}": [
+[
+3.0465995,
+101.5892022,
+"place",
+"suburb",
+"UEP Subang Jaya, Puchong, Majlis Bandaraya Subang Jaya, Petaling, Selangor, Malaysia"
+]
+],
+"{\"q\": \"SUNGAI BULOH, Selangor, Malaysia\"}": [
+[
+3.2062441,
+101.5799923,
+"railway",
+"station",
+"KA08 Sungai Buloh, Jalan Sungai Buloh - Subang, Seksyen U19, Sungai Buloh, Shah Alam, Petaling, Selangor, 47830, Malaysia"
+],
+[
+3.2062633,
+101.581848,
+"railway",
+"station",
+"PY04 Sungai Buloh, Lebuhraya Utara\u2013Selatan, Majlis Perbandaran Selayang, Gombak, Selangor, 47830, Malaysia"
+],
+[
+3.2062285,
+101.5817233,
+"railway",
+"stop",
+"Sungai Buloh (PY), Jalan Kuala Selangor, PJU 5, Petaling Jaya, Petaling, Selangor, 47830, Malaysia"
+],
+[
+3.2061782,
+101.5800355,
+"railway",
+"stop",
+"Sungai Buloh (KTM), Jalan Sungai Buloh - Subang, PJU 5, Petaling Jaya, Petaling, Selangor, 47830, Malaysia"
+],
+[
+3.2063793,
+101.5817709,
+"railway",
+"stop",
+"Sungai Buloh (PY), Lebuhraya Utara\u2013Selatan, Majlis Perbandaran Selayang, Gombak, Selangor, 47830, Malaysia"
+],
+[
+3.21,
+101.55,
+"place",
+"town",
+"Sungai Buloh, Shah Alam, Petaling, Selangor, 47000, Malaysia"
+],
+[
+3.2221954,
+101.5826665,
+"waterway",
+"river",
+"Sungai Buloh, Kampung Orang Asli Sungai Buloh, Kuang, Majlis Perbandaran Selayang, Gombak, Selangor, 47830, Malaysia"
+],
+[
+3.2196754,
+101.5812706,
+"waterway",
+"river",
+"Sungai Buloh, Kuang, Majlis Perbandaran Selayang, Gombak, Selangor, 47830, Malaysia"
+],
+[
+3.2187296,
+101.5811592,
+"waterway",
+"river",
+"Sungai Buloh, Majlis Perbandaran Selayang, Gombak, Selangor, 47830, Malaysia"
+]
+],
+"{\"q\": \"KUALA LUMPUR, Kuala Lumpur, Malaysia\"}": [
+[
+3.1407803,
+101.6939423,
+"railway",
+"station",
+"KA02 Kuala Lumpur, Jalan Perdana, Bukit Bintang, Kuala Lumpur, 50000, Malaysia"
+],
+[
+3.1395162,
+101.6937727,
+"railway",
+"stop",
+"Kuala Lumpur, Jalan Tun Sambanthan, Kampung Attap, Bukit Bintang, Kuala Lumpur, 50000, Malaysia"
+],
+[
+3.1395707,
+101.6936219,
+"railway",
+"stop",
+"Kuala Lumpur, Jalan Sultan Hishamuddin, Bukit Bintang, Kuala Lumpur, 50000, Malaysia"
+],
+[
+3.1533264,
+101.6927379,
+"office",
+"government",
+"Bank Negara, Jalan Dato Onn, Bukit Bintang, Kuala Lumpur, 50580, Malaysia"
+]
+],
+"{\"q\": \"JENJAROM, Selangor, Malaysia\"}": [
+[
+2.8766037,
+101.4988405,
+"place",
+"town",
+"Jenjarom, Kuala Langat, Selangor, 42600, Malaysia"
+]
+],
+"{\"lat\": 5.29964, \"lon\": 103.16396}": {
+"road": "Jalan Sultan Mahmud",
+"neighbourhood": "Taman Koperasi",
+"suburb": "Kampung Mengabang Tengah",
+"city": "Kuala Terengganu",
+"county": "Kuala Terengganu",
+"state": "Terengganu",
+"ISO3166-2-lvl4": "MY-11",
+"postcode": "20400",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.3138, \"lon\": 103.15602}": {
+"amenity": "KMI Kuala Terengganu Medical Centre",
+"road": "Jalan Sultan Mahmud",
+"suburb": "Batu Buruk",
+"city": "Kuala Terengganu",
+"county": "Kuala Terengganu",
+"state": "Terengganu",
+"ISO3166-2-lvl4": "MY-11",
+"postcode": "20400",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"q\": \"KUALA TERENGGANU, Terengganu, Malaysia\"}": [
+[
+5.3296461,
+103.1383265,
+"place",
+"city",
+"Kuala Terengganu, Terengganu, 20300, Malaysia"
+],
+[
+5.2797084,
+103.0837811,
+"boundary",
+"administrative",
+"Kuala Terengganu, Terengganu, Malaysia"
+]
+],
+"{\"q\": \"KOTA KINABALU, Sabah, Malaysia\"}": [
+[
+5.9780066,
+116.0728988,
+"place",
+"city",
+"Kota Kinabalu, Bahagian Pantai Barat, Sabah, 88000, Malaysia"
+],
+[
+5.9500468,
+116.144027,
+"boundary",
+"administrative",
+"Kota Kinabalu, Bahagian Pantai Barat, Sabah, Malaysia"
+]
+],
+"{\"q\": \"TAWAU, Sabah, Malaysia\"}": [
+[
+4.2435206,
+117.885331,
+"place",
+"city",
+"Tawau, Bahagian Tawau, Sabah, 91007, Malaysia"
+],
+[
+4.4336165,
+117.9794409,
+"boundary",
+"administrative",
+"Tawau, Bahagian Tawau, Sabah, Malaysia"
+]
+],
+"{\"q\": \"SANDAKAN, Sabah, Malaysia\"}": [
+[
+5.8391274,
+118.1158598,
+"place",
+"city",
+"Sandakan, Sandakan District, Bahagian Sandakan, Sabah, 90008, Malaysia"
+]
+],
+"{\"q\": \"BINTULU, Sarawak, Malaysia\"}": [
+[
+3.1874261,
+113.0472803,
+"place",
+"city",
+"Bintulu, Bahagian Bintulu, Sarawak, 97000, Malaysia"
+],
+[
+3.3084511,
+113.257907,
+"boundary",
+"administrative",
+"Bintulu, Bahagian Bintulu, Sarawak, Malaysia"
+]
+],
+"{\"q\": \"KUCHING, Sarawak, Malaysia\"}": [
+[
+1.5597561,
+110.345397,
+"place",
+"city",
+"Kuching, Bahagian Kuching, Sarawak, 93000, Malaysia"
+],
+[
+1.4250728,
+110.2993218,
+"boundary",
+"administrative",
+"Kuching, Bahagian Kuching, Sarawak, Malaysia"
+]
+],
+"{\"q\": \"MIRI, Sarawak, Malaysia\"}": [
+[
+4.3940102,
+113.9880199,
+"place",
+"city",
+"Miri, Bahagian Miri, Sarawak, 98000, Malaysia"
+],
+[
+3.527697,
+115.364703,
+"boundary",
+"administrative",
+"Miri, Bahagian Miri, Sarawak, Malaysia"
+]
+],
+"{\"q\": \"SIBU, Sarawak, Malaysia\"}": [
+[
+2.2996601,
+111.8710012,
+"boundary",
+"local_authority",
+"Sibu, Bahagian Sibu, Sarawak, 96000, Malaysia"
+],
+[
+2.2906434,
+111.8256158,
+"place",
+"city",
+"Sibu, Bahagian Sibu, Sarawak, 96000, Malaysia"
+],
+[
+2.2922096,
+111.8765866,
+"boundary",
+"administrative",
+"Sibu, Bahagian Sibu, Sarawak, 96000, Malaysia"
+]
+],
+"{\"q\": \"CHERAS, Kuala Lumpur, Malaysia\"}": [
+[
+3.0991919,
+101.7374229,
+"boundary",
+"administrative",
+"Cheras, Kuala Lumpur, Malaysia"
+],
+[
+3.11265,
+101.7142958,
+"railway",
+"station",
+"SP12 Cheras, Jalan Jelawat 1, Taman Ikan Emas, Bandar Sri Permaisuri, Cheras, Kuala Lumpur, 51020, Malaysia"
+],
+[
+3.1127356,
+101.7143246,
+"railway",
+"stop",
+"Cheras, Lebuhraya Maju, Bandar Sri Permaisuri, Kuala Lumpur, 55720, Malaysia"
+]
+],
+"{\"q\": \"PUTRAJAYA, Putrajaya, Malaysia\"}": [
+[
+2.9179726,
+101.6840801,
+"place",
+"city",
+"Putrajaya, 62618, Malaysia"
+]
+],
+"{\"q\": \"UTAMA MEDICAL CENTRE\"}": [
+[
+2.9925561,
+101.6167216,
+"amenity",
+"veterinary",
+"Pet Medical Centre, Jalan PU 7/2, Kawasan Perniagaan PU7, Bandar Puchong Utama, Majlis Bandaraya Subang Jaya, Petaling, Selangor, 47140, Malaysia"
+]
+],
+"{\"lat\": 1.53178, \"lon\": 103.66626}": {
+"neighbourhood": "Taman Skudai Baru",
+"town": "Skudai",
+"city": "Iskandar Puteri",
+"district": "Johor Bahru",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "81210",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 1.52183, \"lon\": 103.72458}": {
+"road": "Jalan Kempas Baru",
+"neighbourhood": "Kempas Permatang",
+"town": "Tebrau",
+"district": "Johor Bahru",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "81200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 1.47809, \"lon\": 103.63128}": {
+"road": "Jalan Ceria 20",
+"neighbourhood": "Taman Nusa Indah",
+"town": "Pulai",
+"city": "Iskandar Puteri",
+"district": "Johor Bahru",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "79100",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 2.04163, \"lon\": 103.33334}": {
+"shop": "Lim Food Products",
+"road": "Jalan H J Manap Nordin",
+"hamlet": "Kampung Paya",
+"city": "Kluang",
+"district": "Kluang",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "86000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 2.0359, \"lon\": 102.56726}": {
+"city": "Muar",
+"district": "Muar",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "84000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 1.46527, \"lon\": 103.75969}": {
+"amenity": "EV Charging Station DoubleTree by Hilton Hotel Johor Bahru",
+"house_number": "12",
+"road": "Jalan Ngee Heng",
+"city": "Johor Bahru",
+"district": "Johor Bahru",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "80000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 2.05814, \"lon\": 102.57389}": {
+"city": "Muar",
+"district": "Muar",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "84000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 2.03064, \"lon\": 103.32228}": {
+"amenity": "VR kluang 12tree egg",
+"house_number": "48",
+"road": "Jalan Cantik",
+"hamlet": "Kampung Melayu Kluang 2",
+"city": "Kluang",
+"district": "Kluang",
+"state": "Johor",
+"ISO3166-2-lvl4": "MY-01",
+"postcode": "86000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 6.23758, \"lon\": 100.42072}": {
+"office": "Safierah Bonasse Sdn Bhd",
+"house_number": "10",
+"road": "Jalan Mahsuri 1C",
+"retail": "Taman Mahsuri",
+"hamlet": "Kampung Paya Kerchut",
+"village": "Tanah Merah",
+"district": "Kubang Pasu",
+"state": "Kedah",
+"ISO3166-2-lvl4": "MY-02",
+"postcode": "06000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.63189, \"lon\": 100.48867}": {
+"road": "Lorong 17",
+"retail": "Tycoon Square",
+"suburb": "Kampung Baru",
+"city": "Sungai Petani",
+"district": "Kuala Muda",
+"state": "Kedah",
+"ISO3166-2-lvl4": "MY-02",
+"postcode": "08000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 2.60571, \"lon\": 101.85277}": {
+"road": "Persiaran Springhill",
+"suburb": "Bandar Springhill",
+"city": "Port Dickson",
+"district": "Port Dickson",
+"state": "Negeri Sembilan",
+"ISO3166-2-lvl4": "MY-05",
+"postcode": "71010",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.74787, \"lon\": 103.31158}": {
+"road": "Lorong Kempadang Makmur 5",
+"hamlet": "Kampung Pak Mahat",
+"district": "Kuantan",
+"state": "Pahang",
+"ISO3166-2-lvl4": "MY-06",
+"postcode": "26060",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.84266, \"lon\": 103.30249}": {
+"amenity": "Universiti Islam Antarabangsa Malaysia Kampus Kuantan",
+"road": "Jalan Sultan Ahmad Shah",
+"quarter": "Indera Mahkota 8",
+"town": "Indera Mahkota",
+"district": "Kuantan",
+"state": "Pahang",
+"ISO3166-2-lvl4": "MY-06",
+"postcode": "25200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.43084, \"lon\": 100.29978}": {
+"road": "Jalan Gottlieb",
+"suburb": "Central George Town",
+"district": "Timur Laut",
+"city": "George Town",
+"state": "Pulau Pinang",
+"ISO3166-2-lvl4": "MY-07",
+"postcode": "10350",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.35712, \"lon\": 100.44622}": {
+"road": "Lorong Tembikai 6",
+"commercial": "Kawasan Perniagaan Sungai Rambai",
+"hamlet": "Kampung Sungai Rambai",
+"suburb": "Bandar Perda",
+"district": "Seberang Perai Tengah",
+"state_district": "Seberang Perai",
+"state": "Pulau Pinang",
+"ISO3166-2-lvl4": "MY-07",
+"postcode": "13600",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.41729, \"lon\": 100.32531}": {
+"amenity": "Red Hat Aunty Char Koay Teow Lorong Selamat",
+"house_number": "108",
+"road": "Lorong Selamat",
+"quarter": "Dato Keramat",
+"suburb": "Central George Town",
+"district": "Timur Laut",
+"city": "George Town",
+"state": "Pulau Pinang",
+"ISO3166-2-lvl4": "MY-07",
+"postcode": "10400",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.37833, \"lon\": 100.4189}": {
+"road": "Jalan Desa Pauh",
+"suburb": "Bandar Perda",
+"town": "Permatang Pauh",
+"district": "Seberang Perai Tengah",
+"state_district": "Seberang Perai",
+"state": "Pulau Pinang",
+"ISO3166-2-lvl4": "MY-07",
+"postcode": "13700",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.4133, \"lon\": 100.41035}": {
+"road": "Lorong Cermai 1",
+"neighbourhood": "Taman Cermai",
+"town": "Permatang Pauh",
+"district": "Seberang Perai Tengah",
+"state_district": "Seberang Perai",
+"state": "Pulau Pinang",
+"ISO3166-2-lvl4": "MY-07",
+"postcode": "13500",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 4.8494, \"lon\": 100.73625}": {
+"house_number": "275",
+"road": "Jalan Taming Sari",
+"hamlet": "Kampung Jambu",
+"city": "Taiping",
+"district": "Larut, Matang dan Selama",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "34000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.77086, \"lon\": 101.31514}": {
+"city": "Hulu Bernam Barat",
+"district": "Muallim",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.91253, \"lon\": 100.94522}": {
+"road": "Jalan Teluk Intan-Simpang Empat",
+"neighbourhood": "Jendarata",
+"hamlet": "Kampung Mutiara",
+"town": "Hutan Melintang",
+"district": "Bagan Datuk",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "36400",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 4.20931, \"lon\": 100.6433}": {
+"neighbourhood": "Desa Manjung Raya",
+"town": "Seri Manjung",
+"district": "Manjung",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "32200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 4.20782, \"lon\": 100.67512}": {
+"road": "Jalan Lumut",
+"neighbourhood": "Taman Sejati",
+"city": "Sitiawan",
+"district": "Manjung",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "32040",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 4.61367, \"lon\": 101.05749}": {
+"road": "Lengkok Kledang Raya",
+"neighbourhood": "Taman Kledang Raya",
+"suburb": "Silibin",
+"village": "Buntong",
+"city": "Majlis Bandaraya Ipoh",
+"district": "Kinta",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "30100",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 4.21081, \"lon\": 100.67891}": {
+"neighbourhood": "Taman Sejati",
+"city": "Sitiawan",
+"district": "Manjung",
+"state": "Perak",
+"ISO3166-2-lvl4": "MY-08",
+"postcode": "32040",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.17647, \"lon\": 101.57583}": {
+"house_number": "52",
+"road": "Jalan Pekaka 8/3",
+"retail": "Taman Pekaka",
+"quarter": "PJU 5",
+"suburb": "Kota Damansara",
+"city": "Petaling Jaya",
+"district": "Petaling",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "47930",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.01326, \"lon\": 101.4467}": {
+"road": "Jalan Seri Sarawak",
+"neighbourhood": "Taman Sri Andalas",
+"city": "Bandaraya Klang",
+"district": "Klang",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "41200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 2.93283, \"lon\": 101.7646}": {
+"shop": "Bangi Gateway",
+"road": "Jalan Gerbang Wawasan",
+"quarter": "Seksyen 15",
+"town": "Bandar Baru Bangi",
+"city": "Majlis Perbandaran Kajang",
+"district": "Hulu Langat",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "43600",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.04732, \"lon\": 101.5051}": {
+"road": "Persiaran Jubli Perak",
+"quarter": "Seksyen 17",
+"city": "Shah Alam",
+"district": "Petaling",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "40200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.04925, \"lon\": 101.44478}": {
+"road": "Jalan Pasar",
+"hamlet": "Kampung Atap",
+"city": "Bandaraya Klang",
+"district": "Klang",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "41400",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.01806, \"lon\": 101.41543}": {
+"road": "Persiaran Raja Muda Musa",
+"neighbourhood": "Taman Pelabuhan",
+"hamlet": "Kampung Raja Uda",
+"town": "Pelabuhan Klang",
+"city": "Bandaraya Klang",
+"district": "Klang",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "42000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.13958, \"lon\": 101.52619}": {
+"road": "Jalan Alfa F U6/F",
+"commercial": "Pusat Perdagangan Subang Permai",
+"quarter": "Seksyen U6",
+"city": "Shah Alam",
+"district": "Petaling",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "40800",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.09662, \"lon\": 101.37846}": {
+"road": "Jalan Harapan 3A",
+"city": "Bandaraya Klang",
+"district": "Klang",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "42200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.05667, \"lon\": 101.47328}": {
+"road": "Jalan Batai Laut 3",
+"city": "Bandaraya Klang",
+"district": "Klang",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "41300",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.05118, \"lon\": 101.44508}": {
+"road": "Jalan Temoh",
+"hamlet": "Kampung Atap",
+"city": "Bandaraya Klang",
+"district": "Klang",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "41400",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.31545, \"lon\": 101.27604}": {
+"shop": "Windscreen2U Kedai Cermin Kereta Kuala Selangor",
+"house_number": "41",
+"road": "Jalan 1",
+"neighbourhood": "Taman Rhu",
+"suburb": "Assam Jawa",
+"city": "Kuala Selangor",
+"district": "Kuala Selangor",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "45000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.05796, \"lon\": 101.59277}": {
+"amenity": "Starbucks",
+"house_number": "No. 1",
+"road": "Persiaran Kewajipan",
+"suburb": "UEP Subang Jaya",
+"town": "Puchong",
+"city": "Majlis Bandaraya Subang Jaya",
+"district": "Petaling",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "47600",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.22069, \"lon\": 101.59358}": {
+"amenity": "Universiti Teknologi MARA Kampus Sungai Buloh",
+"road": "Jalan Hospital",
+"hamlet": "Kampung Orang Asli Sungai Buloh",
+"city": "Majlis Perbandaran Selayang",
+"district": "Gombak",
+"state": "Selangor",
+"ISO3166-2-lvl4": "MY-10",
+"postcode": "47830",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.97541, \"lon\": 116.11274}": {
+"road": "Jalan Metro 2",
+"village": "Kolombong",
+"district": "Kota Kinabalu",
+"state_district": "Bahagian Pantai Barat",
+"state": "Sabah",
+"ISO3166-2-lvl4": "MY-12",
+"postcode": "88845",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 5.86464, \"lon\": 118.05771}": {
+"road": "Jalan BU 2/3",
+"retail": "Utama Place",
+"suburb": "Batu 6",
+"city": "Sandakan",
+"county": "Sandakan District",
+"region": "Bahagian Sandakan",
+"state": "Sabah",
+"ISO3166-2-lvl4": "MY-12",
+"postcode": "90716",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.26906, \"lon\": 113.06678}": {
+"road": "Jalan Kidurong",
+"city": "Bintulu",
+"county": "Bintulu",
+"region": "Bahagian Bintulu",
+"state": "Sarawak",
+"ISO3166-2-lvl4": "MY-13",
+"postcode": "97300",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 1.51781, \"lon\": 110.37845}": {
+"suburb": "Setia Raja",
+"city": "Kuching",
+"county": "Kuching",
+"region": "Bahagian Kuching",
+"state": "Sarawak",
+"ISO3166-2-lvl4": "MY-13",
+"postcode": "93000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.14597, \"lon\": 101.7217}": {
+"road": "Jalan Tun Razak",
+"neighbourhood": "Pinggiran TRX",
+"suburb": "Maluri",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "55188",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.10968, \"lon\": 101.66538}": {
+"amenity": "Secret Recipe",
+"road": "Jalan Kerinchi",
+"neighbourhood": "Bangsar South",
+"suburb": "Pantai Dalam",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "59200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.17564, \"lon\": 101.69681}": {
+"house_number": "17",
+"road": "Jalan 5/65C",
+"commercial": "Pekeliling Business Centre",
+"suburb": "Sentul",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "50586",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.19399, \"lon\": 101.71135}": {
+"road": "Jalan Genting Kelang",
+"suburb": "Setapak",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "53200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.2131, \"lon\": 101.64618}": {
+"shop": "MOBILE WINDSCREEN (KEPONG)",
+"house_number": "35",
+"road": "Jalan Metro Perdana Timur 1",
+"neighbourhood": "Taman Usahawan Kepong",
+"suburb": "Jinjang",
+"town": "Kepong",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "52100",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.17168, \"lon\": 101.69313}": {
+"office": "Pusat Dialisis Amal MAAEDICARE",
+"house_number": "183",
+"road": "Jalan Sultan Azlan Shah",
+"quarter": "Chow Kit",
+"suburb": "Sentul",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "51200",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.15264, \"lon\": 101.62038}": {
+"house_number": "99",
+"road": "Jalan Aminuddin Baki",
+"suburb": "Taman Tun Dr Ismail",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "68000",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 3.17019, \"lon\": 101.69572}": {
+"shop": "Roopi Medical Centre",
+"house_number": "86",
+"road": "Jalan Datuk Haji Eusoff",
+"quarter": "Chow Kit",
+"suburb": "Sentul",
+"city": "Kuala Lumpur",
+"ISO3166-2-lvl4": "MY-14",
+"postcode": "50586",
+"country": "Malaysia",
+"country_code": "my"
+},
+"{\"lat\": 2.9394, \"lon\": 101.68266}": {
+"amenity": "Klinik Bersalin Presint 8",
+"road": "Jalan P8",
+"quarter": "Presint 8",
+"city": "Putrajaya",
+"state": "Putrajaya",
+"ISO3166-2-lvl4": "MY-16",
+"postcode": "62250",
+"country": "Malaysia",
+"country_code": "my"
+}
+}
