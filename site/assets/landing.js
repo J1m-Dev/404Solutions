@@ -216,7 +216,7 @@
     e.preventDefault(); if (diveStart) return;
     diveTo = el.getAttribute("href") || "dashboard.html";
     if (STILL) { location.href = diveTo; return; }
-    document.body.classList.add("leaving"); diveStart = performance.now();
+    document.body.classList.add("leaving"); diveStart = performance.now(); try { sessionStorage.setItem("dom-dive", "1"); } catch (err) {}
     setTimeout(() => $("veil").classList.add("on"), 900);
     setTimeout(() => { location.href = diveTo; }, 1450);
   }));
