@@ -1,0 +1,86 @@
+/* DOM control room · lane: where. The Where page (#p-atlas) and the Record page (#p-track).
+   Loaded after assets/room.css. Uses the kit at the end of room.css (.phead .board .tile .plate .rows .stack); adds no new sizes, radii or colours. */
+
+/* both pages: the app's honesty chips at a kit size; inside an opened row its notes read in full; controls in a row are quiet pills */
+#p-atlas .chip,#p-track .chip{margin-left:0;font-size:12px}
+#p-atlas .plate p,#p-track .plate p{margin:0;font-size:13.5px;line-height:1.4}
+#p-atlas .rows p.note,#p-track .rows p.note{display:block;overflow:visible;cursor:auto;margin:0 0 10px}
+#p-atlas .rows .drawerbody>:last-child,#p-track .rows .drawerbody>:last-child{margin-bottom:0}
+#p-atlas .rows button{border:0;background:rgba(255,255,255,.16);color:#fff}#p-atlas .rows button:hover{background:rgba(255,255,255,.28)}
+#p-track code,#p-atlas code{font-size:13px}
+
+/* ---------- Where ---------- */
+/* the two tabs sit inside the first line's own height, so the tiles under them keep their gap */
+#p-atlas .subtabs{padding:3px}#p-atlas .subtabs button{padding:5px 14px;line-height:1.3}
+/* the tiles follow the tab that is open */
+#p-atlas:has(>.sub[data-sub=map].on) #b-atlas>[data-for=beds],#p-atlas:has(>.sub[data-sub=beds].on) #b-atlas>[data-for=map]{visibility:hidden;pointer-events:none}
+/* both sets share the same four cells, so the row is as tall as the taller set and the plate never moves when the tab changes */
+#b-atlas>.tile{grid-row:1}#b-atlas>[data-t=gov],#b-atlas>[data-t=need]{grid-column:1}#b-atlas>[data-t=priv],#b-atlas>[data-t=unmet]{grid-column:2}
+#b-atlas>[data-t=clin],#b-atlas>[data-t=hosp]{grid-column:3}#b-atlas>[data-t=top],#b-atlas>[data-t=most]{grid-column:4}
+@media (max-width:900px){#b-atlas>[data-t=clin],#b-atlas>[data-t=hosp]{grid-column:1;grid-row:2}#b-atlas>[data-t=top],#b-atlas>[data-t=most]{grid-column:2;grid-row:2}}
+/* the open tab is lit glass, like the open door on the rail; the screen's one white fill is not spent on a tab */
+#p-atlas .subtabs button.on{background:rgba(255,255,255,.26);color:#fff}
+/* gaps between map tiles show the map's own sea colour, not the light ground; his district labels read over the facility dots */
+#map.leaflet-container{background:#aad3df}#map.leaflet-container img.leaflet-tile{mix-blend-mode:normal;width:257px!important;height:257px!important}
+#map .hotlabel{padding:1px 8px;border-radius:999px;background:rgba(18,32,58,.82);text-shadow:none}
+/* Map: one plate. Its first line is the app's title and chips, with the two view buttons at the right end */
+#atlas .ptop{display:flex;align-items:center;gap:8px 14px;margin:0 0 8px}
+#atlas .ptop h2{flex:1 1 0;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0;font-size:13.5px;font-weight:600;letter-spacing:0;line-height:1.4;color:var(--mute)}
+#atlas .viewbtns{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#atlas .viewbtns button{margin:0;padding:8px 16px;font-size:14px;line-height:1.3;white-space:nowrap}
+#atlas #viewSel{border-color:var(--brand);color:var(--brand)}
+#atlas .viewbtns button:hover{border-color:var(--brand);background:#fff}
+/* the first line, the tiles and the whole map fit a 1280 x 800 window; in a short window the map keeps a usable height */
+#p-atlas #map{height:clamp(280px,calc(100vh - 424px),620px);margin:0;border:0;border-radius:16px}
+@media (max-height:640px) and (min-width:761px){#p-atlas #map{height:clamp(196px,calc(100vh - 330px),620px)}}
+#p-atlas .plate .legend{margin:8px 0 0;color:var(--ink)}
+#p-atlas .rows .histctl,#p-atlas .rows .toggles{margin:0 0 10px}#p-atlas .rows .histctl label{min-width:0;max-width:100%}#p-atlas .rows select{min-width:0;max-width:100%;text-overflow:ellipsis}
+/* Districts and beds: two plates on a second .board, so they sit on the tiles' own columns. The capacity table is under the first three tiles, the districts under the fourth */
+#p-atlas .bedgrid>.pl-beds{grid-column:1 / 4;order:1}#p-atlas .bedgrid>.pl-districts{grid-column:4;order:2}
+#p-atlas .bedgrid h3{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0;font-size:13.5px;font-weight:600;line-height:1.4;color:var(--mute)}
+#p-atlas #hotRank{margin:4px 0 0}#p-atlas #hotRank>p:first-child{color:var(--ink)}#p-atlas #hotRank>h3{margin:14px 0 2px}#p-atlas #hotRank>p.note{margin-top:10px}
+#p-atlas .pl-districts th,#p-atlas .pl-districts td{padding-left:4px;padding-right:4px}
+#p-atlas .bedgrid th:first-child,#p-atlas .bedgrid td:first-child{padding-left:0}#p-atlas .bedgrid th:last-child,#p-atlas .bedgrid td:last-child{padding-right:0}
+#p-atlas .bedgrid tr:last-child>td{border-bottom:0}#p-atlas .pl-districts td:first-child{white-space:nowrap}
+/* the assumptions: the app's three sliders together, in its own words, their handles on one line */
+#p-atlas .assume{display:flex;flex-direction:column;gap:6px;margin:10px 0 6px;padding:12px 0 14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#p-atlas .assume .k{color:var(--ink)}
+#p-atlas .sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 26px}
+#p-atlas .sliders label{position:relative;display:block;margin:0;padding-bottom:28px;font-size:14px;line-height:1.4;color:var(--ink)}
+#p-atlas .sliders input{position:absolute;left:0;right:0;bottom:2px;width:100%;margin:0}
+#p-atlas #plan>p.note{margin-top:10px}
+#p-atlas #plan details.drawer{margin-top:12px;border-bottom:0}#p-atlas #plan details.drawer>summary{padding:14px 0 12px;font-weight:600}
+#p-atlas #plan .drawerbody{padding:0;overflow-x:auto}#p-atlas #plan .drawerbody td.num{white-space:nowrap}#p-atlas #plan .drawerbody p.note{margin-top:10px}
+@media (min-width:761px){#p-atlas .pl-beds td:first-child{white-space:nowrap}}
+@media (max-width:1100px){#p-atlas .bedgrid>.pl-beds,#p-atlas .bedgrid>.pl-districts{grid-column:1 / -1}}
+@media (max-width:760px){#atlas .ptop{flex-wrap:wrap}#atlas .ptop h2{flex:1 1 100%}#atlas .viewbtns{flex:1 1 100%}#p-atlas #map{height:clamp(280px,56vh,460px)}
+  #p-atlas #plan .drawerbody table{min-width:520px}#p-atlas .phead .tools,#p-atlas .subtabs{width:100%}#p-atlas .subtabs button{flex:1 1 0}}
+
+/* ---------- Record ---------- */
+/* the section's title and chip are repeated as the plate's label (the title itself cannot move into what the app rewrites) */
+#track>h2{display:none}
+#trackBody .plate>.k{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 6px}
+/* the empty scoreboard: one ring for each record beside the count */
+#b-track .tile>b{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}#b-track .dots{gap:7px}
+/* one row for each record: the date, what the system said, the result. A click opens the rest */
+table.recs,table.recs tbody{display:block}
+table.recs tr{display:grid;grid-template-columns:104px minmax(0,1fr) 260px 20px;gap:4px 20px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
+table.recs tr:first-child{padding:4px 0 8px;border-top:0}
+table.recs tr[role=button]{cursor:pointer}table.recs tr[role=button]:hover td:first-child{color:var(--brand)}
+table.recs th,table.recs td{display:none;border:0;padding:0;line-height:1.55}
+table.recs th:nth-child(1),table.recs th:nth-child(3),table.recs th:nth-child(6){display:block}
+table.recs td{font-size:14.5px}
+table.recs td:nth-child(1){display:block;grid-area:1 / 1;font-size:15.5px;font-weight:600;line-height:1.4}
+table.recs td:nth-child(3){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden;grid-area:1 / 2}
+table.recs td:nth-child(6){display:block;grid-area:1 / 3}
+table.recs tr[role=button]::after{content:"+";grid-area:1 / 4;justify-self:end;font-size:24px;font-weight:400;line-height:22px;color:var(--mute);transition:transform .3s var(--ease)}
+table.recs tr.open::after{transform:rotate(45deg)}
+table.recs tr.open td:nth-child(3){display:block}
+table.recs tr.open td:nth-child(2),table.recs tr.open td:nth-child(4),table.recs tr.open td:nth-child(5){display:block;grid-column:2 / 4;font-size:13.5px;line-height:1.4;color:var(--mute)}
+table.recs tr.open td:nth-child(2){grid-row:2}table.recs tr.open td:nth-child(4){grid-row:3}table.recs tr.open td:nth-child(5){grid-row:4}
+table.recs tr.open td:nth-child(2)::before,table.recs tr.open td:nth-child(4)::before,table.recs tr.open td:nth-child(5)::before{content:attr(data-l) ": ";font-weight:600;color:var(--ink)}
+table.recs td[colspan]{grid-column:1 / -1}
+@media (max-width:760px){table.recs tr{grid-template-columns:minmax(0,1fr) 20px;gap:4px 12px}table.recs tr:first-child{display:none}table.recs tr:nth-child(2){border-top:0}
+  table.recs td:nth-child(3){grid-area:2 / 1 / auto / -1}table.recs td:nth-child(6){grid-area:3 / 1 / auto / -1;color:var(--mute)}table.recs tr[role=button]::after{grid-area:1 / 2}
+  table.recs tr.open td:nth-child(2),table.recs tr.open td:nth-child(4),table.recs tr.open td:nth-child(5){grid-column:1 / -1}
+  table.recs tr.open td:nth-child(2){grid-row:4}table.recs tr.open td:nth-child(4){grid-row:5}table.recs tr.open td:nth-child(5){grid-row:6}}

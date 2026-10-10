@@ -1,0 +1,66 @@
+/* DOM control room · lane: ask. The Ask page (#p-ask): questions answered only from the figures on the other pages.
+   Loaded after assets/room.css. Uses the kit at the end of room.css; adds no new sizes, radii or colours.
+   One dark glass surface (.tile) on the page's column, as tall as the first screen. Inside it, top to bottom:
+   the conversation (it scrolls), the suggested questions (quiet pills), the input with the screen's one white button. */
+/* the page is a column exactly one window tall (like every page, the footer follows it): the surface takes what the first line leaves */
+#p-ask.on{display:flex;flex-direction:column;height:max(100vh,460px);height:max(100dvh,460px)}
+#p-ask .phead{flex:none}
+#askRoot{flex:1 1 auto;display:flex;min-height:0;width:min(100%,1120px);margin:0 auto}
+.askbox{flex:1 1 auto;gap:14px;min-height:0;overflow:hidden}
+.askbox,a.askbox:hover{transform:none}
+
+/* the conversation */
+.asklog{flex:0 1 auto;min-height:0;display:flex;flex-direction:column;gap:14px;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain}
+.asklog::-webkit-scrollbar{display:none}
+.askbox.has .asklog{flex:1 1 auto}
+.askhi{display:block;margin:2px 0;font-size:clamp(24px,2.7vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.1}
+.askbox.has .askhi{display:none}
+.askturn{display:flex;flex-direction:column;gap:14px}
+.askturn+.askturn{padding-top:14px;border-top:1px solid rgba(255,255,255,.14)}
+.askq{align-self:flex-end;max-width:min(82%,560px);margin:0;padding:10px 14px;border-radius:24px;background:rgba(255,255,255,.16);font-size:14.5px;line-height:1.4;text-align:left;overflow-wrap:anywhere}
+.aska{align-self:flex-start;display:flex;flex-direction:column;gap:4px;width:100%;max-width:680px;min-width:0}
+.aska p{margin:0;font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.92);overflow-wrap:anywhere}
+.aska p.s{font-size:13.5px;line-height:1.4;color:rgba(255,255,255,.78)}
+.asksrc{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.asksrc a{display:inline-block;max-width:100%;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;line-height:1.4;color:#fff;text-decoration:none;background:rgba(255,255,255,.16);transition:background .3s}
+.asksrc a:hover{background:rgba(255,255,255,.28)}
+.askwait{display:flex;gap:5px;align-items:center;height:22px}
+.askwait i{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.3;animation:askdot 1.1s ease-in-out infinite}
+.askwait i:nth-child(2){animation-delay:.18s}.askwait i:nth-child(3){animation-delay:.36s}
+@keyframes askdot{0%,70%,100%{opacity:.3}35%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.askwait i{animation:none;opacity:.7}}
+
+/* the suggested questions: they wrap before the first question, and become one row that slides sideways after it */
+.asksug{display:flex;flex-wrap:wrap;gap:8px;flex:none;min-width:0}
+.asksug .quiet{flex:none;max-width:100%;padding:10px 14px;font-size:13.5px;line-height:1.3;text-align:left}
+.askbox.has .asksug{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.askbox.has .asksug::-webkit-scrollbar{display:none}
+.askbox.has .asksug .quiet{white-space:nowrap;max-width:none}
+
+/* the input and the one filled button */
+.askform{display:flex;align-items:center;gap:8px;flex:none;margin:auto 0 0}
+.askform input{flex:1 1 auto;min-width:0;border:0;border-radius:999px;padding:12px 18px;font:400 14.5px/1.3 var(--sans);color:#fff;background:rgba(255,255,255,.1);transition:background .3s}
+.askform input::placeholder{color:rgba(255,255,255,.72)}
+.askform input:hover,.askform input:focus{background:rgba(255,255,255,.16)}
+.askform input:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.askform .go{flex:none;padding:12px 22px;font-size:14.5px;box-shadow:none}
+.askform .go::before{clip-path:circle(0 at 50% 50%)}
+.askform .go:not(:disabled):hover::before,.askform .go:not(:disabled):focus-visible::before{clip-path:circle(160% at 50% 50%)}
+.askform .go:not(:disabled):hover .lab,.askform .go:not(:disabled):focus-visible .lab{transform:none}
+
+@media (max-width:760px){
+  .askq{border-radius:20px;max-width:88%}
+  .askform input{font-size:16px;padding:11px 16px}   /* 16px: a phone does not zoom the page when the field is tapped */
+  .askform .go{padding:13px 18px}
+  .asksrc a{padding:5px 11px}
+}
+
+/* one centred column inside the surface (Jim, 11 Oct): the line, the pills, the conversation and the input share its two edges */
+.askbox>.asklog,.askbox>.asksug,.askbox>.askform{width:min(100%,760px);margin-left:auto;margin-right:auto}
+.aska{max-width:none}
+/* before the first question: the line and the pills sit in the middle of the space above the input, the pills in two rows of two */
+.askbox:not(.has)>.asklog{margin-top:auto}
+.askbox:not(.has) .askhi{text-align:center;margin-bottom:6px}
+.askbox:not(.has)>.asksug{display:grid;grid-template-columns:1fr 1fr}
+.askbox:not(.has)>.asksug .quiet{max-width:none;text-align:center}
+@media (max-width:760px){.askbox:not(.has)>.asksug{grid-template-columns:1fr}}

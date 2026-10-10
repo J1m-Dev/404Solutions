@@ -8,7 +8,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="vendor/leaflet.min.css">
-<link rel="stylesheet" href="assets/room.css?v=1791667592">
+<link rel="stylesheet" href="assets/room.css?v=1791671637">
+<link rel="stylesheet" href="assets/pages/signal.css?v=1791671637">
+<link rel="stylesheet" href="assets/pages/trust.css?v=1791671637">
+<link rel="stylesheet" href="assets/pages/where.css?v=1791671637">
+<link rel="stylesheet" href="assets/pages/rest.css?v=1791671637">
+<link rel="stylesheet" href="assets/pages/ask.css?v=1791671637">
 <script>try { var d = document.documentElement, q = new URLSearchParams(location.search);
   if (sessionStorage.getItem("dom-dive")) { sessionStorage.removeItem("dom-dive"); d.classList.add("arrive"); }
   d.dataset.nav = "rail"; } catch (e) {}</script>
@@ -33,6 +38,7 @@
   <a href="#/track" data-go="track"><img src="assets/img/ic-track.png" alt="" width="38" height="38"><span>Record</span></a>
   <a href="#/stakes" data-go="stakes"><img src="assets/img/ic-stakes.png" alt="" width="38" height="38"><span>Who for</span></a>
   <a href="#/more" data-go="more"><img src="assets/img/ic-more.png" alt="" width="38" height="38"><span>More</span></a>
+  <a href="#/ask" data-go="ask" class="ask"><img src="assets/img/ic-ask.svg" alt="" width="38" height="38"><span>Ask</span></a>
 </nav>
 
 <main>
@@ -93,7 +99,8 @@
 </section>
 
 <section class="page" id="p-forecast" data-page="forecast">
-  <header class="phead"><h1>The signal</h1><p>The share of flu tests that came back positive, week by week.</p></header>
+  <header class="phead"><p class="when"><b>The signal</b> · <span id="w-forecast">share of lab samples positive for flu, week by week</span></p></header>
+  <div class="board" id="b-forecast"></div>
 <section id="forecast" class="card">
   <h2>The signal: sentinel influenza positivity <span class="chip real">Real data</span></h2>
   <p class="note">Share of sentinel lab samples that tested positive for influenza, Malaysia. Sentinel means a fixed set of clinics and labs that report every week. This is not a count of cases. FluNet labels the rows from 2024 onward as sentinel; the 2022 and 2023 rows carry no origin label and are treated as the same series.</p>
@@ -103,15 +110,17 @@
 </section>
 
 <section class="page" id="p-trust" data-page="trust">
-  <header class="phead"><h1>Why trust it</h1><p>Six past years: how often each step was right, and where it was wrong.</p></header>
+  <header class="phead"><p class="when"><b>Why trust it</b> · <span id="w-trust">six past years, scored week by week</span></p></header>
+  <div class="board" id="b-trust"></div>
 <section id="trust" class="card">
   <h2>Why trust it <span class="chip est">Back-tested on six years; Watch cut-off chosen on them</span></h2>
   <div id="trustBody"></div>
 </section>
 </section>
 <section class="page" id="p-atlas" data-page="atlas">
-  <header class="phead"><h1>Where to be ready</h1><p>Every state, Selangor's districts, and the hospitals and health clinics plotted on the map.</p>
-    <div class="subtabs" id="atlasTabs"><button data-sub="map" class="on">Map</button><button data-sub="beds">Districts and beds</button></div></header>
+  <header class="phead"><p class="when"><b>Where to be ready</b> · <span id="w-atlas">states, Selangor's districts, hospitals and clinics</span></p>
+    <div class="tools"><div class="subtabs" id="atlasTabs"><button data-sub="map" class="on">Map</button><button data-sub="beds">Districts and beds</button></div></div></header>
+  <div class="board" id="b-atlas"></div>
   <div class="sub on" data-sub="map"><section id="atlas" class="card">
   <h2>Map: Malaysia and Selangor <span class="chip real">State figures: real data</span> <span class="chip exp" id="mapChip">Exploratory</span></h2>
   <p class="note" id="stSrc"></p>
@@ -162,7 +171,8 @@
 </section>
 
 <section class="page" id="p-track" data-page="track">
-  <header class="phead"><h1>Track record</h1><p>What the system said before the figures were published, to be scored when they are.</p></header>
+  <header class="phead"><p class="when"><b>Track record</b> · <span id="w-track">written down before the figures were published</span></p></header>
+  <div class="board" id="b-track"></div>
 <section id="track" class="card">
   <h2>Track record: to be scored when these weeks are published <span class="chip real">Real, awaiting data</span></h2>
   <div id="trackBody"></div>
@@ -170,7 +180,8 @@
 </section>
 
 <section class="page" id="p-stakes" data-page="stakes">
-  <header class="phead"><h1>Who it is for</h1><p>The user, the decision, what is at stake, and the 2025 surge week by week.</p></header>
+  <header class="phead"><p class="when"><b>Who it is for</b> · <span id="w-stakes">the user, the decision, what is at stake</span></p></header>
+  <div class="board" id="b-stakes"></div>
 <section class="card hero" id="hero">
   <h1>See an influenza surge in the week your lab figures show it, not four weeks later.</h1>
   <p>The only public weekly lab series for Malaysia, WHO FluNet, was about four weeks behind when we checked on 10 October 2026. DOM takes a planner's own newer lab figures and returns an alert level, the kind of wave, a proposed action and the reason for it. A machine-learning classifier, reading the national series, sorts each week into Clear, Watch or Warning for a rapid rise, and the page shows how often each of those was right over six past years. The results we rely on are shown in full, and so are the ones that failed.</p>
@@ -208,7 +219,8 @@
 </section>
 
 <section class="page" id="p-more" data-page="more">
-  <header class="phead"><h1>More underneath</h1><p>Full results, the second disease, state trends, the what-if drill, uploads and sources.</p><button id="uploadBtn" class="quiet">Upload newest data</button></header>
+  <header class="phead"><p class="when"><b>More underneath</b> · <span id="w-more">full results, dengue, state trends, the drill, uploads, sources</span></p><div class="tools"><button id="uploadBtn" class="quiet">Upload newest data</button></div></header>
+  <div class="board" id="b-more"></div>
 <details id="proof" class="card fold">
   <summary><h2>Every result, pass or fail</h2><span class="note">the alert rule, the classifier, the forecast that did not work, the stress test</span></summary>
   <div id="proofBody"></div>
@@ -274,6 +286,10 @@
   </ul>
 </details>
 </section>
+<section class="page" id="p-ask" data-page="ask">
+  <header class="phead"><p class="when"><b>Ask DOM</b> · <span id="w-ask">from these pages only</span></p></header>
+  <div id="askRoot"></div>
+</section>
 <footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, WHO dengue situation updates, Ministry of Health Malaysia open data and facility registry, OpenDengue, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
 </main>
 
@@ -330,8 +346,15 @@
 <script src="vendor/leaflet.min.js"></script>
 <script src="vendor/leaflet-heat.js"></script>
 <script src="vendor/xlsx.full.min.js"></script>
+<script src="assets/scrub.js?v=1791671637"></script>
 <script src="assets/model.js"></script>
 <script src="assets/app.js"></script>
-<script src="assets/room.js?v=1791667592"></script>
+<script src="assets/room.js?v=1791671637"></script>
+<script src="assets/pages/signal.js?v=1791671637"></script>
+<script src="assets/pages/trust.js?v=1791671637"></script>
+<script src="assets/pages/where.js?v=1791671637"></script>
+<script src="assets/pages/rest.js?v=1791671637"></script>
+<script src="assets/pages/ask.js?v=1791671637"></script>
+<script src="assets/pages/planai.js?v=1791671637"></script>
 </body>
 </html>

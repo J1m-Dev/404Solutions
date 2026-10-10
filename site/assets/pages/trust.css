@@ -1,0 +1,46 @@
+/* DOM control room · lane: trust. The Trust page (#p-trust).
+   Loaded after assets/room.css. Uses the kit at the end of room.css (.phead .board .tile .plate .rows .stack); adds no new sizes, radii or colours.
+   Top to bottom: the first line with the caveat chip · four tiles (#b-trust) · ONE plate (the chart) · rows (everything else, closed). */
+
+/* the first line: the section's own caveat chip sits at its right end, and drops under the words when the window is narrow */
+#p-trust .phead{flex-wrap:wrap;gap:6px 14px}
+#p-trust .phead .tools{position:static;transform:none;flex:0 1 auto;min-width:0}
+#p-trust .chip{font-size:12px}
+#p-trust .phead .chip{margin-left:0;line-height:1.3;text-wrap:balance}   /* never taller than the first line, so the tiles start where they start on Now */
+
+/* the four counts: label, the app's count, the first clause of the app's sentence; the ring sits in the top right corner (wide windows only: on a
+   narrower tile it would touch the count). A click on any tile opens the rest of all four sentences; the plus in the corner is the rows' own */
+#b-trust .tile{position:relative;cursor:pointer}
+#b-trust .tile:hover{background:rgba(8,20,58,.58)}
+#b-trust .tile:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#b-trust .tile .k i{display:none}
+@media (min-width:1260px){#b-trust .tile .k i{display:block;position:absolute;top:22px;right:22px;width:34px;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,rgba(8,20,58,.9) 62%,transparent 64%),conic-gradient(#fff calc(var(--p,0)*1%),rgba(255,255,255,.25) 0)}}
+#b-trust .tile .s::after{content:"";display:inline-block;width:22px}
+#b-trust .tile .more{display:none}
+#b-trust.open .tile .more{display:inline}
+#b-trust .tile::after{content:"+";position:absolute;right:clamp(16px,2vw,22px);bottom:clamp(12px,1.6vw,18px);font-weight:400;font-size:24px;line-height:1;color:rgba(255,255,255,.7);transition:transform .3s var(--ease)}
+#b-trust.open .tile::after{transform:rotate(45deg)}
+
+/* the app's own four counts are the tiles above, in its own words */
+#trustBody>.kpis{display:none}
+
+/* the chart: the one plate. Its label is the app's own heading with its chip, its line is the app's own key (two lines; a click opens it) */
+#trustBody .plate>:is(h3,p,.chartbox){margin:0}   /* the hover readout (lane: signal) keeps its own spacing */
+#trustBody .plate>h3.k{line-height:1.4}
+/* tall enough to be the picture, and short enough that the chart and the two lines of its key (with the hover readout above the chart) end inside a 1280 x 800 window */
+#trustBody .plate>.evchart{height:clamp(240px,calc(100vh - 516px),400px)}
+/* the key opens on a click: the rows' plus at its right end says so */
+#trustBody .plate>p.note{position:relative;padding-right:34px}
+#trustBody .plate>p.note::after{content:"+";position:absolute;right:0;top:0;font-weight:400;font-size:24px;line-height:1;color:var(--mute);transition:transform .3s var(--ease)}
+#trustBody .plate>p.note.open::after{transform:rotate(45deg)}
+#trustBody .plate>h3+.evchart{margin-top:6px}
+
+/* the rows: an open row shows the app's text in full; a wide table scrolls inside its row */
+#trustBody .rows .drawerbody{overflow-x:auto}
+#trustBody .rows .drawerbody>:first-child{margin-top:0}
+#trustBody .rows .drawerbody>:last-child{margin-bottom:0}
+#trustBody .rows p.note{display:block;overflow:visible;cursor:auto}
+/* a table's first and last column sit on the row's own edges, under its title and its plus sign */
+#trustBody .rows :is(th,td):first-child{padding-left:0}
+#trustBody .rows :is(th,td):last-child{padding-right:0}
+#trustBody .rows summary .chip{text-wrap:balance}

@@ -1,3 +1,4 @@
 {
-  "redirects": [{ "source": "/", "destination": "/landing.html", "permanent": false }]
+  "redirects": [{ "source": "/", "destination": "/landing.html", "permanent": false }],
+  "functions": { "api/*.js": { "maxDuration": 30 } }
 }

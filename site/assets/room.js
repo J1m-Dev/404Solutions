@@ -17,6 +17,8 @@
   // the Monday an ISO week starts on (4 January is always in week 1)
   const monday = (y, w) => { const d = new Date(Date.UTC(y, 0, 4)); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) + (w - 1) * 7); return d.toISOString().slice(0, 10); };
   const resize = () => requestAnimationFrame(() => { if (typeof map !== "undefined" && map) map.invalidateSize(); dispatchEvent(new Event("resize")); });
+  // what the page files share: fold() turns headings into drawers, resize() lets charts and the map re-measure, after(fn) runs fn after every render of the app
+  const afters = []; window.Room = { fold, resize, starts, dm, dmy, after: (fn) => { afters.push(fn); if (root.dataset.ready) { try { fn(); } catch (e) { console.error("room", e); } } } };
 
   // ---------- pages ----------
   const pages = [...document.querySelectorAll(".page")].map((p) => p.dataset.page);
@@ -25,6 +27,7 @@
     document.querySelectorAll(".page").forEach((p) => p.classList.toggle("on", p.dataset.page === id));
     document.querySelectorAll(".rail a[data-go]").forEach((a) => a.classList.toggle("on", a.dataset.go === id));
     root.dataset.page = id; scrollTo(0, 0); $("sheet").hidden = true; slideHl();
+    { const lab = document.querySelector(".rail a.on span"); document.title = "DOM · " + (lab ? lab.textContent : "Control room"); }   // each browser tab says which page it holds
     resize();   // charts and the map were laid out off screen; let them take their real size now
   }
   // ---------- the arc: the four steps as one scale, the way a gauge shows where a reading sits ----------
@@ -123,6 +126,7 @@
       records: STEPS.map((k) => (ES && ES.bands[k] ? `In six past years a rapid rise followed ${ES.bands[k].rises} of ${ES.bands[k].weeks} ${STEP[k].name} weeks.` : "")) } }));
     // the data-status line matters on the first screen only when something unusual is on (uploads or a simulation)
     $("stamp").classList.toggle("hush", !(c.sim || (typeof barMsg !== "undefined" && barMsg)));
+    afters.forEach((fn) => { try { fn(); } catch (e) { console.error("room", e); } });
   }
 
   // ---------- long explanations become drawers: each heading with what follows it; nothing is removed ----------
@@ -134,22 +138,7 @@
       else if (cur) cur.lastChild.appendChild(el);
     }
   }
-  // ---------- the inner pages: one picture first, the long reading one click down (nothing is removed) ----------
-  // Why trust it: the app's four counts are shares, so each is drawn as a ring; the chart stays open, every later section is a drawer.
-  function rings() { document.querySelectorAll("#trustBody .kpi").forEach((k) => { const b = k.querySelector("b"); if (!b || k._r === b.textContent) return; k._r = b.textContent;
-    const m = b.textContent.match(/(\d+)\s+of\s+(\d+)/), pc = b.textContent.match(/(\d+)\s*%/), v = m ? (100 * +m[1]) / +m[2] : pc ? +pc[1] : null; if (v == null) return; k.classList.add("ring"); k.style.setProperty("--p", v.toFixed(1)); }); }
-  // Track record: each record reads as one row (the date, what the system said, the result); the rest opens on a click.
-  function trackRows() { const t = document.querySelector("#trackBody table"); if (!t || t.classList.contains("rows")) return; const heads = [...t.querySelectorAll("th")].map((x) => x.textContent);
-    t.querySelectorAll("tr").forEach((tr) => [...tr.children].forEach((td, i) => { td.dataset.l = heads[i] || ""; })); t.classList.add("rows"); }
-  const tidy = { proofBody: (b) => fold(b), trustBody: (b) => { fold(b); const d = b.querySelector("details.drawer"); if (d && !b._opened) { b._opened = true; d.open = true; } rings(); }, trackBody: () => trackRows() };
-  for (const id in tidy) { const box = $(id); if (!box) continue; new MutationObserver(() => tidy[id](box)).observe(box, { childList: true }); tidy[id](box); }
-  document.querySelectorAll("#stakes .grid2 > div").forEach(fold);
-  // the panel: the task list sits right under the step; the summary and the action table (the same actions again) fold away
-  { const sh = $("sheet"), pb = $("planBox"); if (sh && pb) { $("alertCard").after(pb); fold(sh.querySelector(":scope > .card:not(#alertCard)")); } }
-  // Where: the map comes first; its sources, shading choices and layer switches sit together under one drawer
-  (function atlas() { const card = $("atlas"), map = $("map"); if (!card || !map) return; const h2 = card.querySelector("h2"), d = document.createElement("details"); d.className = "drawer"; d.innerHTML = "<summary>Map layers, shading and sources</summary><div class=\"drawerbody\"></div>";
-    const view = $("mapModeRow") && $("mapModeRow").parentElement; h2.after(map); map.after($("stLegend"), $("mapHint")); if (view) $("mapHint").after(view); card.append(d);
-    ["stSrc", "mapNote", "stCtl", "layerToggles"].forEach((id) => { const el = $(id); if (el) d.lastChild.append(el); }); d.addEventListener("toggle", resize); })();
+  // the inner pages arrange themselves: assets/pages/*.js (one file for each group of pages), through window.Room below
   // long notes show two lines; a click opens them. Rows of the track record open the same way.
   document.addEventListener("click", (e) => { if (e.target.closest("a,button,input,select,label,summary")) return;
     const n = e.target.closest(".page .card p.note, .sheet p.note, #trustBody > p, #trackBody > p"); if (n) n.classList.toggle("open"); const r = e.target.closest("table.rows tr"); if (r) r.classList.toggle("open"); });

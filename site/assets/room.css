@@ -144,9 +144,6 @@ html[data-ready] #p-now .read>*{animation:rise .9s var(--ease) both}
 
 
 /* ---------- the pages that carry the team's features: white type for the page title, paper sheets for the content ---------- */
-.phead{display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px 22px;margin:0 0 clamp(12px,2.4vh,22px);max-width:1180px}
-.phead h1{flex:1 1 100%;font-size:clamp(28px,min(5.4vh,3.6vw),50px)}
-.phead p{flex:1 1 320px;margin:0;max-width:60ch;font-size:clamp(15px,2.1vh,18px);line-height:1.4;opacity:.92}
 .subtabs{display:inline-flex;padding:4px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2)}
 .subtabs button{border:0;border-radius:999px;padding:8px 16px;background:transparent;color:#fff;font-weight:600;font-size:14px;cursor:pointer;opacity:.85}
 .subtabs button.on{background:#fff;color:var(--ink);opacity:1}
@@ -275,8 +272,6 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ---------- every page opens the same way: the question, the answer in one sentence, then one picture ---------- */
-.ask{flex:1 1 100%!important;margin:0 0 2px!important;font-size:14px!important;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.7!important}
-.phead h1{max-width:24em;text-wrap:balance}
 .score{max-width:1180px;margin:0 0 16px;display:grid;gap:10px}
 .dots{display:flex;flex-wrap:wrap;gap:5px;max-width:980px}
 .dots i{width:13px;height:13px;border-radius:50%;background:var(--sun);animation:pop .5s var(--ease) both;animation-delay:calc(var(--n) * 6ms)}
@@ -325,50 +320,13 @@ details.fold[open]{padding-bottom:18px}details.fold[open]>summary{margin-bottom:
 main{display:flex;flex-direction:column}
 .stamp,[data-nav=rail] .stamp{order:8;padding:14px clamp(18px,3.4vw,52px) 0;font-size:12.5px;color:rgba(255,255,255,.8)}
 .replay{order:9}footer{order:10}
-.phead{margin:0 0 clamp(14px,2.6vh,22px)}.phead h1{font-size:clamp(30px,min(5.6vh,3.6vw),48px);text-shadow:0 2px 24px rgba(4,12,40,.4)}
-.phead p{font-size:clamp(15px,2.1vh,18px);text-shadow:0 1px 14px rgba(4,12,40,.45)}
 .subtabs{background:rgba(255,255,255,.16);border:0;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.page .card{border-radius:28px;padding:clamp(18px,2.4vw,30px);background:#fff;box-shadow:0 30px 80px rgba(2,8,40,.32)}
 .page>.card>h2:first-child,#p-atlas .card>h2:first-child{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px;font-size:14px;font-weight:600;letter-spacing:0;color:var(--mute)}
 .page .card p.note,#trustBody>p,#trackBody>p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;cursor:pointer}
 .page .card p.note.open,#trustBody>p.open,#trackBody>p.open{display:block}
 .page .card p.note:hover,#trustBody>p:hover,#trackBody>p:hover{color:var(--ink)}
 /* bare facts, never boxed tiles */
 .kpi,.signal{border:0;background:none;padding:6px 4px}.kpis{gap:8px 22px}
-/* Why trust it: each of the app's four counts is a share, drawn as a ring */
-#trustBody .kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin:14px 0 22px}
-#trustBody .kpi.ring{text-align:center}
-#trustBody .kpi.ring b{display:grid;place-content:center;width:min(132px,100%);aspect-ratio:1;margin:0 auto 12px;border-radius:50%;font-size:clamp(16px,1.7vw,21px);letter-spacing:-.02em;
-  background:radial-gradient(closest-side,#fff 80%,transparent 81%),conic-gradient(var(--brand) calc(var(--p,0)*1%),#e6ebf5 0)}
-#trustBody .kpi span{display:block;font-size:13px;line-height:1.4}
-#trustBody details.drawer:first-of-type>summary{font-size:14px;color:var(--mute)}
-/* Where: the map first and large; everything that tunes it is under one drawer */
-#p-atlas #map{height:clamp(340px,60vh,600px);border:0;border-radius:20px;margin-bottom:10px}
-#p-atlas .legend{margin:6px 0 4px}#p-atlas #mapHint{margin:4px 0 8px}
-/* Track record: one row for each record; a click opens the rest */
-table.rows,table.rows tbody{display:block}table.rows tr:first-child{display:none}
-table.rows tr{display:grid;grid-template-columns:132px minmax(0,1fr) minmax(0,.6fr);gap:6px 20px;padding:16px 4px;border-top:1px solid var(--line);cursor:pointer;transition:background .2s}
-table.rows tr:hover{background:#f6f8fc}
-table.rows td{display:none;border:0;padding:0;font-size:14.5px;line-height:1.45}
-table.rows td:nth-child(1){display:block;font-weight:700}table.rows td:nth-child(3){display:block}table.rows td:nth-child(6){display:block;color:var(--mute)}
-table.rows tr.open td{display:block}table.rows tr.open td:nth-child(2),table.rows tr.open td:nth-child(4),table.rows tr.open td:nth-child(5){grid-column:2 / -1;font-size:13.5px;color:var(--mute)}
-table.rows tr.open td:nth-child(2)::before,table.rows tr.open td:nth-child(4)::before,table.rows tr.open td:nth-child(5)::before{content:attr(data-l) ": ";font-weight:600;color:var(--ink)}
-/* Who it is for: the app's own headline sits on the scene; the three parts open as rows */
-#p-stakes .phead{display:none}#p-stakes:has(#hero[hidden]) .phead{display:flex}
-#p-stakes #hero{background:none;box-shadow:none;color:#fff;padding:0 0 4px;border-radius:0;max-width:900px}
-#p-stakes #hero h1{font-size:clamp(28px,min(5.4vh,3.4vw),46px);line-height:1.08;color:#fff;text-shadow:0 2px 24px rgba(4,12,40,.4)}
-#p-stakes #hero p{font-size:clamp(15px,2.1vh,18px);color:rgba(255,255,255,.94);text-shadow:0 1px 14px rgba(4,12,40,.45)}
-#p-stakes #hero a:not(.btn){color:#fff}
-#p-stakes #hero a.btn{background:#fff;color:var(--dark);margin-top:6px}#p-stakes #hero a.btn.ghost{background:rgba(255,255,255,.18);color:#fff;border:0;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-#stakes .grid2{grid-template-columns:1fr;gap:0}
-/* More: six rows on one sheet; nothing is open on arrival */
-#p-more details.fold{margin:0;border-radius:0;box-shadow:none;border-top:1px solid var(--line)}
-#p-more details.fold:first-of-type{border-top:0;border-radius:28px 28px 0 0}#p-more details.fold:last-of-type{border-radius:0 0 28px 28px}
-#p-more details.fold:only-of-type{border-radius:28px}
-#p-more details.fold>summary::before{order:9;margin-left:auto;font-size:22px;font-weight:400;color:var(--mute)}
-#p-more details.fold>summary h2{font-size:17px}
-#p-more{filter:none}
-@media (max-width:760px){#trustBody .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}table.rows tr{grid-template-columns:1fr}table.rows tr.open td:nth-child(n){grid-column:1}.page .card{border-radius:22px}}
 
 
 /* ---------- Now as a board of tiles over the scene (after Apple Weather): one question to a tile, a label, a value, one short line ---------- */
@@ -400,14 +358,84 @@ a.tile:hover{transform:translateY(-3px);background:rgba(8,20,58,.58)}a.tile:acti
 @media (max-height:640px){.tile.status .gauge{width:min(100%,400px)}}
 .tile.status .big{font-size:clamp(46px,min(10.5vh,6.4vw),88px);bottom:-2%}
 
-/* the sheet's close button never scrolls away and never sits under the scrollbar; a click outside the sheet closes it too */
-.sheet .x{position:fixed;top:24px;right:34px;float:none;margin:0;width:40px;height:40px;z-index:25;background:#fff;box-shadow:0 4px 14px rgba(2,8,40,.18)}
-.sheet{padding-top:30px}.sheet>.x{animation:none}
-@media (max-width:760px){.sheet .x{right:18px;top:22px}}
-
-/* the panel says what is going on first: the step, the ladder, then the task list; the long reading follows and the rest is folded */
-.sheet{display:flex;flex-direction:column}.sheet>#alertCard{display:contents}
-.sheet .level{order:1;margin-bottom:14px}.sheet .ladder{order:2}.sheet .cats{order:3;margin-bottom:6px}.sheet>#planBox{order:4;margin:6px 0 18px}
-.sheet #alertCard>h3{order:5;margin:6px 0 4px}.sheet ul.why{order:6;color:var(--ink);font-size:14px;line-height:1.5}.sheet #alertCard>p.note{order:7}.sheet>.card:not(#alertCard){order:8}
-.sheet p.note{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;cursor:pointer}.sheet p.note.open{display:block}
-.sheet .planbox{margin-top:0}
+/* ================= THE KIT (11 Oct): every inner page is built from these parts and nothing else =================
+   1 .phead  the first line, "<b>Page</b> · a few words", at the same place and size as on Now; .tools (tabs, one button) sit at its right end
+   2 .board  the grid of tiles: the same four columns and 14px gaps as Now, so tile edges do not move when the page changes
+   3 .tile   dark frosted glass: .k label, b value, .s one short line, .link a quiet link. Wider tiles: .w2 .w3 .w4
+   4 .plate  the ONE light surface on a page: the chart, the map or the table the team drew in dark ink. Label .k, value b, line .s
+   5 .rows   dark glass rows that open (details.drawer): the team's long text in their own words, one click down
+   .stack    any container whose children are kit blocks: a column with the same 14px between them
+   Sizes (the only ones): label 13.5/600 · value clamp(24px,2.7vw,34px)/700 · line 13.5/1.4 · row title 15.5/600 · body 14.5/1.55 · link 14/600
+   Alignment: one column, min(100%,1120px), centred. Text is left-aligned everywhere. Numbers in tables right-aligned, tabular.
+   Padding inside a tile, a plate and a row block is the same: clamp(16px,2vw,22px). Radius 24px (20px on a phone). */
+.page:not(#p-now).on{padding:clamp(56px,9vh,84px) clamp(18px,3.4vw,48px) clamp(18px,4vh,36px)}
+.phead{position:relative;display:flex;align-items:center;width:min(100%,1120px);max-width:none;margin:0 auto 14px}
+.phead .when{flex:1 1 auto;margin:0;width:auto;text-align:left;font-size:clamp(16px,2.3vh,20px);line-height:1.3;white-space:normal}
+.phead .tools{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:8px}
+.board{display:grid;width:min(100%,1120px);margin:0 auto 14px;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.2fr);gap:14px;align-items:stretch}
+.board:empty{display:none}
+.tile.w2{grid-column:span 2}.tile.w3{grid-column:span 3}.tile.w4{grid-column:1 / -1}
+.stack{display:flex;flex-direction:column;gap:14px}.stack>*{margin-top:0!important;margin-bottom:0!important}
+/* the team's own section is no longer a white sheet: it is a plain column, and each piece inside it is given a kit surface by its page's file */
+.page:not(#p-now) .card{width:min(100%,1120px);max-width:none;margin:0 auto 14px;padding:0;border-radius:0;background:none;box-shadow:none;color:#fff;overflow:visible}
+.page:not(#p-now) .card .card{width:auto;margin:0}
+.page .card>h2:first-child{color:rgba(255,255,255,.82)}
+.plate{display:flex;flex-direction:column;gap:4px;width:min(100%,1120px);min-width:0;margin:0 auto;padding:clamp(16px,2vw,22px);border-radius:24px;background:#f4f7fc;color:var(--ink);box-shadow:0 18px 50px rgba(2,8,40,.22)}
+.board>.plate,.stack>.plate,.card .plate{width:auto;margin:0}.board>.plate{grid-column:1 / -1}
+.plate .k{display:block;font-size:13.5px;font-weight:600;color:var(--mute)}
+.plate>b,.plate .v{display:block;font-size:clamp(24px,2.7vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.1;margin:2px 0;font-variant-numeric:tabular-nums}
+.plate .s{display:block;font-size:13.5px;line-height:1.4;color:var(--mute)}
+.plate a{color:var(--brand)}.plate p.note:hover{color:var(--ink)}
+.rows{width:min(100%,1120px);min-width:0;margin:0 auto;padding:4px clamp(16px,2vw,22px);border-radius:24px;color:#fff;background:rgba(8,20,58,.46);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3)}
+.board>.rows,.stack>.rows,.card .rows{width:auto;margin:0}.board>.rows{grid-column:1 / -1}
+.rows details.drawer,.rows details.fold{border:0;border-top:1px solid rgba(255,255,255,.14);border-radius:0;background:none;box-shadow:none;margin:0;padding:0}
+.rows details.drawer:first-of-type,.rows details.fold:first-of-type{border-top:0}.rows details.drawer:last-child{border-bottom:0}
+.rows details>summary{display:flex;align-items:center;gap:10px;padding:15px 0;cursor:pointer;list-style:none;font-size:15.5px;font-weight:600;line-height:1.3;color:#fff}
+.rows details>summary::-webkit-details-marker{display:none}
+.rows details.drawer>summary::after{color:rgba(255,255,255,.7)}.rows details.drawer>summary:hover{color:#fff}
+.rows .drawerbody{padding:0 0 16px;font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.92)}
+.rows p,.rows li{font-size:14.5px;line-height:1.55}.rows .note,.tile .note{color:rgba(255,255,255,.78);font-size:13.5px}
+.rows p.note:hover,.tile p.note:hover,.page:not(#p-now) .card>p.note:hover{color:#fff}
+.rows a,.tile a{color:#fff}.rows h3{margin:14px 0 6px;font-size:15.5px}
+.rows th,.rows td{border-bottom-color:rgba(255,255,255,.14)}.rows th{color:rgba(255,255,255,.72)}
+.rows .chip,.tile .chip,.phead .chip,.page .card>h2 .chip{background:rgba(255,255,255,.16);color:#fff}
+.rows .pass{color:var(--green)}.rows .fail{color:var(--red)}.rows .nb{color:rgba(255,255,255,.8)}
+.rows .kpi b{font-size:15.5px}.rows .kpi span{color:rgba(255,255,255,.8)}
+.rows label{color:#fff}.rows .signal{border:0;background:rgba(255,255,255,.1);color:#fff}
+html:not([data-page=now]) .scene{filter:blur(16px) brightness(.8) saturate(1.1)}
+@media (max-width:900px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}.tile.w3,.tile.w4{grid-column:1 / -1}}
+@media (max-width:760px){.page:not(#p-now).on{padding:calc(var(--top) + 108px) 14px 36px}.phead{flex-wrap:wrap;gap:10px}.phead .tools{position:static;transform:none}
+  .board{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.stack{gap:10px}.page:not(#p-now) .card{margin-bottom:10px}.plate,.rows{border-radius:20px;padding-left:15px;padding-right:15px}.plate{padding-top:15px;padding-bottom:15px}}
+/* the column must not jump sideways between a short page and a long one: the page scrolls without a scrollbar taking width */
+html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
+/* one chip size everywhere */
+.chip{font-size:12px}
+/* the rail must read from the back of a room: the tiles' own dark glass, every label in full-strength white (Jim, 06:28) */
+[data-nav=rail] .rail{background:rgba(8,20,58,.52);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+[data-nav=rail] .rail a{opacity:1;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 1px 6px rgba(4,12,40,.55)}
+[data-nav=rail] .rail a.on,[data-nav=rail] .rail a:hover{color:#fff}
+[data-nav=rail] .rail a img{filter:drop-shadow(0 2px 6px rgba(4,12,40,.5))}
+[data-nav=rail] .rail .hl{background:rgba(255,255,255,.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.42)}
+/* critic, 06:30. Links inside tiles are left-aligned like everything else, also when they wrap */
+.tile .link{text-align:left}
+/* in the replay the "Data age" tile is absent: the replay tile takes its place, so the bottom row has no hole */
+@media (min-width:901px){[data-replay="1"] #p-now .tile.play{grid-column:span 2}}
+/* phone: eight doors share the rail's width, so none is cut off or off screen; a dark band keeps page text from showing through the logo and rail */
+@media (max-width:760px){
+  .rail,[data-nav=rail] .rail{justify-content:space-between;gap:0;padding:5px 4px;overflow:hidden;-webkit-mask-image:none;mask-image:none}
+  [data-nav=rail] .rail a{flex:1 1 0;min-width:0;width:auto;margin-top:0;padding:4px 0;font-size:10.5px}
+  [data-nav=rail] .rail a span{white-space:nowrap}
+  [data-nav=rail] .rail svg,[data-nav=rail] .rail img{width:24px;height:24px}
+  body::before{content:"";position:fixed;z-index:5;left:0;right:0;top:0;height:calc(var(--top) + 104px);pointer-events:none;
+    background:linear-gradient(180deg,rgba(6,16,48,.88) 0%,rgba(6,16,48,.8) 70%,rgba(6,16,48,0) 100%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    -webkit-mask-image:linear-gradient(180deg,#000 78%,transparent);mask-image:linear-gradient(180deg,#000 78%,transparent)}
+}
+/* "Why?" sits on the sentence's centre line and looks like something to press (Jim, 06:40) */
+.tile.status h1{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 14px}
+.tile.status h1 button.why{margin:0;display:inline-flex;align-items:center;gap:6px;padding:8px 14px 8px 16px;font:600 14px/1 var(--sans);vertical-align:baseline;background:rgba(255,255,255,.24);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 6px 18px rgba(4,12,40,.28);transition:background .25s,transform .25s var(--ease),box-shadow .25s}
+.tile.status h1 button.why::after{content:"";width:6px;height:6px;border-right:2px solid #fff;border-top:2px solid #fff;transform:rotate(45deg);transition:transform .25s var(--ease)}
+.tile.status h1 button.why:hover{background:rgba(255,255,255,.38);transform:translateY(-1px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 10px 24px rgba(4,12,40,.34)}
+.tile.status h1 button.why:hover::after{transform:translateX(3px) rotate(45deg)}
+.tile.status h1 button.why:active{transform:scale(.96)}
+/* rail pictures: the pale marks inside the glass (the tick, the clock hands) need more bite */
+[data-nav=rail] .rail a img{filter:contrast(1.35) saturate(1.3) drop-shadow(0 2px 6px rgba(4,12,40,.5))}

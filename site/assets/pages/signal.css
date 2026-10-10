@@ -1,0 +1,36 @@
+/* DOM control room · lane: signal. The hover readout on every chart (.readout, made by assets/scrub.js) and the Signal page (#p-forecast).
+   Loaded after assets/room.css. Uses the kit at the end of room.css (.phead .board .tile .plate .rows .stack); adds no new sizes, radii or colours. */
+
+/* ---------- the readout above every chart: the week and its value on one row (shared baseline), the other lines as small pairs under it.
+   One fixed row of pairs where they fit (a long name shortens, its number never goes); it grows on a phone, with many series, and for the team's own tooltip lines ---------- */
+.readout{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;min-width:0;margin:0 0 8px;text-align:left;color:inherit;font-variant-numeric:tabular-nums}
+.readout .k{flex:0 1 auto;min-width:0;font-size:13.5px;font-weight:600;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.readout .v{flex:none;margin:0;font-size:clamp(24px,2.7vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.1;white-space:nowrap}
+.readout .s{flex:0 0 100%;display:flex;gap:0 16px;height:19px;min-width:0;font-size:13.5px;line-height:19px;white-space:nowrap;overflow:hidden}
+.readout .p,.readout .r{display:flex;align-items:baseline;flex:0 1 auto;min-width:0}
+.readout .n{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.readout .p b{flex:none;margin-left:5px;font-weight:600}
+.readout i{flex:none;align-self:center;width:9px;height:9px;margin-right:6px;border-radius:50%}
+.readout .r{flex:0 0 100%}.readout .r em{flex:none;margin-right:8px;font-style:normal;font-weight:600}
+.readout.many .s,.readout.lines .s{flex-wrap:wrap;height:auto;min-height:19px;overflow:visible}.readout.lines .s{min-height:38px}
+.readout.lines .n{white-space:normal;overflow:visible}
+/* on the light plate: dark ink, muted label and line */
+.plate .readout{color:var(--ink)}.plate .readout .k,.plate .readout .s{color:var(--mute)}.plate .readout .p b,.plate .readout .r em{color:var(--ink)}
+canvas[tabindex]:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+@media (max-width:760px){.readout .ax{display:none}.readout .s{flex-wrap:wrap;gap:0 12px;height:auto;min-height:57px;overflow:visible}}
+
+/* ---------- the Signal page: four tiles, the chart on one plate, the long text one click down ---------- */
+#forecast .plate>h2{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;font-size:13.5px;font-weight:600;line-height:1.4;letter-spacing:0;color:var(--mute)}
+#forecast .plate>h2 .chip{margin-left:0;font-size:12px}
+/* the chart is the page's picture: as tall as the window allows with the tiles and the plate on one screen */
+#p-forecast .chartbox{height:clamp(220px,calc(100vh - 500px),460px);min-width:0}
+#forecast .rows p.note{display:block;margin:0;overflow:visible;cursor:auto;font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.92)}
+#forecast .keys{display:grid;gap:6px;margin:0 0 12px;padding:0;list-style:none}
+#forecast .keys li{display:flex;align-items:center;gap:10px;font-size:14.5px;line-height:1.55}
+/* each key is the line as the chart draws it, on a chip of the plate's own paper so dark ink shows on the glass */
+#forecast .keys i{flex:none;position:relative;width:30px;height:14px;border-radius:99px;background:#f4f7fc}
+#forecast .keys i::after{content:"";position:absolute;left:5px;right:5px;top:50%;margin-top:-1px;border-top:2px solid var(--c)}
+#forecast .keys i.dash::after{border-top-style:dashed}
+#forecast .keys i.band::after{top:3px;bottom:3px;margin:0;border:0;border-radius:99px;background:var(--c)}
+#forecast #signals{margin:0;gap:8px}#forecast #signals .note{font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.92)}
+@media (max-width:760px){#p-forecast .chartbox{height:260px}}

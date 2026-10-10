@@ -28,14 +28,16 @@ split = atlas.index('  <div class="grid2">\n    <div>\n      <h3>Selangor distri
 map_part, beds_part = atlas[:split] + "</section>", atlas[split:atlas.rindex("</section>")]
 
 V = str(int(time.time()))   # stamped on our own files' addresses, so a browser never runs an older copy after a deploy
-def page(ident, title, lead, body, extra=""):
+def page(ident, title, lead, body, tools=""):
+    """An inner page in the kit (assets/room.css, "THE KIT"): the first line, an empty board for its tiles, then the team's own section."""
     return f'''
 <section class="page" id="p-{ident}" data-page="{ident}">
-  <header class="phead"><h1>{title}</h1><p>{lead}</p>{extra}</header>
+  <header class="phead"><p class="when"><b>{title}</b> · <span id="w-{ident}">{lead}</span></p>{tools and f'<div class="tools">{tools}</div>'}</header>
+  <div class="board" id="b-{ident}"></div>
 {body}
 </section>'''
-def door(ident, name):
-    return f'<a href="#/{ident}" data-go="{ident}"><img src="assets/img/ic-{ident}.png" alt="" width="38" height="38"><span>{name}</span></a>'
+def door(ident, name, ext="png", cls=""):
+    return f'<a href="#/{ident}" data-go="{ident}"{cls and f' class="{cls}"'}><img src="assets/img/ic-{ident}.{ext}" alt="" width="38" height="38"><span>{name}</span></a>'
 
 html = f'''<!doctype html>
 <html lang="en" data-state="clear">
@@ -48,6 +50,11 @@ html = f'''<!doctype html>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="vendor/leaflet.min.css">
 <link rel="stylesheet" href="assets/room.css?v={V}">
+<link rel="stylesheet" href="assets/pages/signal.css?v={V}">
+<link rel="stylesheet" href="assets/pages/trust.css?v={V}">
+<link rel="stylesheet" href="assets/pages/where.css?v={V}">
+<link rel="stylesheet" href="assets/pages/rest.css?v={V}">
+<link rel="stylesheet" href="assets/pages/ask.css?v={V}">
 <script>try {{ var d = document.documentElement, q = new URLSearchParams(location.search);
   if (sessionStorage.getItem("dom-dive")) {{ sessionStorage.removeItem("dom-dive"); d.classList.add("arrive"); }}
   d.dataset.nav = "rail"; }} catch (e) {{}}</script>
@@ -72,6 +79,7 @@ html = f'''<!doctype html>
   {door("track", "Record")}
   {door("stakes", "Who for")}
   {door("more", "More")}
+  {door("ask", "Ask", "svg", "ask")}
 </nav>
 
 <main>
@@ -130,18 +138,23 @@ html = f'''<!doctype html>
     </article>
   </div>
 </section>
-{page("forecast", "The signal", "The share of flu tests that came back positive, week by week.", forecast)}
-{page("trust", "Why trust it", "Six past years: how often each step was right, and where it was wrong.", trust)}
+{page("forecast", "The signal", "share of lab samples positive for flu, week by week", forecast)}
+{page("trust", "Why trust it", "six past years, scored week by week", trust)}
 <section class="page" id="p-atlas" data-page="atlas">
-  <header class="phead"><h1>Where to be ready</h1><p>Every state, Selangor's districts, and the hospitals and health clinics plotted on the map.</p>
-    <div class="subtabs" id="atlasTabs"><button data-sub="map" class="on">Map</button><button data-sub="beds">Districts and beds</button></div></header>
+  <header class="phead"><p class="when"><b>Where to be ready</b> · <span id="w-atlas">states, Selangor's districts, hospitals and clinics</span></p>
+    <div class="tools"><div class="subtabs" id="atlasTabs"><button data-sub="map" class="on">Map</button><button data-sub="beds">Districts and beds</button></div></div></header>
+  <div class="board" id="b-atlas"></div>
   <div class="sub on" data-sub="map">{map_part}</div>
   <div class="sub" data-sub="beds"><section class="card">
 {beds_part}</section></div>
 </section>
-{page("track", "Track record", "What the system said before the figures were published, to be scored when they are.", track)}
-{page("stakes", "Who it is for", "The user, the decision, what is at stake, and the 2025 surge week by week.", hero + chr(10) + stakes)}
-{page("more", "More underneath", "Full results, the second disease, state trends, the what-if drill, uploads and sources.", more, '<button id="uploadBtn" class="quiet">Upload newest data</button>')}
+{page("track", "Track record", "written down before the figures were published", track)}
+{page("stakes", "Who it is for", "the user, the decision, what is at stake", hero + chr(10) + stakes)}
+{page("more", "More underneath", "full results, dengue, state trends, the drill, uploads, sources", more, '<button id="uploadBtn" class="quiet">Upload newest data</button>')}
+<section class="page" id="p-ask" data-page="ask">
+  <header class="phead"><p class="when"><b>Ask DOM</b> · <span id="w-ask">from these pages only</span></p></header>
+  <div id="askRoot"></div>
+</section>
 {footer}
 </main>
 
@@ -156,9 +169,16 @@ html = f'''<!doctype html>
 <script src="vendor/leaflet.min.js"></script>
 <script src="vendor/leaflet-heat.js"></script>
 <script src="vendor/xlsx.full.min.js"></script>
+<script src="assets/scrub.js?v={V}"></script>
 <script src="assets/model.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/room.js?v={V}"></script>
+<script src="assets/pages/signal.js?v={V}"></script>
+<script src="assets/pages/trust.js?v={V}"></script>
+<script src="assets/pages/where.js?v={V}"></script>
+<script src="assets/pages/rest.js?v={V}"></script>
+<script src="assets/pages/ask.js?v={V}"></script>
+<script src="assets/pages/planai.js?v={V}"></script>
 </body>
 </html>
 '''
