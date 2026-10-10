@@ -4,54 +4,104 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DOM · Disease No More</title>
-<meta name="description" content="DOM watches influenza and dengue in Malaysia, warns when a surge is likely, explains why, and says what to do first.">
+<meta name="description" content="Early warning for influenza and dengue in Malaysia: how likely a surge is, why, and what to do first.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/landing.css">
 </head>
-<body>
+<body class="loading">
+<div class="mist" aria-hidden="true"><i></i><i></i><i></i></div>
 <canvas id="earth" aria-hidden="true"></canvas>
 <div id="veil" aria-hidden="true"></div>
 
+<div id="intro" aria-hidden="true">
+  <div class="intro-logo"><span>D</span><i></i><span>M</span></div>
+  <div class="intro-tag">Disease No More</div>
+  <div class="intro-load mono">Loading <b id="loadN">000</b>%</div>
+</div>
+
 <header class="bar">
-  <a class="logo" href="landing.html" aria-label="DOM, Disease No More">
-    <span>D</span><i id="logoO" aria-hidden="true"></i><span>M</span>
-    <small>Disease No More</small>
-  </a>
+  <a class="logo" href="landing.html" aria-label="DOM, Disease No More"><span>D</span><canvas id="navO" width="60" height="60"></canvas><span>M</span></a>
   <nav>
+    <a href="#how">How it works</a>
     <a href="index.html#proof" data-enter>How it is tested</a>
-    <button class="btn" data-enter>Open the control room</button>
+    <button class="btn small white" data-enter><span class="arr" aria-hidden="true">→</span><span class="lab">Open app</span><span class="dot" aria-hidden="true"></span></button>
   </nav>
 </header>
 
-<main class="hero">
-  <section class="copy">
-    <h1>See the outbreak before it spreads.</h1>
-    <p>DOM watches influenza and dengue in Malaysia, warns when a surge is likely, explains why, and says what to do first.</p>
-    <button class="btn big" data-enter>Open the control room</button>
+<main>
+  <section class="hero">
+    <div class="copy">
+      <h1>See the outbreak<br>before it spreads.</h1>
+      <p>Early warning for influenza and dengue in Malaysia.</p>
+      <button class="btn" data-enter><span class="arr" aria-hidden="true">→</span><span class="lab">Open the control room</span><span class="dot" aria-hidden="true"></span></button>
+    </div>
+    <div id="slotA" class="slot" aria-hidden="true"></div>
+    <div class="hint mono" aria-hidden="true">Scroll to discover</div>
   </section>
 
-  <div id="slot" aria-hidden="true"></div>
-
-  <aside class="lens" aria-label="Forecast, sample data">
-    <div class="lens-head"><span>Malaysia · Influenza</span><span class="chip">Sample data</span></div>
-    <div class="ring">
-      <svg viewBox="0 0 200 200" aria-hidden="true">
-        <defs><linearGradient id="arcG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb8e6"/><stop offset="1" stop-color="#d9f0ff"/></linearGradient></defs>
-        <g id="ticks"></g>
-        <circle class="track" cx="100" cy="100" r="78"/>
-        <circle class="arc" id="arc" cx="100" cy="100" r="78" transform="rotate(-90 100 100)"/>
-        <circle class="tip" id="tip" r="6"/>
-      </svg>
-      <div class="ring-in"><b><span id="pct">0</span><em>%</em></b><span id="level">Watch</span></div>
+  <section class="horizon" id="how">
+    <div class="copy2">
+      <h2>From first signal<br>to first action.</h2>
+      <p>DOM turns weekly lab numbers into a chance of a surge, a plain reason, and the first thing to do.</p>
     </div>
-    <p class="line">Chance of a surge in the next <b id="wkLabel">4 weeks</b></p>
-    <label class="slide"><span>1 week</span><input id="weeks" type="range" min="1" max="4" step="1" value="4" aria-label="Weeks ahead"><span>4 weeks</span></label>
-    <p class="why"><b>Why:</b> <span id="why"></span></p>
-  </aside>
+    <div id="slotB" class="slot" aria-hidden="true"></div>
+    <div class="chips" aria-label="Example, sample data">
+      <div class="pill c1"><i>1</i><span>Surge chance <b>46%</b></span></div>
+      <div class="pill c2"><i>2</i><span>Why: tests rose two weeks running</span></div>
+      <div class="pill c3"><i>3</i><span>First: check antiviral stock</span></div>
+    </div>
+    <div class="sample mono">Example with sample data</div>
+  </section>
+
+  <section class="band" aria-label="What DOM is built on">
+    <div class="track" id="track">
+      <span>Influenza</span><span>Dengue</span><span>245 weeks of flu data</span><span>624 weeks of dengue data</span><span>Rules frozen before testing</span><span>Every result shown, pass or fail</span><span>English and Bahasa Melayu</span>
+    </div>
+  </section>
+
+  <section class="orbit" id="orbit">
+    <div class="copy2">
+      <h2>What one number protects.</h2>
+      <p>Drag the slider. The pictures are who has to be ready.</p>
+    </div>
+    <div class="stage" id="stage">
+      <figure class="card"><img src="assets/landing/g1.jpg" alt="" loading="lazy"><figcaption>Schools</figcaption></figure>
+      <figure class="card"><img src="assets/landing/g2.jpg" alt="" loading="lazy"><figcaption>Hospital wards</figcaption></figure>
+      <figure class="card"><img src="assets/landing/g3.jpg" alt="" loading="lazy"><figcaption>Pharmacy shelves</figcaption></figure>
+      <figure class="card"><img src="assets/landing/g4.jpg" alt="" loading="lazy"><figcaption>Labs</figcaption></figure>
+      <figure class="card"><img src="assets/landing/g5.jpg" alt="" loading="lazy"><figcaption>Dengue control</figcaption></figure>
+      <figure class="card"><img src="assets/landing/g6.jpg" alt="" loading="lazy"><figcaption>Whole cities</figcaption></figure>
+      <figure class="card"><img src="assets/landing/g7.jpg" alt="" loading="lazy"><figcaption>Fogging teams</figcaption></figure>
+      <figure class="card"><img src="assets/landing/g8.jpg" alt="" loading="lazy"><figcaption>Control rooms</figcaption></figure>
+      <aside class="lens" aria-label="Forecast, sample data">
+        <div class="lens-head"><span>Malaysia · Influenza</span><span class="chip">Sample data</span></div>
+        <div class="ring">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <defs><linearGradient id="arcG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fb8e6"/><stop offset="1" stop-color="#e3f3ff"/></linearGradient></defs>
+            <g id="ticks"></g>
+            <circle class="track-c" cx="100" cy="100" r="78"/>
+            <circle class="arc" id="arc" cx="100" cy="100" r="78" transform="rotate(-90 100 100)"/>
+            <circle class="tip" id="tip" r="6"/>
+          </svg>
+          <div class="ring-in"><b><span id="pct">0</span><em>%</em></b><span id="level">Watch</span></div>
+        </div>
+        <p class="line">Chance of a surge in the next <b id="wkLabel">4 weeks</b></p>
+        <label class="slide"><span>1 week</span><input id="weeks" type="range" min="1" max="4" step="1" value="4" aria-label="Weeks ahead"><span>4 weeks</span></label>
+        <p class="why"><b>Why:</b> <span id="why"></span></p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="end">
+    <h2>Disease no more.</h2>
+    <button class="btn" data-enter><span class="arr" aria-hidden="true">→</span><span class="lab">Open the control room</span><span class="dot" aria-hidden="true"></span></button>
+    <p class="fine">Independent student project for Dormathon 2026. Not affiliated with the Ministry of Health Malaysia. The forecast on this page uses sample numbers.</p>
+  </section>
 </main>
 
-<div id="tag" class="tag" hidden><b>Malaysia</b><span>the only country watched today</span></div>
+<div id="tag" class="tag mono" hidden>Malaysia · watching</div>
+<div id="hud" class="hud mono" hidden></div>
 
 <script src="assets/landing.js"></script>
 </body>
