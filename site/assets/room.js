@@ -32,7 +32,7 @@
   function arc(si) {
     const svg = $("arc"); if (!svg) return;
     if (!svg.firstChild) svg.innerHTML = `<path class="rail" d="${ARC.d}"/><path class="fill" id="arcFill" d="${ARC.d}" pathLength="100"/>` +
-      STEPS.map((k, i) => { const [x, y] = ARC.at(i / 3), ax = i === 0 ? "start" : i === 3 ? "end" : "middle", dx = i === 0 ? -6 : i === 3 ? 6 : 0; return `<circle class="tick" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4"/><text data-i="${i}" x="${(x + dx).toFixed(1)}" y="${(y + (i === 0 || i === 3 ? 30 : -18)).toFixed(1)}" text-anchor="${ax}">${STEP[k].name}</text>`; }).join("") +
+      STEPS.map((k, i) => { const [x, y] = ARC.at(i / 3), ax = i === 0 ? "start" : i === 3 ? "end" : "middle", dx = i === 0 ? -6 : i === 3 ? 6 : 0; return `<circle class="tick" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4"/><text data-i="${i}" x="${(x + dx).toFixed(1)}" y="${(y + (i === 0 || i === 3 ? 30 : -18)).toFixed(1)}" text-anchor="${ax}"><title>${STEP[k].name}: ${STEP[k].say}</title>${STEP[k].name}</text>`; }).join("") +
       `<g id="arcDot"><circle class="halo" r="15"/><circle class="dot" r="8"/></g>`;
     const [x, y] = ARC.at(si / 3); $("arcFill").style.strokeDasharray = `${(si / 3) * 100} 100`; $("arcDot").style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
     svg.querySelectorAll("text").forEach((t) => t.classList.toggle("on", +t.dataset.i === si));
@@ -75,7 +75,7 @@
     const ES = typeof evStats === "function" ? evStats() : null, band = ES && st.band && !H.byRule ? ES.bands[st.band] : null;
     root.dataset.state = a.dataWarning ? "unconfirmed" : st.key; root.dataset.ready = "1";
     $("lvl").textContent = c.rise.off ? "Classifier off for your own series" : `Classifier: ${STEP[c.rise.band].name} · Alert rule: ${RULE_WORDS[a.level]}`;
-    $("flag").hidden = !(c.sim || c.own || c.uploaded);
+    $("flag").hidden = !(c.sim || c.own || (c.uploaded && !(REPLAY && pure)));   // the first line already says "Replay ... real lab data"
     $("flag").textContent = c.sim ? `Simulation on: the newest ${c.nSim} week${c.nSim > 1 ? "s are" : " is"} invented` : c.own ? "Your own uploaded series, not verified" : REPLAY && pure ? "Replay of real weeks" : REPLAY ? "Replay with uploaded weeks, not verified" : "Includes uploaded weeks, not verified";
     // the sentence under the step word is the app's own sub-line, read from its alert card so the two can never differ
     // under the step word: the app's own headline for the step, without repeating the word it starts with
@@ -88,17 +88,21 @@
     if ($("pct").textContent !== word) { const b = $("pct"); b.textContent = word; b.classList.remove("roll"); void b.offsetWidth; b.classList.add("roll"); }
     const when = lastIso ? `<b>${dmy(lastIso)}</b>` : `<b>${wk(a.last)}</b>`;
     const now = new Date(), today = `${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
-    // top right: the date, and what the figures run to. A glance, not a sentence.
-    $("basis").innerHTML = c.sim ? `<b>What-if drill</b> · invented weeks to the week of ${when}` : c.own ? `<b>Your uploaded series</b> · to the week of ${when}` : REPLAY && pure ? `<b>Replay</b> · real national data to the week of ${when}` : REPLAY ? `<b>Replay</b> · with uploaded weeks, not verified, to the week of ${when}` : `<b>${today}</b> · newest national figures: week of ${when}`;
-    // three discs, one fact each, each a door to its proof: the newest reading, how old the data is, how often this step was followed by a rise
-    $("d1").textContent = f1(a.pLast) + "%"; $("d1l").textContent = `of ${c.own ? "your" : "flu"} tests positive`;
-    $("d2").innerHTML = c.lag > 0 ? `${c.lag}<small>wk</small>` : "0<small>wk</small>"; $("d2l").textContent = c.lag > 0 ? "data behind today" : "data is current";
-    $("d3").innerHTML = band ? `${band.rises}<small>of ${band.weeks}</small>` : c.rise.off ? "Off" : "Rule"; $("d3l").textContent = band ? `${STEP[st.band].name} weeks then a rise` : c.rise.off ? "classifier, own series" : "set by the alert rule";
+    // first line: what this screen is about, and the date. A stranger must not have to ask "clear of what?"
+    $("basis").innerHTML = c.sim ? `<b>What-if drill</b> · invented weeks, not a reading` : c.own ? `<b>Your own lab network</b> · data to the week of ${when}` : REPLAY ? `<b>Replay of the October 2025 outbreak</b> · ${pure ? "real lab data" : "with uploaded weeks, not verified,"} to the week of ${when}` : `<b>Flu in Malaysia</b> · ${today}`;
+    // one plain reason, from the same figures the app's own "Why this step" uses: the newest reading and where it came from
+    $("because").textContent = `In the week of ${lastIso ? dm(lastIso) : wk(a.last)}, ${f1(a.pLast)}% of ${c.own ? "your" : "lab"} samples tested positive for flu (${f1(a.p2)}% two weeks before). Watch line ${f1(c.th.yellow)}%, alert line ${f1(c.th.orange)}%.`;
+    // when and who, in the app's own words (its plan uses the same "when" for each step)
+    const act = actionsOf(c)[0]; const due = a.dataWarning ? "today" : PLAN_WHEN[st.key]; $("doK").textContent = "Do first" + (due && due !== "ongoing" ? " · " + due : ""); $("who").textContent = act[1] ? "By: " + act[1] + "." : "";
+    // the problem in one line, with the way to fix it beside it; the replay, as an answer to "does it work?"
+    $("ageRow").hidden = REPLAY || c.sim || c.own; $("proofRow").hidden = REPLAY;
+    $("age").textContent = c.lag > 0 ? `Published figures are ${c.lag} week${c.lag > 1 ? "s" : ""} old; this step is the reading for the weeks since.` : "Figures are current to this week.";
+    $("planBtn").className = REPLAY ? "quiet" : "go"; $("planBtn").querySelector(".lab").textContent = "See the plan";
     arc(STEPS.indexOf(st.key));
     $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls
     const n = STATE.lab.length, nr = REPLAY && !c.own ? nextRow(c) : null, done = REPLAY && nr === null;
-    $("rpGoLab").textContent = REPLAY ? (done ? "Replay finished" : "Add the next real week") : "Replay October 2025"; $("rpGo").disabled = done || busy; $("rpGo").hidden = REPLAY && c.own;
+    $("rpGoLab").textContent = REPLAY ? (done ? "Replay finished" : "Add the next real week") : "Replay October 2025"; $("rpGo").disabled = done || busy; $("rpGo").hidden = !REPLAY || c.own;
     $("rpAgain").hidden = !(REPLAY && (n > 0 || c.sim)); $("rpLeave").hidden = !REPLAY;
     // the strip describes the real replay weeks only: it steps aside while the what-if drill or an own series is on screen
     $("strip").hidden = !REPLAY || c.sim || c.own;
@@ -181,7 +185,10 @@
   // Start again also leaves the what-if drill, the same way the app's own "Exit simulation" button does
   $("rpAgain").onclick = () => { if (SIM.on) { SIM.on = false; if ($("simOn")) $("simOn").checked = false; } resetState(); };
   $("rpLeave").onclick = () => { location.href = "dashboard.html#/now"; };
-  $("whyBtn").onclick = () => { $("sheet").hidden = false; $("sheet").scrollTop = 0; $("sheetX").focus({ preventScroll: true }); }; $("sheetX").onclick = () => { $("sheet").hidden = true; $("whyBtn").focus({ preventScroll: true }); };
+  // "Why?" opens the sheet at the reasons; "See the plan" opens the same sheet at the actions and the plan
+  const openSheet = (at) => { $("sheet").hidden = false; const el = at && $(at); $("sheet").scrollTop = el ? Math.max(0, el.offsetTop - 16) : 0; $("sheetX").focus({ preventScroll: true }); };
+  $("whyBtn").onclick = () => openSheet(); $("planBtn").onclick = () => openSheet("action"); $("sheetX").onclick = () => { $("sheet").hidden = true; };
+  $("rpLink").onclick = () => $("rpGo").onclick(); $("addBtn").onclick = () => { const u = $("uploadBtn"); if (u) u.click(); };
   addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && !e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && REPLAY && root.dataset.page === "now" && $("sheet").hidden && !document.querySelector("dialog[open]") && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
 
   // ---------- the rail: each page is a small live picture ----------

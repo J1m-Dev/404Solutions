@@ -72,21 +72,12 @@ main{position:relative;z-index:2;margin-left:var(--rail);min-height:100vh}
 
 /* ---------- the first screen: one reading on the scene (after Oura's home). Eye order: the arc and the step, the action, the button. ---------- */
 #p-now.on{height:auto;min-height:100vh;padding:clamp(54px,9vh,92px) clamp(18px,4vw,56px) clamp(18px,4vh,40px);display:grid;justify-items:center;align-content:start;animation:none}
-.when{position:absolute;right:clamp(18px,3vw,40px);top:var(--top);margin:0;font-size:13.5px;line-height:30px;color:rgba(255,255,255,.9);text-align:right;white-space:nowrap}
+.when{margin:0 0 clamp(2px,1vh,10px);font-size:clamp(15px,2.1vh,18px);font-weight:500;color:rgba(255,255,255,.94);text-shadow:0 1px 16px rgba(4,12,40,.45)}
 .when b{font-weight:700;color:#fff}
 .read{position:relative;display:grid;justify-items:center;text-align:center;width:min(100%,720px)}
 .label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}   /* for screen readers: what the word is, and the classifier and rule behind it (both are in the Why sheet for the eye) */
 .top{margin:0 0 12px;font-size:13.5px}.top:has(.flag[hidden]){display:none}
 .flag{padding:5px 12px;border-radius:999px;background:rgba(4,12,40,.5);font-weight:600;color:#fff}
-
-/* three discs: one fact each, and each is the door to its proof */
-.discs{display:flex;justify-content:center;gap:clamp(14px,3vw,34px)}
-.disc{display:grid;justify-items:center;gap:8px;width:clamp(92px,11vw,118px);color:#fff;text-decoration:none}
-.disc b{display:grid;place-content:center;justify-items:center;width:clamp(72px,8.6vw,92px);aspect-ratio:1;border-radius:50%;font-size:clamp(19px,2.3vw,25px);font-weight:600;letter-spacing:-.02em;line-height:1;
-  background:rgba(255,255,255,.14);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .35s var(--ease),background .3s}
-.disc b small{display:block;margin-top:3px;font-size:.5em;font-weight:600;letter-spacing:0;opacity:.85}
-.disc span{font-size:13px;line-height:1.25;color:rgba(255,255,255,.92);text-wrap:balance}
-.disc:hover b{transform:translateY(-3px) scale(1.04);background:rgba(255,255,255,.24)}.disc:active b{transform:scale(.96)}
 
 /* the arc: the four steps as one scale; the thick part runs from Clear to the step that is showing */
 .gauge{position:relative;width:100%;margin-top:clamp(4px,1.6vh,18px)}
@@ -107,9 +98,16 @@ main{position:relative;z-index:2;margin-left:var(--rail);min-height:100vh}
 .big b.roll{animation:roll .8s var(--ease) both}
 @keyframes roll{from{transform:translateY(.4em);opacity:0}to{transform:none;opacity:1}}
 h1{margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.04;font-size:clamp(28px,min(6.2vh,4vw),58px);text-wrap:balance}
-#head{margin-top:clamp(18px,3.4vh,34px);font-size:clamp(19px,min(3.2vh,2.2vw),26px);font-weight:600;letter-spacing:-.015em;line-height:1.25;max-width:24em;text-shadow:0 1px 18px rgba(4,12,40,.4)}
-.do{margin:clamp(8px,1.6vh,14px) 0 0;max-width:30em;font-size:clamp(15px,2.2vh,17px);font-weight:600;line-height:1.4;color:#fff;text-shadow:0 1px 14px rgba(4,12,40,.45)}
-.do .k{font-weight:500;opacity:.82;margin-right:.5em}
+.read h1{margin-top:clamp(18px,3.4vh,34px);font-size:clamp(19px,min(3.2vh,2.2vw),26px);font-weight:600;letter-spacing:-.015em;line-height:1.25;max-width:24em;text-shadow:0 1px 18px rgba(4,12,40,.4)}
+.why{margin-left:.35em;padding:3px 11px;border:0;border-radius:999px;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font:600 .62em/1.5 var(--sans);vertical-align:middle;cursor:pointer;text-shadow:none;transition:background .3s,transform .25s var(--ease)}
+.why:hover{background:rgba(255,255,255,.32)}.why:active{transform:scale(.95)}
+.because{margin:clamp(6px,1.2vh,10px) 0 0;max-width:36em;text-wrap:balance;font-size:clamp(14px,2vh,15.5px);line-height:1.45;color:rgba(255,255,255,.9);text-shadow:0 1px 14px rgba(4,12,40,.5)}
+.do{margin:clamp(14px,2.8vh,26px) 0 0;max-width:32em;font-size:clamp(16px,2.4vh,19px);font-weight:700;line-height:1.35;color:#fff;text-shadow:0 1px 14px rgba(4,12,40,.5)}
+.do .k{display:block;margin:0 0 3px;font-size:13.5px;font-weight:600;opacity:.88}
+.do .who{font-weight:500;opacity:.86}
+.foot{margin:clamp(12px,2.2vh,20px) 0 0;font-size:14px;color:rgba(255,255,255,.9);text-shadow:0 1px 14px rgba(4,12,40,.5)}.foot+.foot{margin-top:6px}
+.link{border:0;padding:0 0 2px;background:linear-gradient(#fff,#fff) 0 100%/100% 1.5px no-repeat;color:#fff;font:600 14px/1.3 var(--sans);cursor:pointer;text-shadow:inherit;transition:background-size .45s var(--swing)}
+.link:hover{background-size:38% 1.5px}
 .read .row{display:flex;align-items:center;justify-content:center;gap:10px 18px;flex-wrap:wrap;margin-top:clamp(14px,3vh,28px)}
 /* the main button is the landing page's own: on hover the dot grows to fill it, the label slides, an arrow arrives */
 .go{--fg:var(--dark);position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:14px;border:0;border-radius:999px;cursor:pointer;
@@ -123,8 +121,10 @@ h1{margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.04;font-size:cla
 .go:not(:disabled):hover .arr,.go:not(:disabled):focus-visible .arr{opacity:1;transform:translate(0,-50%)}
 .go:not(:disabled):hover .dot,.go:not(:disabled):focus-visible .dot{transform:scale(0)}
 .go:active{transform:scale(.96)}.go:disabled{opacity:.6;cursor:default}
+#planBtn.go{padding-left:26px;padding-right:26px}#planBtn.go::before{clip-path:circle(0 at 50% 50%)}#planBtn.go:hover::before,#planBtn.go:focus-visible::before{clip-path:circle(160% at 50% 50%)}
+#arc text{cursor:help}
 .quiet{border:0;border-radius:999px;padding:clamp(11px,1.8vh,14px) 18px;font:600 14.5px/1 var(--sans);color:#fff;cursor:pointer;background:rgba(255,255,255,.16);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background .3s,transform .25s var(--ease)}
-.quiet:hover{background:rgba(255,255,255,.28)}.quiet:active{transform:scale(.96)}
+.quiet:hover{background:rgba(255,255,255,.28)}.quiet:active{transform:scale(.96)}.quiet .arr,.quiet .dot{display:none}
 .whybtn{border:0;background:none;padding:0 0 3px;cursor:pointer;font-weight:600;font-size:15px;color:#fff;background:linear-gradient(#fff,#fff) 0 100%/100% 1.5px no-repeat;transition:background-size .45s var(--swing);text-shadow:0 1px 14px rgba(4,12,40,.45)}
 .whybtn:hover{background-size:38% 1.5px}
 :focus-visible{outline:2px solid #fff;outline-offset:3px}
@@ -136,10 +136,10 @@ h1{margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.04;font-size:cla
 .bars{display:none}
 
 /* every part of the first screen arrives the same way, once the reading is known */
-html:not([data-ready]) #p-now .read>*,html:not([data-ready]) .when{opacity:0}
+html:not([data-ready]) #p-now .read>*{opacity:0}
 html[data-ready] #p-now .read>*{animation:rise .9s var(--ease) both}
-#p-now .read>:nth-child(3){animation-delay:.06s}#p-now .read>:nth-child(4){animation-delay:.14s}#p-now .read>:nth-child(5){animation-delay:.3s}
-#p-now .read>:nth-child(6){animation-delay:.36s}#p-now .read>:nth-child(7){animation-delay:.42s}#p-now .read>:nth-child(8){animation-delay:.5s}
+#p-now .read>:nth-child(4){animation-delay:.08s}#p-now .read>:nth-child(5){animation-delay:.24s}#p-now .read>:nth-child(6){animation-delay:.3s}
+#p-now .read>:nth-child(7){animation-delay:.36s}#p-now .read>:nth-child(8){animation-delay:.42s}#p-now .read>:nth-child(9){animation-delay:.48s}#p-now .read>:nth-child(10){animation-delay:.52s}
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
 
@@ -258,7 +258,7 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
 @keyframes land-rail{from{opacity:0}to{opacity:1}}
 
 /* short windows (about 1000 x 520) */
-@media (max-height:640px){#p-now.on{padding-top:clamp(44px,8vh,60px)}.disc b{width:64px;font-size:18px}.disc{gap:5px}.disc span{font-size:12px}.read{width:min(100%,600px)}.big{font-size:clamp(50px,13vh,96px)}
+@media (max-height:640px){#p-now.on{padding-top:clamp(44px,8vh,60px)}.read{width:min(100%,600px)}.do{margin-top:10px}.foot{margin-top:8px}.big{font-size:clamp(50px,13vh,96px)}
   #head{margin-top:14px}.read .row{margin-top:12px}[data-nav=rail] .rail a span{font-size:11px}[data-nav=rail] .rail svg,[data-nav=rail] .rail img{width:24px;height:24px}[data-nav=rail] .rail a{padding:2px 0}}
 @media (max-width:860px){.grid2{grid-template-columns:1fr}}
 @media (max-width:760px){
@@ -267,9 +267,8 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
     -webkit-mask-image:linear-gradient(90deg,#000 84%,transparent);mask-image:linear-gradient(90deg,#000 84%,transparent)}
   [data-nav=rail] .rail a{width:58px;padding:4px 0}[data-nav=rail] .rail svg,[data-nav=rail] .rail img{width:28px;height:28px}
   .page,.page.on,[data-nav=rail] .page{padding:calc(var(--top) + 104px) 16px 28px}
-  #p-now.on,[data-nav=rail] #p-now.on{padding:calc(var(--top) + 150px) 16px 40px}
-  .when{left:16px;right:16px;top:calc(var(--top) + 112px);text-align:center;white-space:normal;line-height:1.4}
-  .disc{width:31%}.disc b{width:76px}.big{font-size:clamp(54px,17vw,84px);bottom:-10%}#arc text{font-size:22px}
+  #p-now.on,[data-nav=rail] #p-now.on{padding:calc(var(--top) + 112px) 16px 40px}
+  .big{font-size:clamp(54px,17vw,84px);bottom:-10%}#arc text{font-size:22px}
   .stamp,[data-nav=rail] .stamp,[data-page=now] .stamp{position:relative;bottom:auto;padding:var(--head) 16px 0}
   .sheet{left:8px;right:8px;width:auto}
 }

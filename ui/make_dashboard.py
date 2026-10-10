@@ -79,28 +79,26 @@ html = f'''<!doctype html>
 <div id="replayBar" class="replay" hidden></div>
 
 <section class="page on" id="p-now" data-page="now">
-  <p class="when" id="basis"></p>
   <div class="read">
+    <p class="when" id="basis"></p>
     <p class="label"><span id="label"></span> <span id="lvl"></span></p>
     <p class="top"><span class="flag" id="flag" hidden></span></p>
-    <div class="discs">
-      <a class="disc" href="#/forecast"><b id="d1"></b><span id="d1l"></span></a>
-      <a class="disc" href="#/forecast"><b id="d2"></b><span id="d2l"></span></a>
-      <a class="disc" href="#/trust"><b id="d3"></b><span id="d3l"></span></a>
-    </div>
     <div class="gauge">
       <svg id="arc" viewBox="0 0 680 236" aria-hidden="true"></svg>
       <ol class="steps" id="steps" aria-label="The four early-warning steps"></ol>
       <div class="big word"><b id="pct"></b></div>
     </div>
-    <h1 id="head"></h1>
-    <p class="do"><span class="k">Do first</span><span id="first"></span></p>
+    <h1><span id="head"></span> <button class="why" id="whyBtn">Why?</button></h1>
+    <p class="because" id="because"></p>
+    <p class="do"><span class="k" id="doK">Do first</span><span id="first"></span> <span class="who" id="who"></span></p>
     <div class="row">
-      <button class="go" id="rpGo"><span class="arr" aria-hidden="true">→</span><span class="lab" id="rpGoLab"></span><span class="dot" aria-hidden="true"></span></button>
+      <button class="go" id="planBtn"><span class="arr" aria-hidden="true">→</span><span class="lab">See the plan</span></button>
+      <button class="go" id="rpGo" hidden><span class="arr" aria-hidden="true">→</span><span class="lab" id="rpGoLab"></span><span class="dot" aria-hidden="true"></span></button>
       <button class="quiet" id="rpAgain" hidden>Start again</button>
       <button class="quiet" id="rpLeave" hidden>Leave replay</button>
-      <button class="whybtn" id="whyBtn">Why this step, and the plan</button>
     </div>
+    <p class="foot" id="ageRow"><span id="age"></span> <button class="link" id="addBtn">Add this week's counts</button></p>
+    <p class="foot" id="proofRow">Does it work? <button class="link" id="rpLink">Watch it catch the October 2025 outbreak</button></p>
     <div class="strip" id="strip" hidden>
       <p id="stripNote"></p>
       <div class="bars" id="bars" role="img"></div>
