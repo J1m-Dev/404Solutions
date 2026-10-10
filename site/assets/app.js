@@ -193,7 +193,7 @@ async function renderSummary(c) {
   const r = (await api("POST", "/api/summary", fg)).data;
   // Only the English is ever reworded; the Malay stays the fixed template.
   if (r && r.en && numbersOk(r.en, fg) && JSON.stringify(figures(context())) === JSON.stringify(fg)) {
-    $("sumEn").textContent = r.en; $("sumChip").textContent = `English reworded by AI (${r.model}) from the figures on this page; Malay is the template`;
+    $("sumEn").textContent = r.en; $("sumChip").textContent = `English reworded by AI (${r.model}${r.tried && r.tried.length ? ", a fallback model" : ""}) from the figures on this page; Malay is the template`;
   } else $("sumChip").textContent = r && r.en ? "Template (AI text rejected: it used a number not in the figures)" : `Template (AI wording unavailable: ${aiWhy(r && r.error)})`;
 }
 
@@ -281,9 +281,9 @@ function renderPlanBox(c) {
   if (!PLAN || PLAN.key !== key) { PLAN = { key, source: "template", steps: templatePlan(inp) }; planMsg = ""; }
   const table = (steps) => `<table><tr><th>#</th><th>Step</th><th>Who</th><th>By when</th></tr>${steps.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.what)}</td><td>${esc(x.who)}</td><td>${esc(x.when)}</td></tr>`).join("")}</table>`;
   const ai = PLAN.source === "ai" || PLAN.source === "cache", why = !SERVER ? "Drafting with AI and approving need the local server." : c.sim ? "Simulated figures are never sent to the AI service, and a simulated plan cannot be approved." : "";
-  const stale = ap && STATE.stamp && new Date(ap.at) < new Date(STATE.stamp);
+  const stale = ap && STATE.stamp && new Date(ap.at) < new Date(STATE.stamp), same = ap && JSON.stringify(ap.steps) === JSON.stringify(PLAN.steps);
   $("planBox").innerHTML = `<div class="planbox">
-    <b>Step-by-step plan</b> <span class="chip ${ai ? "ai" : "exp"}">${ai ? `AI draft${PLAN.model ? ` (${esc(PLAN.model)})` : ""}: not approved` : "Fixed template: not approved"}</span>
+    <b>Step-by-step plan</b> <span class="chip ${same ? "real" : ai ? "ai" : "exp"}">${ai ? `AI draft${PLAN.model ? ` (${esc(PLAN.model)})` : ""}` : "Fixed template"}: ${same ? "approved" : "not approved"}</span>
     ${table(PLAN.steps)}
     <p class="note">${ai ? "Drafted by a language model from the proposed actions and the computed figures on this page. Checked on the server before it was shown: every number is one of those figures, and each role and deadline comes from a fixed list. It cannot change the step or the actions." : "One line per proposed action, from a fixed template."} A plan counts only after a named person approves it.</p>
     <button type="button" id="planAI" ${why ? "disabled" : ""}>Draft with AI</button><button type="button" id="planOK" ${why ? "disabled" : ""}>Approve this plan</button>
@@ -294,7 +294,7 @@ function renderPlanBox(c) {
   const by = () => localStorage.getItem("fs_by") || "";
   $("planAI").onclick = async () => { $("planMsg").textContent = "Asking the AI service..."; $("planAI").disabled = true;
     const r = await api("POST", `/api/plan?mode=${MODE}`, { ...inp, by: by() }), d = r.data || {};
-    if (r.ok && Array.isArray(d.steps) && d.steps.length) { PLAN = { key, source: d.source, steps: d.steps, model: d.model }; planMsg = d.source === "cache" ? "This draft was made earlier for the same figures." : ""; }
+    if (r.ok && Array.isArray(d.steps) && d.steps.length) { PLAN = { key, source: d.source, steps: d.steps, model: d.model }; planMsg = d.source === "cache" ? "This draft was made earlier for the same figures." : d.tried && d.tried.length ? `Answered by a fallback model, ${d.model}, after ${d.tried.join("; ")}.` : ""; }
     else planMsg = r.status === 401 ? "Drafting needs the uploader passcode (see Uploads, roles and history)." : r.status === 429 ? "Too many wrong passcodes. Wait ten minutes." : `The fixed template is shown: ${aiWhy(d.reason)}.`;
     renderPlanBox(context()); };
   $("planOK").onclick = async () => {
