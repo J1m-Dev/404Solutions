@@ -90,14 +90,18 @@
     const now = new Date(), today = `${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
     // first line: what this screen is about, and the date. A stranger must not have to ask "clear of what?"
     $("basis").innerHTML = c.sim ? `<b>What-if drill</b> · invented weeks, not a reading` : c.own ? `<b>Your own lab network</b> · data to the week of ${when}` : REPLAY ? `<b>Replay of the October 2025 outbreak</b> · ${pure ? "real lab data" : "with uploaded weeks, not verified,"} to the week of ${when}` : `<b>Flu in Malaysia</b> · ${today}`;
-    // one plain reason, from the same figures the app's own "Why this step" uses: the newest reading and where it came from
-    $("because").textContent = `In the week of ${lastIso ? dm(lastIso) : wk(a.last)}, ${f1(a.pLast)}% of ${c.own ? "your" : "lab"} samples tested positive for flu (${f1(a.p2)}% two weeks before). Watch line ${f1(c.th.yellow)}%, alert line ${f1(c.th.orange)}%.`;
-    // when and who, in the app's own words (its plan uses the same "when" for each step)
-    const act = actionsOf(c)[0]; const due = a.dataWarning ? "today" : PLAN_WHEN[st.key]; $("doK").textContent = "Do first" + (due && due !== "ongoing" ? " · " + due : ""); $("who").textContent = act[1] ? "By: " + act[1] + "." : "";
-    // the problem in one line, with the way to fix it beside it; the replay, as an answer to "does it work?"
-    $("ageRow").hidden = REPLAY || c.sim || c.own; $("proofRow").hidden = REPLAY;
-    $("age").textContent = c.lag > 0 ? `Published figures are ${c.lag} week${c.lag > 1 ? "s" : ""} old; this step is the reading for the weeks since.` : "Figures are current to this week.";
-    $("planBtn").className = REPLAY ? "quiet" : "go"; $("planBtn").querySelector(".lab").textContent = "See the plan";
+    // the tiles: one question each, a label, a value and one short line, all from the app's own figures
+    const act = actionsOf(c)[0], due = a.dataWarning ? "today" : PLAN_WHEN[st.key];
+    $("doK").textContent = "Do first" + (due && due !== "ongoing" ? " · " + due : ""); $("who").textContent = act[1] ? "By: " + act[1] : "";
+    $("t1").textContent = f1(a.pLast) + "%"; $("because").textContent = `of ${c.own ? "your" : "lab"} samples positive for flu, week of ${lastIso ? dm(lastIso) : wk(a.last)}`;
+    { const v = c.series.slice(-26).map(M.pct), top = Math.max(c.th.orange * 1.2, ...v), y = (q) => (52 - (q / top) * 50).toFixed(1), d = v.map((q, i) => (i ? "L" : "M") + ((i * 200) / (v.length - 1)).toFixed(1) + " " + y(q)).join("");
+      $("spark").innerHTML = `<line x1="0" x2="200" y1="${y(c.th.orange)}" y2="${y(c.th.orange)}" class="al"/><line x1="0" x2="200" y1="${y(c.th.yellow)}" y2="${y(c.th.yellow)}" class="wl"/><path d="${d}"/>`; }
+    $("ageRow").hidden = REPLAY || c.sim || c.own;
+    $("age").textContent = c.lag > 0 ? `${c.lag} week${c.lag > 1 ? "s" : ""} old` : "Current"; $("ageS").textContent = c.lag > 0 ? "Published figures run late. This step reads the weeks since." : "Figures run to this week.";
+    $("recV").textContent = band ? `${band.rises} of ${band.weeks}` : c.rise.off ? "Off" : "Alert rule"; $("recS").textContent = band ? `${STEP[st.band].name} weeks were followed by a rapid rise, in six past years` : c.rise.off ? "The classifier is off for your own series" : "This step is set by the alert rule on the data";
+    $("recV").parentElement.style.setProperty("--p", band ? ((100 * band.rises) / band.weeks).toFixed(1) : 0);
+    $("proofRow").hidden = REPLAY; $("aboutBox").hidden = !REPLAY;
+    $("planBtn").className = "go"; $("planBtn").querySelector(".lab").textContent = "Full plan";
     arc(STEPS.indexOf(st.key));
     $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls

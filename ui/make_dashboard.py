@@ -79,31 +79,55 @@ html = f'''<!doctype html>
 <div id="replayBar" class="replay" hidden></div>
 
 <section class="page on" id="p-now" data-page="now">
-  <div class="read">
-    <p class="when" id="basis"></p>
-    <p class="label"><span id="label"></span> <span id="lvl"></span></p>
-    <p class="top"><span class="flag" id="flag" hidden></span></p>
-    <div class="gauge">
-      <svg id="arc" viewBox="0 0 680 236" aria-hidden="true"></svg>
-      <ol class="steps" id="steps" aria-label="The four early-warning steps"></ol>
-      <div class="big word"><b id="pct"></b></div>
-    </div>
-    <h1><span id="head"></span> <button class="why" id="whyBtn">Why?</button></h1>
-    <p class="because" id="because"></p>
-    <p class="do"><span class="k" id="doK">Do first</span><span id="first"></span> <span class="who" id="who"></span></p>
-    <div class="row">
-      <button class="go" id="planBtn"><span class="arr" aria-hidden="true">→</span><span class="lab">See the plan</span></button>
-      <button class="go" id="rpGo" hidden><span class="arr" aria-hidden="true">→</span><span class="lab" id="rpGoLab"></span><span class="dot" aria-hidden="true"></span></button>
-      <button class="quiet" id="rpAgain" hidden>Start again</button>
-      <button class="quiet" id="rpLeave" hidden>Leave replay</button>
-    </div>
-    <p class="foot" id="ageRow"><span id="age"></span> <button class="link" id="addBtn">Add this week's counts</button></p>
-    <p class="foot" id="proofRow">Does it work? <button class="link" id="rpLink">Watch it catch the October 2025 outbreak</button></p>
-    <div class="strip" id="strip" hidden>
-      <p id="stripNote"></p>
-      <div class="bars" id="bars" role="img"></div>
-      <details class="about"><summary>About this replay</summary><p id="rpAbout"></p></details>
-    </div>
+  <p class="when" id="basis"></p>
+  <p class="label"><span id="label"></span> <span id="lvl"></span></p>
+  <div class="read bento">
+    <article class="tile status">
+      <p class="top"><span class="flag" id="flag" hidden></span></p>
+      <div class="gauge">
+        <svg id="arc" viewBox="0 0 680 236" aria-hidden="true"></svg>
+        <ol class="steps" id="steps" aria-label="The four early-warning steps"></ol>
+        <div class="big word"><b id="pct"></b></div>
+      </div>
+      <h1><span id="head"></span> <button class="why" id="whyBtn">Why?</button></h1>
+    </article>
+    <article class="tile act">
+      <span class="k" id="doK">Do first</span>
+      <b id="first"></b>
+      <span class="s" id="who"></span>
+      <button class="go" id="planBtn"><span class="arr" aria-hidden="true">→</span><span class="lab">Full plan</span></button>
+    </article>
+    <a class="tile" href="#/forecast">
+      <span class="k">Newest reading</span>
+      <b id="t1"></b>
+      <svg id="spark" viewBox="0 0 200 54" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <span class="s" id="because"></span>
+    </a>
+    <article class="tile" id="ageRow">
+      <span class="k">Data age</span>
+      <b id="age"></b>
+      <span class="s" id="ageS"></span>
+      <button class="link" id="addBtn">Add this week's counts</button>
+    </article>
+    <a class="tile rel" href="#/trust">
+      <span class="k">How reliable</span>
+      <b id="recV"></b>
+      <span class="s" id="recS"></span>
+    </a>
+    <article class="tile play">
+      <span class="k">Does it work?</span>
+      <div id="proofRow"><b>October 2025</b><span class="s">The real outbreak, one week at a time.</span><button class="link" id="rpLink">Watch it catch the outbreak</button></div>
+      <div class="strip" id="strip" hidden>
+        <p id="stripNote"></p>
+        <div class="bars" id="bars" role="img"></div>
+      </div>
+      <div class="row">
+        <button class="go" id="rpGo" hidden><span class="arr" aria-hidden="true">→</span><span class="lab" id="rpGoLab"></span></button>
+        <button class="quiet" id="rpAgain" hidden>Start again</button>
+        <button class="quiet" id="rpLeave" hidden>Leave</button>
+      </div>
+      <details class="about" id="aboutBox" hidden><summary>About this replay</summary><p id="rpAbout"></p></details>
+    </article>
   </div>
 </section>
 {page("forecast", "The signal", "The share of flu tests that came back positive, week by week.", forecast)}
