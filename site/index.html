@@ -11,7 +11,7 @@
 <body>
 <header class="top">
   <div class="brand">FluSentinel <span>influenza early warning for Selangor planners</span></div>
-  <nav><a href="#stakes">Why</a><a href="#now">Now</a><a href="#sim">What-if</a><a href="#forecast">Forecast</a><a href="#selangor">Selangor</a><a href="#dengue">Dengue</a><a href="#proof">Proof</a></nav>
+  <nav><a href="#stakes">Why</a><a href="#now">Now</a><a href="#history">History</a><a href="#sim">What-if</a><a href="#forecast">Forecast</a><a href="#selangor">Selangor</a><a href="#states">All states</a><a href="#dengue">Dengue (historical)</a><a href="#proof">Proof</a></nav>
   <button id="uploadBtn" class="primary">Upload newest data</button>
 </header>
 <div id="stamp" class="stamp"></div>
@@ -33,6 +33,17 @@
     <h3>Proposed action <span class="chip exp">Proposal</span></h3>
     <div id="action"></div>
   </div>
+</section>
+
+<section id="history" class="card">
+  <h2>Upload history <span class="chip ai" id="roleChip"></span></h2>
+  <p class="note" id="histNote"></p>
+  <div class="histctl">
+    <label>Your name or role, shown beside your uploads <input type="text" id="byIn" maxlength="60" placeholder="for example: District officer, Klang"></label>
+    <label id="passRow" hidden>Passcode <input type="password" id="passIn" autocomplete="off"> <button type="button" id="passBtn">Use passcode</button></label>
+  </div>
+  <div id="histBody"></div>
+  <p class="err" id="histMsg"></p>
 </section>
 
 <section id="sim" class="card">
@@ -69,7 +80,7 @@
   <p class="note" id="mapNote"></p>
   <div class="grid2">
     <div>
-      <label>Map shows <select id="mapMode"><option value="hot">Hotspots: where cases and clusters are</option><option value="pop">Population (exposure proxy)</option></select></label>
+      <label>Map shows <select id="mapMode"><option value="hot">Hotspots: where cases and clusters are</option><option value="pop">Population (exposure proxy)</option><option value="pupils">School pupils (exposure proxy)</option></select></label>
       <div class="toggles" id="layerToggles">
         <label class="tog"><input type="checkbox" id="ly_shade" checked><span class="sw"></span>District shading</label>
         <label class="tog"><input type="checkbox" id="ly_hot" checked><span class="sw"></span><i class="dot" style="background:#e0393f"></i>Hotspot circles</label>
@@ -135,8 +146,20 @@
   </ul>
 </section>
 
+<section id="states" class="card">
+  <h2>All states <span class="chip real">Real data</span> <span class="chip est">Projections estimated</span></h2>
+  <p class="note" id="stNote"></p>
+  <div class="histctl">
+    <label>Disease <select id="stDisease"><option value="dengue">Dengue</option><option value="flu">Influenza</option></select></label>
+    <label id="stViewRow">View <select id="stView"><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 2009 to 2023</option></select></label>
+  </div>
+  <div class="toggles" id="stToggles"></div>
+  <div class="chartbox"><canvas id="stChart"></canvas></div>
+  <div id="stBody"></div>
+</section>
+
 <section id="dengue" class="card">
-  <h2>Dengue (second disease) <span class="chip real">Real data</span> <span class="chip est">Estimated</span></h2>
+  <h2>Dengue: historical second-disease experiment <span class="chip real">Real data to 2022</span> <span class="chip est">Estimated</span></h2>
   <p class="note" id="dengueNote"></p>
   <div class="chartbox"><canvas id="dengueChart"></canvas></div>
   <div id="dengueBody"></div>

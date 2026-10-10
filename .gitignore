@@ -6,3 +6,4 @@ __pycache__/
 data/store.json
 data/raw/opendengue/Temporal_extract_V1_3.csv
 data/raw/opendengue/*.zip
+!.env.example

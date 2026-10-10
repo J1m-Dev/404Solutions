@@ -7,6 +7,7 @@ import numpy as np
 import core as c
 
 SITE = c.ROOT / "site"
+SCHOOL_DATE = "2025-06-30"
 REPLAY_CUT = (2025, 37)  # replay demo: public data ends here, later weeks arrive by upload
 DISTRICTS = {"Gombak": "Gombak", "Klang": "Klang", "Kuala Langat": "Kuala Langat",
              "Kuala Selangor": "Kuala Selangor", "Petaling": "Petaling", "Sabak Bernam": "Sabak Bernam",
@@ -141,13 +142,24 @@ def main():
     for r in csv.DictReader(open(c.ROOT / "data/raw/population_district.csv", encoding="utf-8")):
         if r["state"] == "Selangor" and r["sex"] == "both" and r["age"] == "overall" and r["ethnicity"] == "overall":
             pop[r["district"]] = (r["date"], float(r["population"]))
+    # Government schools and pupils per district (Ministry of Education records via OpenDOSM, 30 June 2025).
+    sch, pup = {}, {}
+    for r in csv.DictReader(open(c.ROOT / "data/raw/schools_district.csv", encoding="utf-8-sig")):
+        if r["state"] == "Selangor" and r["date"] == SCHOOL_DATE and r["stage"] in ("primary", "secondary"):
+            sch[r["district"]] = sch.get(r["district"], 0) + int(float(r["schools"]))
+    for r in csv.DictReader(open(c.ROOT / "data/raw/enrolment_school_district.csv", encoding="utf-8-sig")):
+        if r["state"] == "Selangor" and r["date"] == SCHOOL_DATE and r["sex"] == "both" and r["stage"] in ("primary", "secondary"):
+            dn = "Petaling" if r["district"].startswith("Petaling") else r["district"]  # Petaling is reported as two education districts
+            pup[dn] = pup.get(dn, 0) + int(float(r["students"]))
     g = json.load(open(c.ROOT / "data/raw/mys_adm2.geojson", encoding="utf-8"))
     feats = []
     for f in g["features"]:
         nm = DISTRICTS.get(f["properties"]["shapeName"])
         if nm:
             d = pop.get(nm) or pop.get(f["properties"]["shapeName"]) or (None, None)
+            sn = f["properties"]["shapeName"]
             f["properties"] = {"name": nm, "pop_thousand": d[1], "pop_date": d[0],
+                               "schools": sch.get(nm, sch.get(sn)), "pupils": pup.get(nm, pup.get(sn)), "schools_date": SCHOOL_DATE,
                                "published_cases_w42_2025": PUBLISHED_DISTRICT_CASES.get(nm)}
             feats.append(f)
     c.dump({"type": "FeatureCollection", "features": feats}, SITE / "data" / "districts.geojson")
@@ -167,7 +179,8 @@ def main():
             if key and not any(h["name"] == key for h in hosp):
                 hosp.append({"name": key, "lat": f["lat"], "lon": f["lon"], "beds_simulated": HOSPITALS[key], "approximate": bool(f.get("approximate"))})
     c.dump(hosp, SITE / "data" / "hospitals.json")
-    print("districts", [(f["properties"]["name"], f["properties"]["pop_thousand"]) for f in feats])
+    print("districts", [(f["properties"]["name"], f["properties"]["pop_thousand"], f["properties"]["schools"], f["properties"]["pupils"]) for f in feats])
+    print("schools total", sum(f["properties"]["schools"] for f in feats), "of", sch.get("All Districts"), "| pupils total", sum(f["properties"]["pupils"] for f in feats), "of", pup.get("All Districts"))
     print("hospitals", len(hosp), sorted(set(HOSPITALS) - {h["name"] for h in hosp}))
 
     # templates and demo files

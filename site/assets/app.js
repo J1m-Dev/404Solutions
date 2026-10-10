@@ -28,7 +28,7 @@ const SCHEMA = {
   beds: { cols: ["hospital", "beds_available"], tpl: "template_beds.csv" },
   clusterlist: { cols: ["name", "district", "cases", "setting", "lat", "lon"], tpl: "template_cluster_list.csv" },
 };
-let D, GEO, HOSP, FAC, DENGUE, STATE, chart, map, geoLayer, hospLayer, facDone = false, pending = [];
+let D, GEO, HOSP, FAC, DENGUE, STATES, STATE, chart, map, geoLayer, hospLayer, facDone = false, pending = [];
 // What-if simulator. Factor effects are the team's own assumptions (percentage points of weekly growth), not estimates.
 const SIM = { on: false, week: 0, base: 15, weeks: 5, school: true, strain: 50, vax: 10, travel: false, rain: false };
 const SIM_EFFECT = { schoolIn: 8, schoolOut: -8, strainPerPoint: 0.2, vaxPerPoint: -0.25, travel: 6, rain: 3 };
@@ -54,27 +54,41 @@ const LAYERS = { shade: true, hot: true, government: true, private: true, clinic
 const FACG = {};
 let SERVER = true; // false on static hosting: uploads then stay in this browser only
 
+// The server, when present, keeps an upload history with passcode roles. On static hosting the same
+// history lives in this browser only, and there are no passcodes.
+const PASS = () => sessionStorage.getItem("fs_pass") || "";
 async function api(method, path, body) {
-  if (!SERVER) return null;
+  if (!SERVER) return { ok: false, status: 0, data: null };
   try {
-    const r = await fetch(path, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
-    if (!r.ok) throw 0;
-    return await r.json();
-  } catch { return null; }
+    const r = await fetch(path, { method, headers: { "Content-Type": "application/json", "x-passcode": PASS() }, body: body ? JSON.stringify(body) : undefined });
+    let data = null; try { data = await r.json(); } catch {}
+    return { ok: r.ok, status: r.status, data };
+  } catch { return { ok: false, status: 0, data: null }; }
 }
-// Falls back to this browser's storage when the API is not reachable (static hosting).
-const emptyState = () => ({ lab: [], ili: [], clusters: [], beds: [], clusterlist: [], own: false, stamp: null });
+const emptyState = () => ({ lab: [], ili: [], clusters: [], beds: [], clusterlist: [], own: false, stamp: null, log: [], auth: { required: false, role: "admin" } });
+const localLog = () => JSON.parse(localStorage.getItem("fs_log_" + MODE) || "[]");
+function useLocal(log) {
+  localStorage.setItem("fs_log_" + MODE, JSON.stringify(log));
+  STATE = { ...emptyState(), ...M.reduceLog(log), log: log.map(({ rows, ...e }) => ({ ...e, n: rows.length })) };
+}
 async function loadState() {
-  const remote = await api("GET", `/api/state?mode=${MODE}`);
-  if (!remote) SERVER = false;
-  STATE = { ...emptyState(), ...(remote || JSON.parse(localStorage.getItem("fs_" + MODE) || "null") || {}) };
+  const r = await api("GET", `/api/state?mode=${MODE}`);
+  if (r.ok) STATE = { ...emptyState(), ...r.data }; else { SERVER = false; useLocal(localLog()); }
 }
+const denied = (r) => (r.status === 401 ? "That passcode does not allow this." : r.status === 429 ? "Too many wrong passcodes. Wait ten minutes." : "The server did not accept that.");
+// Returns an error message, or "" when saved.
 async function saveUpload(type, rows, own) {
-  const s = await api("POST", `/api/state?mode=${MODE}`, { type, rows, own: !!own });
-  if (s) STATE = { ...emptyState(), ...s };
-  else { if (type === "lab" && own) { STATE.lab = rows; STATE.own = true; }
-    else STATE[type] = type === "beds" || type === "clusterlist" ? rows : STATE[type].concat(rows);
-    STATE.stamp = new Date().toISOString(); localStorage.setItem("fs_" + MODE, JSON.stringify(STATE)); }
+  const by = localStorage.getItem("fs_by") || "";
+  if (!SERVER) { useLocal(localLog().concat([{ id: Date.now() + "-" + Math.random().toString(16).slice(2, 8), at: new Date().toISOString(), by: by || "this browser", role: "local", type, own: !!own, rows }])); return ""; }
+  const r = await api("POST", `/api/state?mode=${MODE}`, { type, rows, own: !!own, by });
+  if (r.ok) { STATE = { ...emptyState(), ...r.data }; return ""; }
+  return denied(r);
+}
+async function setUndone(id, undone) {
+  let msg = "";
+  if (!SERVER) useLocal(localLog().map((e) => (e.id === id ? { ...e, undone } : e)));
+  else { const r = await api("POST", `/api/undo?mode=${MODE}`, { id, restore: !undone }); if (r.ok) STATE = { ...emptyState(), ...r.data }; else msg = denied(r); }
+  render(); $("histMsg").textContent = msg;
 }
 // Alert lines for an uploaded own-network series: the same formula as the national ones, from the uploader's
 // own weeks (leaving out the newest four). Under a year of history, the national lines are used and flagged.
@@ -85,10 +99,12 @@ function ownThresholds(rows) {
   const dev = p.map((v) => Math.abs(v - med)).sort((a, b) => a - b), sd = 1.4826 * dev[Math.floor(dev.length / 2)];
   return { median: med, robust_sd: sd, yellow: med + sd, orange: med + 2 * sd, calibrated: true, weeks: rows.length };
 }
+// Reset marks every upload as undone. Nothing is erased, so it can be seen and restored in the history.
 async function resetState() {
-  STATE = (await api("DELETE", `/api/state?mode=${MODE}`)) || emptyState();
-  localStorage.removeItem("fs_" + MODE);
-  render();
+  let msg = "";
+  if (!SERVER) useLocal(localLog().map((e) => ({ ...e, undone: true })));
+  else { const r = await api("DELETE", `/api/state?mode=${MODE}`); if (r.ok) STATE = { ...emptyState(), ...r.data }; else msg = r.status === 401 ? "Resetting everything needs the admin passcode. Single uploads can still be undone below." : denied(r); }
+  render(); $("histMsg").textContent = msg;
 }
 
 function context(k) {
@@ -141,7 +157,7 @@ async function renderSummary(c) {
   $("sumEn").textContent = t.en; $("sumBm").textContent = t.bm; $("sumChip").textContent = "Template";
   if (c.sim || !$("aiOn").checked) return; // simulated figures are never sent; AI wording is opt-in
   $("sumChip").textContent = "Template (asking the AI service...)";
-  const r = await api("POST", "/api/summary", fg);
+  const r = (await api("POST", "/api/summary", fg)).data;
   if (r && r.en && r.bm && numbersOk(r.en + " " + r.bm, fg) && JSON.stringify(figures(context())) === JSON.stringify(fg)) {
     $("sumEn").textContent = r.en; $("sumBm").textContent = r.bm; $("sumChip").textContent = `AI-written (${r.model}) from the figures on this page`;
   } else $("sumChip").textContent = r && r.en ? "Template (AI text rejected: it used a number not in the figures)" : "Template (AI wording unavailable)";
@@ -190,7 +206,7 @@ function renderStamp(c) {
   if ($("playNext")) $("playNext").onclick = async () => {
     const wb = XLSX.read(await (await fetch("templates/demo_real_replay_2025_W38_W41.csv")).text(), { type: "string" });
     const { errs, out } = validate("lab", XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" }));
-    if (!errs.length) { await saveUpload("lab", out); render(); }
+    if (!errs.length) { const m = await saveUpload("lab", out); render(); $("histMsg").textContent = m; }
   };
 }
 
@@ -229,7 +245,7 @@ const hav = (a, b) => { const R = 6371, r = Math.PI / 180, dl = (b[0] - a[0]) * 
 function districts() {
   const tot = GEO.features.reduce((s, f) => s + f.properties.pop_thousand, 0);
   return GEO.features.map((f) => { const c = L.geoJSON(f).getBounds().getCenter();
-    return { name: f.properties.name, pop: f.properties.pop_thousand, share: f.properties.pop_thousand / tot, c: [c.lat, c.lng], published: f.properties.published_cases_w42_2025 }; });
+    return { name: f.properties.name, pop: f.properties.pop_thousand, share: f.properties.pop_thousand / tot, c: [c.lat, c.lng], published: f.properties.published_cases_w42_2025, schools: f.properties.schools, pupils: f.properties.pupils }; });
 }
 // Hotspot source, best available first: an uploaded cluster list, uploaded district counts, then the published 2025 district totals.
 function hotspotData() {
@@ -259,14 +275,18 @@ function renderMap(c) {
   if (geoLayer) geoLayer.remove(); if (hospLayer) hospLayer.remove();
   const hot = $("mapMode").value === "hot", H = hotspotData(), ds = H.ds;
   const near3 = (d) => HOSP.map((h) => ({ h, km: hav(d.c, [h.lat, h.lon]) })).sort((a, b) => a.km - b.km).slice(0, 3).map((x) => `${x.h.name}: ${Math.round(x.km)} km`).join("<br>");
+  const school = (d) => `Government schools: ${d.schools}; pupils: ${d.pupils.toLocaleString()} <i>Real data, 2025</i>`;
   if (!hot) {
-    const mx = Math.max(...ds.map((d) => d.share));
+    const byPupils = $("mapMode").value === "pupils", val = (d) => (byPupils ? d.pupils : d.pop), mx = Math.max(...ds.map(val)), tot = ds.reduce((a, d) => a + val(d), 0);
     $("mapChip").className = "chip exp"; $("mapChip").textContent = "Exploratory";
-    $("mapNote").textContent = "Shading shows each district's share of Selangor's population: an exposure proxy, not a forecast of district cases. No public district-level influenza series exists.";
-    geoLayer = L.geoJSON(GEO, { style: (f) => ({ color: "#555", weight: 1, fillColor: "#6d3a9c", fillOpacity: LAYERS.shade ? 0.08 + 0.55 * (ds.find((x) => x.name === f.properties.name).share / mx) : 0 }),
+    $("mapNote").textContent = byPupils
+      ? "Shading shows each district's share of Selangor's government-school pupils (Ministry of Education records, 30 June 2025). Most clusters in the 2025 surge were in schools, so this is a second exposure proxy. It is real data about schools, not a forecast of district cases."
+      : "Shading shows each district's share of Selangor's population: an exposure proxy, not a forecast of district cases. No public district-level influenza series exists.";
+    geoLayer = L.geoJSON(GEO, { style: (f) => ({ color: "#555", weight: 1, fillColor: byPupils ? "#1d6fa5" : "#6d3a9c", fillOpacity: LAYERS.shade ? 0.08 + 0.55 * (val(ds.find((x) => x.name === f.properties.name)) / mx) : 0 }),
       onEachFeature: (f, layer) => { const d = ds.find((x) => x.name === f.properties.name);
-        layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand (${Math.round(d.share * 100)}% of Selangor) <i>Real data</i><br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } }).addTo(map);
-    $("hotRank").innerHTML = "";
+        layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand (${Math.round(d.share * 100)}% of Selangor) <i>Real data</i><br>${school(d)}<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } }).addTo(map);
+    const rank = [...ds].sort((a, b) => val(b) - val(a));
+    $("hotRank").innerHTML = `<h3>Districts by ${byPupils ? "pupils" : "population"} <span class="chip real">Real data</span></h3><table><tr><th>District</th><th class="num">Population (thousand)</th><th class="num">Schools</th><th class="num">Pupils</th><th class="num">Share</th></tr>${rank.map((d) => `<tr><td>${d.name}</td><td class="num">${Math.round(d.pop)}</td><td class="num">${d.schools}</td><td class="num">${d.pupils.toLocaleString()}</td><td class="num">${Math.round((100 * val(d)) / tot)}%</td></tr>`).join("")}</table>`;
     return facilityLayers();
   }
   const have = ds.filter((d) => d.has), mxRate = Math.max(...have.map((d) => d.rate), 1e-9), mxVal = Math.max(...have.map((d) => d.value), 1);
@@ -275,7 +295,7 @@ function renderMap(c) {
       if (!LAYERS.shade) return { color: "#555", weight: 1, fillOpacity: 0 };
       return d.has ? { color: "#555", weight: 1, fillColor: "#c0282d", fillOpacity: 0.06 + 0.6 * (d.rate / mxRate) } : { color: "#777", weight: 1, dashArray: "4", fillColor: "#9aa7b3", fillOpacity: 0.25 }; },
     onEachFeature: (f, layer) => { const d = ds.find((x) => x.name === f.properties.name);
-      layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand<br>` + (d.has ? `${d.value} ${H.unit}${H.kind === "list" ? `, ${d.cases} cases` : ""}; <b>${f1(d.rate)} per 100,000 people</b>` : "No figure published for this district") + `<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } }).addTo(map);
+      layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand<br>${school(d)}<br>` + (d.has ? `${d.value} ${H.unit}${H.kind === "list" ? `, ${d.cases} cases` : ""}; <b>${f1(d.rate)} per 100,000 people</b>` : "No figure published for this district") + `<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } }).addTo(map);
   const marks = [], pts = H.points.filter((r) => r.lat != null && r.lon != null).sort((a, b) => b.cases - a.cases);
   if (H.kind === "list") {
     pts.forEach((r, i) => { const m = L.circleMarker([r.lat, r.lon], { radius: 4 + 2.2 * Math.sqrt(r.cases), color: i === 0 ? "#111" : "#8f1d21", weight: i === 0 ? 3 : 1, fillColor: "#e0393f", fillOpacity: 0.55 })
@@ -395,12 +415,60 @@ function renderProof() {
   <ul class="why"><li>District-level influenza activity. No public data exists for it.</li><li>Whether the thresholds fit your own data. They were learned from the national sentinel series; an uploaded series from another lab network is uncalibrated.</li><li>Real hospital capacity, unless a planner uploads it.</li><li>Case counts. Positivity is a share of tested samples.</li><li>Whether uploaded figures are correct. They are marked unverified.</li></ul>`;
 }
 
+// ---------- all states: one switchable line per state, plus a national layer ----------
+const ST = { disease: "dengue", view: "monthly", on: {}, national: true };
+const ST_COL = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#ad494a", "#637939", "#7b4173", "#3182bd", "#e6550d"];
+let stChart;
+function renderStates() {
+  const S = STATES; if (!S) { $("states").hidden = true; return; }
+  const flu = ST.disease === "flu", src = flu ? S.flu.weekly : S.dengue[ST.view], monthly = !flu && ST.view === "monthly";
+  const names = flu ? [] : Object.keys(src.states);
+  names.forEach((n) => { if (!(n in ST.on)) ST.on[n] = true; });
+  $("stViewRow").hidden = flu;
+  $("stNote").textContent = flu ? `Source: ${S.flu.source}. ${S.flu.note}` : `Source: ${S.dengue.source}. ${src.note}`;
+  $("stToggles").innerHTML = names.map((n, i) => `<label class="tog"><input type="checkbox" data-st="${n}" ${ST.on[n] ? "checked" : ""}><span class="sw"></span><i class="dot" style="background:${ST_COL[i % ST_COL.length]}"></i><span>${n}</span></label>`).join("") +
+    `<label class="tog"><input type="checkbox" data-st="__nat" ${ST.national ? "checked" : ""}><span class="sw"></span><i class="dot" style="background:#111"></i><span><b>${src.national_label}</b></span></label>` +
+    (names.length ? `<button type="button" data-all="1">All states on</button><button type="button" data-all="0">All states off</button>` : "");
+  const models = monthly ? Object.fromEntries(S.dengue.models.map((m) => [m.state, m])) : {};
+  const extra = monthly ? ["2011-01", "2011-02", "2011-03"] : [];
+  const labels = src.labels.map(String).concat(extra), n = src.labels.length, pad = (a) => a.concat(extra.map(() => null));
+  const ds = [];
+  names.forEach((nm, i) => { if (!ST.on[nm]) return; const col = ST_COL[i % ST_COL.length];
+    ds.push({ label: nm, data: pad(src.states[nm]), borderColor: col, backgroundColor: col, borderWidth: 1.5, pointRadius: monthly ? 0 : 3, yAxisID: "y", spanGaps: false });
+    if (models[nm]) ds.push({ label: "", data: Array(n - 1).fill(null).concat([src.states[nm][n - 1]], models[nm].projection), borderColor: col, borderDash: [4, 3], borderWidth: 1.5, pointRadius: 2, yAxisID: "y" }); });
+  if (ST.national) { ds.push({ label: src.national_label, data: pad(src.national), borderColor: "#111", backgroundColor: "#111", borderWidth: 2.5, pointRadius: flu || monthly ? 0 : 3, yAxisID: flu ? "y" : "y2", spanGaps: false });
+    const all = models["All ten states together"]; if (all) ds.push({ label: "", data: Array(n - 1).fill(null).concat([src.national[n - 1]], all.projection), borderColor: "#111", borderDash: [4, 3], borderWidth: 2, pointRadius: 2, yAxisID: "y2" }); }
+  if (stChart) stChart.destroy();
+  const scales = { x: { ticks: { maxTicksLimit: 14 } }, y: { beginAtZero: true, title: { display: true, text: flu ? "% of sentinel samples positive" : `Reported dengue cases per ${monthly ? "month" : "year"}, each state` } } };
+  if (!flu) scales.y2 = { position: "right", beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: monthly ? "All reporting states together" : "National total" }, display: ST.national };
+  stChart = new Chart($("stChart"), { type: "line", data: { labels, datasets: ds }, options: { maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales } });
+
+  if (flu) { $("stBody").innerHTML = `<h3>Published state snapshots <span class="chip real">Real data</span></h3>
+    <p class="note">Week 40 of 2025, from a Ministry of Health statement reported by Bernama on 9 Oct 2025. The statement named only the five highest states for each measure, so a blank means "not among the five named", not zero.</p>
+    <table><tr><th>State</th><th class="num">Clusters in week 40</th><th class="num">ILI consultation rate</th></tr>${S.flu.snapshots.map((r) => `<tr><td>${r.state}</td><td class="num">${r.clusters_week_40_2025 ?? ""}</td><td class="num">${r.ili_rate_percent_week_40_2025 == null ? "" : r.ili_rate_percent_week_40_2025 + "%"}</td></tr>`).join("")}</table>
+    <p class="note">With no state series, no state model can be trained or tested for influenza. The national model and its results are in the Proof section.</p>`; return; }
+  if (!monthly) { $("stBody").innerHTML = `<p class="note">Yearly figures are too few to model (eleven points per state). Switch to the monthly view for the state models. Dashed lines there are projections.</p>`; return; }
+  const cell = (r) => (r.best === "last_value" ? `<td class="fail">No model beat last month</td>` : `<td class="pass">${r.best.replace(/_/g, " ")}, ${r.gain_vs_last_value_pct}% lower error</td>`);
+  const wins = (k) => S.dengue.models.filter((m) => m.state !== "All ten states together" && m.results[k].best !== "last_value").length, tot = S.dengue.models.length - 1;
+  $("stBody").innerHTML = `<h3>The same model comparison, state by state <span class="chip real">Measured</span></h3>
+    <p class="note">For each state: the earliest 70% of months train the models, the latest 30% test them. Each cell names the method with the lowest error and how much it beat "same as last month". Settings are the ones used for the weekly models; nothing was tuned per state. Dashed lines on the chart project three months past the data (early 2011) and cannot be checked.</p>
+    <table><tr><th>State</th><th>Months</th><th>Test period</th><th>1 month ahead</th><th>2 months ahead</th><th>3 months ahead</th></tr>
+    ${S.dengue.models.map((m) => `<tr><td>${m.state}</td><td>${m.months}</td><td>${m.test_start} to ${m.test_end}</td>${m.results.map(cell).join("")}</tr>`).join("")}</table>
+    <p class="note">A model beat "same as last month" in ${wins(0)} of ${tot} states one month ahead, ${wins(1)} of ${tot} two months ahead and ${wins(2)} of ${tot} three months ahead. Selangor is the exception at every horizon. Three states with monthly data (Kelantan, Sabah, Sarawak) have gaps in their series and were not modelled. This data ends in 2010, so it shows the method working on other states, not anything about dengue today.</p>`;
+}
+function setupStates() {
+  $("stDisease").onchange = (e) => { ST.disease = e.target.value; renderStates(); };
+  $("stView").onchange = (e) => { ST.view = e.target.value; ST.on = {}; renderStates(); };
+  $("stToggles").onchange = (e) => { const k = e.target.dataset.st; if (!k) return; if (k === "__nat") ST.national = e.target.checked; else ST.on[k] = e.target.checked; renderStates(); };
+  $("stToggles").onclick = (e) => { const b = e.target.closest("button[data-all]"); if (!b) return; for (const k in ST.on) ST.on[k] = b.dataset.all === "1"; renderStates(); };
+}
+
 function renderDengue() {
   const d = DENGUE; if (!d) { $("dengue").hidden = true; return; }
   const n = d.series.length, k = d.split_index, ex = d.extrapolation;
   const labels = d.series.map((r) => r[0]).concat(ex.map((e) => e.start));
   const vals = d.series.map((r) => r[1]);
-  $("dengueNote").textContent = `Weekly reported dengue cases, Malaysia, ${d.series[0][0]} to ${d.series[n - 1][0]} (${n} weeks). Source: ${d.source}. This series ends in 2022, so it demonstrates the method on past data and says nothing about dengue today. Some years count confirmed cases and others all reported cases.`;
+  $("dengueNote").textContent = `Weekly reported dengue cases, Malaysia, ${d.series[0][0]} to ${d.series[n - 1][0]} (${n} weeks). Source: ${d.source}. This is a historical experiment: the series ends in December 2022, so it shows the method on past data and says nothing about dengue today. Some years count confirmed cases and others all reported cases.`;
   new Chart($("dengueChart"), { type: "line", data: { labels, datasets: [
     { label: "Training weeks (earliest 70%)", data: vals.map((v, i) => (i < k ? v : null)), borderColor: "#16202a", pointRadius: 0, borderWidth: 1.5 },
     { label: "Test weeks (latest 30%)", data: vals.map((v, i) => (i >= k - 1 ? v : null)), borderColor: "#2a5aa8", pointRadius: 0, borderWidth: 1.5 },
@@ -442,7 +510,24 @@ function setupSim() {
   bind("simSchool", "school", "check"); bind("simTravel", "travel", "check"); bind("simRain", "rain", "check");
 }
 
-function render() { const c = context(); renderStamp(c); renderSim(c); renderAlert(c); renderChart(c); renderMap(c); renderPlan(c); renderSummary(c); }
+const TYPE_LABEL = { lab: "Lab counts", ili: "ILI rate", clusters: "District cluster counts", clusterlist: "Cluster list", beds: "Hospital beds" };
+function renderHistory() {
+  const a = STATE.auth || {}, log = [...(STATE.log || [])].reverse();
+  $("roleChip").textContent = !SERVER ? "Kept in this browser only" : !a.required ? "Open mode: no passcode set" : `Your role: ${a.role}`;
+  $("histNote").textContent = !SERVER ? "This hosted copy has no server, so uploads and this history stay in your browser. Undo and restore work the same way."
+    : a.required ? "Anyone can view. Uploading or undoing an upload needs the uploader passcode; restoring or resetting everything needs the admin passcode. Nothing is ever erased: an undone upload stays in this list."
+    : "No passcode is set on this server, so anyone who can reach it can upload. Set passcodes in .env.local before sharing it. Nothing is ever erased: an undone upload stays in this list.";
+  $("passRow").hidden = !(SERVER && a.required);
+  $("byIn").value = localStorage.getItem("fs_by") || "";
+  $("histBody").innerHTML = log.length ? `<table><tr><th>When</th><th>Who</th><th>What</th><th class="num">Rows</th><th>Status</th><th></th></tr>${log.map((e) => `<tr class="${e.undone ? "undone" : ""}"><td>${new Date(e.at).toLocaleString()}</td><td>${String(e.by).replace(/[<>&]/g, "")}${e.role && e.role !== "local" ? ` (${e.role})` : ""}</td><td>${TYPE_LABEL[e.type] || e.type}${e.own ? ", own lab network" : ""}</td><td class="num">${e.n}</td><td>${e.undone ? "Undone" : "In use"}</td><td><button data-id="${e.id}" data-undo="${e.undone ? 0 : 1}">${e.undone ? "Restore" : "Undo"}</button></td></tr>`).join("")}</table>` : '<p class="note">No uploads yet.</p>';
+}
+function setupHistory() {
+  $("histBody").onclick = (e) => { const b = e.target.closest("button[data-id]"); if (b) setUndone(b.dataset.id, b.dataset.undo === "1"); };
+  $("byIn").onchange = (e) => localStorage.setItem("fs_by", e.target.value.trim().slice(0, 60));
+  $("passBtn").onclick = async () => { sessionStorage.setItem("fs_pass", $("passIn").value); $("passIn").value = ""; await loadState(); render(); $("histMsg").textContent = STATE.auth.role === "viewer" ? "That passcode was not recognised." : ""; };
+}
+
+function render() { const c = context(); renderStamp(c); renderHistory(); renderSim(c); renderAlert(c); renderChart(c); renderMap(c); renderPlan(c); renderSummary(c); }
 
 // ---------- upload ----------
 function manualInputs() { const t = $("utype").value;
@@ -531,7 +616,9 @@ function setupUpload() {
     const key = JSON.stringify(pending);
     if (warns.length && setupUpload.ack !== key) { setupUpload.ack = key; $("uerr").textContent = "Please check these unusual values:\n" + warns.join("\n") + "\nIf they are right, press Confirm again."; return; }
     setupUpload.ack = null; const ownNew = t === "lab" && $("ownSeries").checked;
-    await saveUpload(t, out, ownNew); render();
+    const failed = await saveUpload(t, out, ownNew);
+    if (failed) { $("uerr").textContent = failed + " Enter a passcode under Upload history."; return; }
+    render();
     if (setupUpload.nextFile()) return;
     $("dlg").close(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
@@ -540,7 +627,8 @@ function setupUpload() {
   [D, GEO, HOSP] = await Promise.all(["data/site.json", "data/districts.geojson", "data/hospitals.json"].map((u) => fetch(u).then((r) => r.json())));
   FAC = await fetch("data/facilities.json").then((r) => r.json()).catch(() => HOSP.map((h) => ({ ...h, kind: "government" })));
   DENGUE = await fetch("data/dengue.json").then((r) => r.json()).catch(() => null);
-  await loadState(); setupUpload(); setupSim(); setupLayers(); renderProof(); renderDengue();
+  STATES = await fetch("data/states.json").then((r) => r.json()).catch(() => null);
+  await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupStates(); renderStates(); renderProof(); renderDengue();
   $("adm").oninput = $("share").oninput = () => renderPlan(context());
   $("mapMode").onchange = () => renderMap(context());
   $("aiOn").disabled = !SERVER; $("aiOn").onchange = () => renderSummary(context());

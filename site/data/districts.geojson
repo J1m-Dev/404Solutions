@@ -7,6 +7,9 @@
     "name": "Sabak Bernam",
     "pop_thousand": 110.9,
     "pop_date": "2026-01-01",
+    "schools": 64,
+    "pupils": 20669,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": null
    },
    "geometry": {
@@ -583,6 +586,9 @@
     "name": "Kuala Selangor",
     "pop_thousand": 305.0,
     "pop_date": "2026-01-01",
+    "schools": 90,
+    "pupils": 56407,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": null
    },
    "geometry": {
@@ -831,6 +837,9 @@
     "name": "Hulu Selangor",
     "pop_thousand": 261.2,
     "pop_date": "2026-01-01",
+    "schools": 68,
+    "pupils": 42886,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": null
    },
    "geometry": {
@@ -1303,6 +1312,9 @@
     "name": "Sepang",
     "pop_thousand": 354.1,
     "pop_date": "2026-01-01",
+    "schools": 53,
+    "pupils": 53873,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": null
    },
    "geometry": {
@@ -1579,6 +1591,9 @@
     "name": "Klang",
     "pop_thousand": 1191.2,
     "pop_date": "2026-01-01",
+    "schools": 131,
+    "pupils": 155974,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": 291
    },
    "geometry": {
@@ -2425,6 +2440,9 @@
     "name": "Kuala Langat",
     "pop_thousand": 331.6,
     "pop_date": "2026-01-01",
+    "schools": 76,
+    "pupils": 59630,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": null
    },
    "geometry": {
@@ -2773,6 +2791,9 @@
     "name": "Petaling",
     "pop_thousand": 2382.0,
     "pop_date": "2026-01-01",
+    "schools": 227,
+    "pupils": 249534,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": 534
    },
    "geometry": {
@@ -3313,6 +3334,9 @@
     "name": "Gombak",
     "pop_thousand": 991.9,
     "pop_date": "2026-01-01",
+    "schools": 104,
+    "pupils": 126317,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": 341
    },
    "geometry": {
@@ -3937,6 +3961,9 @@
     "name": "Hulu Langat",
     "pop_thousand": 1526.4,
     "pop_date": "2026-01-01",
+    "schools": 132,
+    "pupils": 175010,
+    "schools_date": "2025-06-30",
     "published_cases_w42_2025": 487
    },
    "geometry": {

@@ -75,3 +75,7 @@ label.row { display:flex; align-items:center; gap:8px; }
 .tog input:checked + .sw { background:var(--brand); } .tog input:checked + .sw::after { left:15px; }
 .tog input:focus-visible + .sw { outline:2px solid var(--ink); outline-offset:2px; }
 .tog .dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+.histctl { display:flex; flex-wrap:wrap; gap:8px 20px; margin:6px 0 10px; } .histctl input { font:inherit; padding:5px 7px; border:1px solid var(--line); border-radius:5px; }
+tr.undone td { color:var(--mute); text-decoration:line-through; } tr.undone td:last-child, tr.undone td:nth-last-child(2) { text-decoration:none; }
+#histBody button { padding:2px 10px; font-size:12px; }
+#stDisease, #stView { font:inherit; padding:4px 6px; }

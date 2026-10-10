@@ -48,3 +48,10 @@ Real data / Estimated / Exploratory / Simulated / Uploaded, not verified. Bed nu
 - **AI wording** is a switch, off by default; without a key the template is shown.
 - **Proof**: year-by-year test of the classifier (`pipeline/walkforward.py`) and a record made in advance (`pipeline/archive.py`).
 - Each week, after downloading a newer FluNet file: `py archive.py score <new csv>`, then `py archive.py record`, then commit.
+
+## Priority 2 additions
+- **Upload history, roles and undo** (`server.js`): every upload is kept, with who and when; any upload can be undone, and nothing is erased. Set `UPLOAD_PASSCODE` and `ADMIN_PASSCODE` in `.env.local` (see `.env.example`) to require a passcode: viewers read, uploaders upload and undo, the admin also restores and resets. With no passcode set the server is in open mode. `node tests/role_test.js "<project folder>"` checks all of this on a throwaway port.
+- **Supabase**: `supabase/schema.sql` and `supabase/README.md` describe the same model for Supabase. Designed, not yet run against a real project.
+- **Schools layer**: government schools and pupils per district (Ministry of Education records via OpenDOSM, 30 June 2025) as a second map view.
+- **All states chart** (`pipeline/states.py`): dengue by state, monthly 1993-2010 and yearly 2009-2023, with a switch per state and a national layer, plus the model comparison per state. Influenza has no state series; the chart shows the national line and the published state snapshots.
+- **Data request draft**: `docs/PILOT_REQUEST.md`, for the Selangor State Health Department. Not sent.
