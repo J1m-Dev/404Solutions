@@ -139,3 +139,6 @@ body.leaving .bar{z-index:10}   /* the logo stays on screen through the dive and
   body.ready .spread span{animation:none}
   .btn::before,.btn .lab,.btn .arr,.btn .dot{transition:none}
 }
+
+/* the dive: the room's picture arrives slightly enlarged and keeps moving, so the next page can settle out of the same motion */
+#veil{transform:scale(1.02);transition:opacity .55s ease,transform 1.2s cubic-bezier(.2,.8,.2,1)}#veil.on{transform:scale(1.12)}
