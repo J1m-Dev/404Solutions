@@ -21,6 +21,7 @@ import urllib.parse
 import urllib.request
 from collections import Counter
 
+import beds
 import core as c
 
 URL = "https://raw.githubusercontent.com/MoH-Malaysia/data-resources-public/main/facilities_master.csv"
@@ -125,23 +126,26 @@ def build():
         rows.append({"name": name, "kind": kind, "type": (HOSPITAL if kind == "government" else CLINIC).get(r["JENIS_FASILITI"].strip(), nice(r["JENIS_FASILITI"])),
                      "state": state, "district": nice(r["DAERAH"]), "address": ", ".join(x for x in (nice(r["ALAMAT"]), town) if x),
                      "lat": round(lat, 5), "lon": round(lon, 5), "approximate": False, **({"osm": True} if osm else {})})
+    bed_matched, bed_missed = beds.attach(rows)  # real bed counts for the hospital pop-ups
     private = {"listed": 0, "located": 0, "approximate": 0, "not_located": 0, "source": None}
     if PRIVATE.exists():
         src = json.load(open(PRIVATE, encoding="utf-8"))
         items = src["rows"] if isinstance(src, dict) else src
-        private.update(listed=len(items), source=(src.get("source") if isinstance(src, dict) else None) or "Ministry of Health list of private hospitals licensed under Act 586")
+        private.update(listed=len(items), source=(src.get("source") if isinstance(src, dict) else None) or "the Ministry of Health's public map of licensed private hospitals (MyGeoCKAPS, retrieved 11 October 2026)")
         for p in items:
             if p.get("lat") is None or p.get("lon") is None:
                 private["not_located"] += 1
                 continue
             private["approximate" if p.get("approximate") else "located"] += 1
-            rows.append({"name": p["name"], "kind": "private", "type": p.get("category") or "Licensed private hospital", "state": p.get("state") or "", "district": "",
+            rows.append({"name": nice(p["name"]), "kind": "private", "type": "Private hospital licensed under Act 586", "pos": "Position: " + (p.get("located_by") or "matched by name"), "state": p.get("state") or "", "district": "",
                          "address": p.get("address") or "", "lat": round(float(p["lat"]), 5), "lon": round(float(p["lon"]), 5), "approximate": bool(p.get("approximate"))})
     counts = Counter(r["kind"] for r in rows)
     meta = {"source": "Ministry of Health Malaysia, facilities_master.csv (github.com/MoH-Malaysia/data-resources-public)", "as_at": AS_AT,
-            "counts": dict(counts), "registry_coordinates_wrong_repositioned": repaired, "registry_coordinates_wrong_left_off": dropped, "just_outside_simplified_outline": len(other_state), "private": private}
+            "counts": dict(counts), "registry_coordinates_wrong_repositioned": repaired, "registry_coordinates_wrong_left_off": dropped, "just_outside_simplified_outline": len(other_state), "private": private,
+            "beds": {"source": "Ministry of Health bed file", "updated": beds.UPDATED, "hospitals_with_beds": bed_matched}}
     (c.ROOT / "site/data/facilities.json").write_text(json.dumps({"meta": meta, "rows": rows}, separators=(",", ":")), encoding="utf-8")
     print(json.dumps(meta, indent=1))
+    print("bed file rows not matched to a registry hospital:", bed_missed)
     print("by state:", dict(Counter(r["state"] for r in rows)))
     print("just outside their state's simplified outline (kept):", len(other_state), other_state[:8])
 

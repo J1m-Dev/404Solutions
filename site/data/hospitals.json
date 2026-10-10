@@ -1,75 +1,173 @@
-[
- {
-  "name": "Hospital Cyberjaya",
-  "lat": 2.9204475,
-  "lon": 101.631591,
-  "beds_simulated": 30
+{
+ "meta": {
+  "bed_file": "Ministry of Health Malaysia, bedutil_facility.csv (github.com/MoH-Malaysia/data-resources-public)",
+  "bed_file_updated": "3 September 2024",
+  "counts": {
+   "ministry": 5,
+   "lookup": 0,
+   "estimated": 7
+  },
+  "occupancy_reported": [
+   "Hospital Sungai Buloh",
+   "Hospital Kajang"
+  ]
  },
- {
-  "name": "Hospital Tengku Ampuan Rahimah",
-  "lat": 3.0212805,
-  "lon": 101.4394649,
-  "beds_simulated": 60
- },
- {
-  "name": "Hospital Banting",
-  "lat": 2.803344,
-  "lon": 101.4924685,
-  "beds_simulated": 20
- },
- {
-  "name": "Hospital Kajang",
-  "lat": 2.9940874,
-  "lon": 101.792517,
-  "beds_simulated": 35
- },
- {
-  "name": "Hospital Kuala Kubu Bharu",
-  "lat": 3.5653297,
-  "lon": 101.6528409,
-  "beds_simulated": 15
- },
- {
-  "name": "Hospital Ampang",
-  "lat": 3.1281224,
-  "lon": 101.7639491,
-  "beds_simulated": 45
- },
- {
-  "name": "Hospital Tanjong Karang",
-  "lat": 3.3960911,
-  "lon": 101.2169921,
-  "beds_simulated": 15
- },
- {
-  "name": "Hospital Shah Alam",
-  "lat": 3.0709163,
-  "lon": 101.4897215,
-  "beds_simulated": 40
- },
- {
-  "name": "Hospital Sultan Idris Shah Serdang",
-  "lat": 2.976926,
-  "lon": 101.7206156,
-  "beds_simulated": 50
- },
- {
-  "name": "Hospital Sungai Buloh",
-  "lat": 3.2209952,
-  "lon": 101.5854584,
-  "beds_simulated": 60
- },
- {
-  "name": "Hospital Selayang",
-  "lat": 3.2431336,
-  "lon": 101.6474818,
-  "beds_simulated": 50
- },
- {
-  "name": "Hospital Tengku Ampuan Jemaah",
-  "lat": 3.76328,
-  "lon": 100.98448,
-  "beds_simulated": 15,
-  "approximate": true
- }
-]
+ "rows": [
+  {
+   "name": "Hospital Tengku Ampuan Rahimah",
+   "lat": 3.02008,
+   "lon": 101.43986,
+   "district": "Klang",
+   "type": "State hospital",
+   "occ": null,
+   "icu": null,
+   "vent": null,
+   "beds": 1072,
+   "beds_src": "estimated",
+   "src": "estimated: the middle value for a state hospital in the Ministry bed file"
+  },
+  {
+   "name": "Hospital Selayang",
+   "lat": 3.24305,
+   "lon": 101.6472,
+   "district": "Gombak",
+   "type": "Major specialist hospital",
+   "occ": null,
+   "icu": 29,
+   "vent": 97,
+   "beds": 1018,
+   "beds_src": "ministry",
+   "src": "Ministry of Health bed file, 3 September 2024"
+  },
+  {
+   "name": "Hospital Sungai Buloh",
+   "lat": 3.22011,
+   "lon": 101.58303,
+   "district": "Gombak",
+   "type": "Major specialist hospital",
+   "occ": 85.9,
+   "icu": 42,
+   "vent": 121,
+   "beds": 626,
+   "beds_src": "ministry",
+   "src": "Ministry of Health bed file, 3 September 2024"
+  },
+  {
+   "name": "Hospital Sultan Idris Shah Serdang",
+   "lat": 2.97626,
+   "lon": 101.72019,
+   "district": "Sepang",
+   "type": "Major specialist hospital",
+   "occ": null,
+   "icu": null,
+   "vent": null,
+   "beds": 502,
+   "beds_src": "estimated",
+   "src": "estimated: the middle value for a major specialist hospital in the Ministry bed file"
+  },
+  {
+   "name": "Hospital Ampang",
+   "lat": 3.12827,
+   "lon": 101.76338,
+   "district": "Hulu Langat",
+   "type": "Major specialist hospital",
+   "occ": null,
+   "icu": 15,
+   "vent": 74,
+   "beds": 676,
+   "beds_src": "ministry",
+   "src": "Ministry of Health bed file, 3 September 2024"
+  },
+  {
+   "name": "Hospital Shah Alam",
+   "lat": 3.07145,
+   "lon": 101.49076,
+   "district": "Petaling",
+   "type": "Major specialist hospital",
+   "occ": null,
+   "icu": 13,
+   "vent": 42,
+   "beds": 472,
+   "beds_src": "ministry",
+   "src": "Ministry of Health bed file, 3 September 2024"
+  },
+  {
+   "name": "Hospital Kajang",
+   "lat": 2.99339,
+   "lon": 101.79273,
+   "district": "Hulu Langat",
+   "type": "Major specialist hospital",
+   "occ": 77.8,
+   "icu": 8,
+   "vent": 32,
+   "beds": 378,
+   "beds_src": "ministry",
+   "src": "Ministry of Health bed file, 3 September 2024"
+  },
+  {
+   "name": "Hospital Banting",
+   "lat": 2.80347,
+   "lon": 101.49389,
+   "district": "Kuala Langat",
+   "type": "Minor specialist hospital",
+   "occ": null,
+   "icu": null,
+   "vent": null,
+   "beds": 157,
+   "beds_src": "estimated",
+   "src": "estimated: the middle value for a minor specialist hospital in the Ministry bed file"
+  },
+  {
+   "name": "Hospital Kuala Kubu Bharu",
+   "lat": 3.56498,
+   "lon": 101.65283,
+   "district": "Hulu Selangor",
+   "type": "District hospital without specialists",
+   "occ": null,
+   "icu": null,
+   "vent": null,
+   "beds": 80,
+   "beds_src": "estimated",
+   "src": "estimated: the middle value for a district hospital without specialists in the Ministry bed file"
+  },
+  {
+   "name": "Hospital Tanjong Karang",
+   "lat": 3.42499,
+   "lon": 101.17911,
+   "district": "Kuala Selangor",
+   "type": "District hospital without specialists",
+   "occ": null,
+   "icu": null,
+   "vent": null,
+   "beds": 80,
+   "beds_src": "estimated",
+   "src": "estimated: the middle value for a district hospital without specialists in the Ministry bed file"
+  },
+  {
+   "name": "Hospital Tengku Ampuan Jemaah",
+   "lat": 3.75992,
+   "lon": 100.98907,
+   "district": "Sabak Bernam",
+   "type": "District hospital without specialists",
+   "occ": null,
+   "icu": null,
+   "vent": null,
+   "beds": 80,
+   "beds_src": "estimated",
+   "src": "estimated: the middle value for a district hospital without specialists in the Ministry bed file"
+  },
+  {
+   "name": "Hospital Cyberjaya",
+   "lat": 2.92084,
+   "lon": 101.63129,
+   "district": "Sepang",
+   "type": "Major specialist hospital",
+   "occ": null,
+   "icu": null,
+   "vent": null,
+   "beds": 502,
+   "beds_src": "estimated",
+   "src": "estimated: the middle value for a major specialist hospital in the Ministry bed file"
+  }
+ ]
+}

@@ -14,3 +14,5 @@ data/raw/who_dengue/*.html
 data/raw/states/weekly_state_2010_2015.csv
 data/raw/states/weekly_state_2020_2022.csv
 data/raw/states/district_weekly_2022_2024.csv
+# large OpenStreetMap extract: `py -3.13 -I pipeline/private_hospitals.py --refresh` downloads it again
+data/raw/facilities/osm_health_malaysia_*.json

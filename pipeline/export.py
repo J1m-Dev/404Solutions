@@ -12,11 +12,6 @@ REPLAY_CUT = (2025, 37)  # replay demo: public data ends here, later weeks arriv
 DISTRICTS = {"Gombak": "Gombak", "Klang": "Klang", "Kuala Langat": "Kuala Langat",
              "Kuala Selangor": "Kuala Selangor", "Petaling": "Petaling", "Sabak Bernam": "Sabak Bernam",
              "Sepang": "Sepang", "Ulu Langat": "Hulu Langat", "Ulu Selangor": "Hulu Selangor"}
-# Government hospitals in Selangor (names as tagged in OpenStreetMap). Beds are SIMULATED placeholders.
-HOSPITALS = {"Hospital Tengku Ampuan Rahimah": 60, "Hospital Selayang": 50, "Hospital Sungai Buloh": 60,
-             "Hospital Sultan Idris Shah Serdang": 50, "Hospital Ampang": 45, "Hospital Shah Alam": 40,
-             "Hospital Kajang": 35, "Hospital Banting": 20, "Hospital Kuala Kubu Bharu": 15,
-             "Hospital Tanjong Karang": 15, "Hospital Tengku Ampuan Jemaah": 15, "Hospital Cyberjaya": 30}
 # Cumulative influenza cases to epi week 42/2025, Selangor State Assembly answer (Nov 2025)
 PUBLISHED_DISTRICT_CASES = {"Petaling": 534, "Hulu Langat": 487, "Gombak": 341, "Klang": 291}
 
@@ -163,25 +158,9 @@ def main():
                                "published_cases_w42_2025": PUBLISHED_DISTRICT_CASES.get(nm)}
             feats.append(f)
     c.dump({"type": "FeatureCollection", "features": feats}, SITE / "data" / "districts.geojson")
-    osm = json.load(open(c.ROOT / "data/raw/osm_hospitals_selangor.json", encoding="utf-8"))
-    hosp = []
-    for e in osm["elements"]:
-        nm = e.get("tags", {}).get("name", "")
-        key = next((k for k in HOSPITALS if nm.startswith(k)), None)
-        if key and not any(h["name"] == key for h in hosp):
-            hosp.append({"name": key, "lat": e.get("lat") or e["center"]["lat"], "lon": e.get("lon") or e["center"]["lon"],
-                         "beds_simulated": HOSPITALS[key]})
-    # Hospitals not found by name in OpenStreetMap fall back to the geocoded facility list (town-level position).
-    fac = SITE / "data" / "facilities.json"
-    if fac.exists():
-        for f in json.loads(fac.read_text(encoding="utf-8")):
-            key = next((k for k in HOSPITALS if f["name"].startswith(k)), None)
-            if key and not any(h["name"] == key for h in hosp):
-                hosp.append({"name": key, "lat": f["lat"], "lon": f["lon"], "beds_simulated": HOSPITALS[key], "approximate": bool(f.get("approximate"))})
-    c.dump(hosp, SITE / "data" / "hospitals.json")
+    # site/data/hospitals.json (the capacity table) and the beds template are written by beds.py, from real bed counts.
     print("districts", [(f["properties"]["name"], f["properties"]["pop_thousand"], f["properties"]["schools"], f["properties"]["pupils"]) for f in feats])
     print("schools total", sum(f["properties"]["schools"] for f in feats), "of", sch.get("All Districts"), "| pupils total", sum(f["properties"]["pupils"] for f in feats), "of", pup.get("All Districts"))
-    print("hospitals", len(hosp), sorted(set(HOSPITALS) - {h["name"] for h in hosp}))
 
     # templates and demo files
     T = SITE / "templates"
@@ -191,7 +170,6 @@ def main():
     w("template_lab_counts.csv", [lab_head, [2026, 38, 900, 150, 30, 60, 60]])
     w("template_ili_rate.csv", [["year", "week", "ili_rate_percent"], [2026, 38, 6.5]])
     w("template_clusters.csv", [["year", "week", "district", "clusters"], [2026, 38, "Petaling", 3]])
-    w("template_beds.csv", [["hospital", "beds_available"]] + [[h["name"], h["beds_simulated"]] for h in hosp])
     w("demo_real_replay_2025_W38_W41.csv", [lab_head] + [
         [s["year"], s["week"], int(s["n"]), int(s["pos"]), int(s["h3"]), int(s["h1"]), int(s["b"])]
         for s in series[cut + 1: cut + 5]])

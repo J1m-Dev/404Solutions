@@ -28,7 +28,7 @@ const SCHEMA = {
   beds: { cols: ["hospital", "beds_available"], tpl: "template_beds.csv" },
   clusterlist: { cols: ["name", "district", "cases", "setting", "lat", "lon"], tpl: "template_cluster_list.csv" },
 };
-let D, GEO, HOSP, FAC, DENGUE, STATES, STATE, chart, map, geoLayer, hospLayer, facDone = false, pending = [];
+let D, GEO, HOSP, HOSPMETA, FAC, DENGUE, STATES, STATE, chart, map, geoLayer, hospLayer, facDone = false, pending = [];
 // What-if simulator. Factor effects are the team's own assumptions (percentage points of weekly growth), not estimates.
 const SIM = { on: false, week: 0, base: 15, weeks: 5, school: true, strain: 50, vax: 10, travel: false, rain: false };
 const SIM_EFFECT = { schoolIn: 8, schoolOut: -8, strainPerPoint: 0.2, vaxPerPoint: -0.25, travel: 6, rain: 3 };
@@ -388,20 +388,21 @@ function renderMap(c) {
 }
 // Hospitals and clinics for every state. Built once; shown only when zoomed in, each kind in its own pane so hospitals stay on top.
 function facilityLayers() {
-  const KIND = { clinic: ["Government health clinic", "#e07a00", 3.5, 1], private: ["Licensed private hospital", "#b5179e", 5.5, 2], government: ["Public hospital", "#0b6e6e", 6.5, 2] };
+  const KIND = { clinic: ["Government health clinic", "#e07a00", 3.5, 1], private: ["Private hospital licensed under Act 586", "#b5179e", 5.5, 2], government: ["Public hospital", "#0b6e6e", 6.5, 2] };
   const where = (f) => (f.approximate ? "Approximate position: placed at its town, not the building" : f.osm ? "Position from OpenStreetMap: the registry's coordinates for this facility were wrong" : f.pos || (FACMETA ? "Position from the Ministry of Health registry" : "Position from OpenStreetMap"));
   if (!facDone) { facDone = true;
     for (const k in KIND) { const [label, col, rad, wt] = KIND[k], list = FAC.filter((f) => f.kind === k);
       FACG[k] = L.layerGroup(list.map((f) => L.circleMarker([f.lat, f.lon], { pane: "fac_" + k, radius: rad, color: f.approximate ? col : "#fff", weight: f.approximate ? 2 : wt * 0.5, fillColor: col, fillOpacity: f.approximate ? 0.15 : 0.9, dashArray: f.approximate ? "3" : null })
-        .bindPopup(() => `<b>${f.name}</b><br>${f.type || label}<br>${[f.district, f.state].filter(Boolean).join(", ")}${f.address ? "<br>" + f.address : ""}<br><i>${where(f)}</i>`)));
+        .bindPopup(() => `<b>${f.name}</b><br>${f.type || label}<br>${[f.district, f.state].filter(Boolean).join(", ")}${f.address ? "<br>" + f.address : ""}` +
+          (f.beds ? `<br><b>${f.beds.toLocaleString()} beds</b>${f.icu ? `, ${f.icu} ICU beds` : ""}${f.vent ? `, ${f.vent} ventilators` : ""}${f.occ != null ? `; ${Math.round(f.occ)}% of beds in use` : ""} <i>(Ministry bed file, ${FACMETA.beds.updated})</i>` : "") + `<br><i>${where(f)}</i>`)));
       $("n_" + k).textContent = list.length.toLocaleString(); }
     const n = (k) => FAC.filter((f) => f.kind === k).length, M = FACMETA, P = M && M.private, moved = M ? M.registry_coordinates_wrong_repositioned : [], off = M ? M.registry_coordinates_wrong_left_off : [];
     $("facNote").innerHTML = !M ? `${FAC.length} facilities are plotted.` :
       `<b>${FAC.length.toLocaleString()}</b> facilities across Malaysia are plotted; zoom in on any state to see them. <b>${n("government")}</b> public hospitals and <b>${n("clinic").toLocaleString()}</b> government health clinics come from the Ministry of Health's own facility registry, as registered on ${M.as_at}, at the Ministry's coordinates. ` +
-      (P && P.listed ? `<b>${n("private")}</b> private hospitals come from ${P.source}; their positions were matched by name on OpenStreetMap, so ${P.approximate} are placed at their town only (hollow, dashed markers) and ${P.not_located} of the ${P.listed} listed could not be placed and are left off. ` : "Private hospitals are not plotted: we have not obtained the Ministry's list of hospitals licensed under Act 586 in a usable form. ") +
+      (P && P.listed ? `<b>${n("private")}</b> private hospitals come from ${P.source}, at the Ministry's own map points, cross-checked against OpenStreetMap` + (P.approximate ? `; ${P.approximate} could only be placed approximately (hollow, dashed marker)` : "") + (P.not_located ? `; ${P.not_located} of the ${P.listed} listed could not be placed and are left off` : "") + `. ` : "Private hospitals are not plotted. ") +
       `Rural clinics (Klinik Desa), dental clinics and private GP clinics are not plotted.` +
       (moved.length || off.length ? ` ${moved.length + off.length} registry rows had coordinates far outside their state: ${moved.length} were placed by name from OpenStreetMap instead${off.length ? `, and ${off.length} could not be placed and are left off (${off.join("; ")})` : ""}.` : "") +
-      ` The capacity heuristic above uses twelve Selangor government hospitals only.`; }
+      (M.beds ? ` Click a public hospital to see its beds, ICU beds and ventilators: ${M.beds.hospitals_with_beds} of them have figures in the Ministry's bed file (last updated ${M.beds.updated}).` : "") + ` The capacity table uses twelve Selangor government hospitals.`; }
   for (const k in KIND) { const want = LAYERS[k] && detail; if (want !== map.hasLayer(FACG[k])) want ? FACG[k].addTo(map) : FACG[k].remove(); }
 }
 function setupLayers() {
@@ -411,26 +412,39 @@ function setupLayers() {
   $("lyNone").onclick = () => { for (const k in LAYERS) LAYERS[k] = false; sync(); };
 }
 function renderPlan(c) {
-  const adm = +$("adm").value, share = +$("share").value / 100, a = c.a;
-  $("admV").textContent = adm; $("shareV").textContent = Math.round(share * 100) + "%";
+  const adm = +$("adm").value, share = +$("share").value / 100, occA = +$("occ").value / 100, a = c.a;
+  $("admV").textContent = adm; $("shareV").textContent = Math.round(share * 100) + "%"; $("occV").textContent = Math.round(occA * 100) + "%";
   const est = c.lag === 0 ? a.pLast : a.fc[c.lag].model;
   const mult = Math.min(4, Math.max(0.3, est / c.th.median));
   const up = Object.fromEntries(STATE.beds.map((r) => [r.hospital, r.beds]));
-  const real = STATE.beds.length > 0;
-  $("bedChip").className = "chip " + (real ? "unv" : "sim"); $("bedChip").textContent = real ? "Beds uploaded, not verified" : "Simulated";
-  const cap = HOSP.map((h) => ({ ...h, left: Math.floor((up[h.name] ?? h.beds_simulated) * share) }));
+  const uploaded = STATE.beds.length > 0, M = HOSPMETA || { counts: { ministry: 0, lookup: 0, estimated: 0 }, occupancy_reported: [], bed_file_updated: "" }, n = M.counts, short = (nm) => nm.replace("Hospital ", "");
+  $("bedChip").className = "chip " + (uploaded ? "unv" : "est");
+  $("bedChip").textContent = uploaded ? "Beds uploaded, not verified" : n.estimated ? `Bed totals: ${n.ministry + n.lookup} real, ${n.estimated} estimated` : "Real bed totals, occupancy mostly assumed";
+  // Room for flu = total beds x (1 - occupancy) x share. Occupancy is the reported figure where the Ministry file has one, else the slider.
+  // An uploaded figure is taken as the number of beds available and replaces the calculation for that hospital.
+  const cap = HOSP.map((h) => { const occ = h.occ != null ? Math.min(100, h.occ) / 100 : occA, room = up[h.name] ?? Math.floor(Math.round(h.beds * (1 - occ)) * share);
+    return { ...h, occUsed: occ, room, left: room }; });
   const ds = districts().map((d) => ({ ...d, need: Math.round(adm * mult * d.share) })).sort((x, y) => y.need - x.need);
   let unmet = 0, overflowNearest = 0;
   const naive = Object.fromEntries(cap.map((h) => [h.name, 0]));
   const rows = ds.map((d) => { const near = cap.map((h) => ({ h, km: hav(d.c, [h.lat, h.lon]) })).sort((x, y) => x.km - y.km);
     naive[near[0].h.name] += d.need; let need = d.need; const got = [];
-    for (const x of near) { if (!need) break; const take = Math.min(need, x.h.left); if (take > 0) { x.h.left -= take; need -= take; got.push(`${x.h.name.replace("Hospital ", "")} ${take} (${x.h.approximate ? "about " : ""}${Math.round(x.km)} km)`); } }
+    for (const x of near) { if (!need) break; const take = Math.min(need, x.h.left); if (take > 0) { x.h.left -= take; need -= take; got.push(`${short(x.h.name)} ${take} (${Math.round(x.km)} km)`); } }
     unmet += need;
     return `<tr><td>${d.name}</td><td class="num">${d.need}</td><td>${got.join(", ") || "none"}</td><td class="num">${need || ""}</td></tr>`; });
-  cap.forEach((h) => { if (naive[h.name] > Math.floor((up[h.name] ?? h.beds_simulated) * share)) overflowNearest++; });
-  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${f1(mult)} (today's positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), split by population. Assumes admissions scale with positivity. This is an illustration on assumed beds, not a recommended allocation. Distances are straight-line and approximate.`;
-  $("plan").innerHTML = `<table><tr><th>District</th><th class="num">Need</th><th>Nearest hospitals with assumed space under this scenario</th><th class="num">Unmet</th></tr>${rows.join("")}</table>
-    <p class="note"><b>${unmet}</b> admissions unplaced under this scenario. If every district simply used its nearest hospital, <b>${overflowNearest}</b> hospital(s) would be over their assumed capacity.</p>`;
+  cap.forEach((h) => { if (naive[h.name] > h.room) overflowNearest++; });
+  const rep = M.occupancy_reported.map(short);
+  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${f1(mult)} (today's positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), split by population. Room for flu at each hospital = total beds × (1 − occupancy) × the share usable for flu. ` +
+    `Bed totals come from the Ministry of Health bed file (last updated ${M.bed_file_updated}) for ${n.ministry} hospitals` + (n.lookup ? `, from official pages for ${n.lookup}` : "") + (n.estimated ? `, and are estimated for ${n.estimated}` : "") + `. ` +
+    (rep.length ? `Occupancy is the reported figure for ${rep.join(" and ")}; the others have none in the file (several show 0%, which we treat as not reported), so they use the slider. ` : "") +
+    `Assumes admissions scale with positivity. This is an illustration, not a recommended allocation. Distances are straight-line.`;
+  const from = (h) => (h.beds_src === "ministry" ? "Ministry bed file" : h.beds_src === "lookup" ? (h.src_url ? `<a href="${h.src_url}" target="_blank" rel="noopener">${h.src}</a>` : h.src) : `<span class="fail">Estimated</span>`);
+  $("plan").innerHTML = `<table><tr><th>District</th><th class="num">Need</th><th>Nearest hospitals with room under this scenario</th><th class="num">Unmet</th></tr>${rows.join("")}</table>
+    <p class="note"><b>${unmet}</b> admissions unplaced under this scenario. If every district simply used its nearest hospital, <b>${overflowNearest}</b> hospital(s) would be over the room worked out for them.</p>
+    <h3>Hospitals in this scenario</h3>
+    <table><tr><th>Hospital</th><th class="num">Total beds</th><th>Bed total from</th><th class="num">Occupancy</th><th class="num">Room for flu</th><th class="num">Used</th></tr>
+    ${cap.map((h) => `<tr><td>${short(h.name)}</td><td class="num">${h.beds.toLocaleString()}</td><td>${from(h)}</td><td class="num">${Math.round(h.occUsed * 100)}% ${h.occ != null ? "reported" : "assumed"}</td><td class="num">${h.room}${up[h.name] != null ? " (uploaded)" : ""}</td><td class="num">${h.room - h.left}</td></tr>`).join("")}</table>
+    <p class="note">"Estimated" totals are the middle value for a hospital of the same type in the Ministry file, used where no published figure was found. Upload today's free beds (Upload newest data, Hospital beds) to replace the calculation for any hospital.</p>`;
 }
 
 function renderProof() {
@@ -745,13 +759,14 @@ function setupUpload() {
 
 (async function () {
   [D, GEO, HOSP] = await Promise.all(["data/site.json", "data/districts.geojson", "data/hospitals.json"].map((u) => fetch(u).then((r) => r.json())));
+  HOSPMETA = HOSP.meta; HOSP = HOSP.rows || HOSP;
   const fj = await fetch("data/facilities.json").then((r) => r.json()).catch(() => null);
   FAC = fj ? fj.rows || fj : HOSP.map((h) => ({ ...h, kind: "government" })); FACMETA = fj && fj.meta;
   DENGUE = await fetch("data/dengue.json").then((r) => r.json()).catch(() => null);
   STATES = await fetch("data/states.json").then((r) => r.json()).catch(() => null);
   STGEO = await fetch("data/states_map.geojson").then((r) => r.json()).catch(() => null);
   await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupAtlas(); if (STATES) stMeasureOptions(); renderStates(); renderProof(); renderDengue();
-  $("adm").oninput = $("share").oninput = () => renderPlan(context());
+  $("adm").oninput = $("share").oninput = $("occ").oninput = () => renderPlan(context());
   $("mapMode").onchange = () => renderMap(context());
   $("aiOn").disabled = !SERVER; $("aiOn").onchange = () => renderSummary(context());
   if (!SERVER) $("aiNote").textContent = "AI wording needs the local server; this hosted copy shows the template.";
