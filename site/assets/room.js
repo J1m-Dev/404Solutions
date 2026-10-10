@@ -98,7 +98,7 @@
       $("spark").innerHTML = `<line x1="0" x2="200" y1="${y(c.th.orange)}" y2="${y(c.th.orange)}" class="al"/><line x1="0" x2="200" y1="${y(c.th.yellow)}" y2="${y(c.th.yellow)}" class="wl"/><path d="${d}"/>`; }
     $("ageRow").hidden = REPLAY || c.sim || c.own;
     $("age").textContent = c.lag > 0 ? `${c.lag} week${c.lag > 1 ? "s" : ""} old` : "Current"; $("ageS").textContent = c.lag > 0 ? "Published figures run late. This step reads the weeks since." : "Figures run to this week.";
-    $("recV").textContent = band ? `${band.rises} of ${band.weeks}` : c.rise.off ? "Off" : "Alert rule"; $("recS").textContent = band ? `${STEP[st.band].name} weeks were followed by a rapid rise, in six past years` : c.rise.off ? "The classifier is off for your own series" : "This step is set by the alert rule on the data";
+    $("recV").textContent = band ? `${band.rises} of ${band.weeks}` : c.rise.off ? "Off" : "Alert rule"; $("recS").textContent = band ? `In six past years there were ${band.weeks} ${STEP[st.band].name} weeks. A rapid rise followed ${band.rises} of them.` : c.rise.off ? "The classifier is off for your own series" : "This step is set by the alert rule on the data";
     $("recV").parentElement.style.setProperty("--p", band ? ((100 * band.rises) / band.weeks).toFixed(1) : 0);
     $("proofRow").hidden = REPLAY; $("aboutBox").hidden = !REPLAY;
     $("planBtn").className = "go"; $("planBtn").querySelector(".lab").textContent = "Full plan";
@@ -144,13 +144,15 @@
   const tidy = { proofBody: (b) => fold(b), trustBody: (b) => { fold(b); const d = b.querySelector("details.drawer"); if (d && !b._opened) { b._opened = true; d.open = true; } rings(); }, trackBody: () => trackRows() };
   for (const id in tidy) { const box = $(id); if (!box) continue; new MutationObserver(() => tidy[id](box)).observe(box, { childList: true }); tidy[id](box); }
   document.querySelectorAll("#stakes .grid2 > div").forEach(fold);
+  // the panel: the task list sits right under the step; the summary and the action table (the same actions again) fold away
+  { const sh = $("sheet"), pb = $("planBox"); if (sh && pb) { $("alertCard").after(pb); fold(sh.querySelector(":scope > .card:not(#alertCard)")); } }
   // Where: the map comes first; its sources, shading choices and layer switches sit together under one drawer
   (function atlas() { const card = $("atlas"), map = $("map"); if (!card || !map) return; const h2 = card.querySelector("h2"), d = document.createElement("details"); d.className = "drawer"; d.innerHTML = "<summary>Map layers, shading and sources</summary><div class=\"drawerbody\"></div>";
     const view = $("mapModeRow") && $("mapModeRow").parentElement; h2.after(map); map.after($("stLegend"), $("mapHint")); if (view) $("mapHint").after(view); card.append(d);
     ["stSrc", "mapNote", "stCtl", "layerToggles"].forEach((id) => { const el = $(id); if (el) d.lastChild.append(el); }); d.addEventListener("toggle", resize); })();
   // long notes show two lines; a click opens them. Rows of the track record open the same way.
   document.addEventListener("click", (e) => { if (e.target.closest("a,button,input,select,label,summary")) return;
-    const n = e.target.closest(".page .card p.note, #trustBody > p, #trackBody > p"); if (n) n.classList.toggle("open"); const r = e.target.closest("table.rows tr"); if (r) r.classList.toggle("open"); });
+    const n = e.target.closest(".page .card p.note, .sheet p.note, #trustBody > p, #trackBody > p"); if (n) n.classList.toggle("open"); const r = e.target.closest("table.rows tr"); if (r) r.classList.toggle("open"); });
 
   // In the replay: the data week each step of the app's own ladder was first reached (same rule as stepOf, same frozen cut-offs).
   function milestones() {
