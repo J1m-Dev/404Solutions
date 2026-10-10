@@ -29,17 +29,17 @@
 *{box-sizing:border-box}[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;color:#fff;font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;
-  background:linear-gradient(90deg,rgba(3,10,46,.5) 0%,rgba(3,10,46,.22) 36%,rgba(3,10,46,0) 62%) fixed,linear-gradient(128deg,var(--bg-a) 0%,var(--bg-b) 54%,var(--bg-c) 100%) fixed}
-[data-tone=picture] body{background:linear-gradient(90deg,rgba(3,10,46,.46) 0%,rgba(3,10,46,.16) 40%,rgba(3,10,46,0) 64%) fixed,url(img/room-blue.jpg) center/cover fixed}
-[data-tone=picture] .mist{display:none}
-/* slow fog, as on the landing page; the bright part sits low and to the right, behind the living object */
-.mist{position:fixed;inset:-12%;pointer-events:none}
-.mist i{position:absolute;border-radius:50%;filter:blur(90px);animation:drift 26s ease-in-out infinite alternate}
-.mist i:nth-child(1){left:46%;top:42%;width:52vw;height:40vw;background:rgba(170,214,255,.3)}
-.mist i:nth-child(2){left:8%;top:66%;width:44vw;height:30vw;background:rgba(120,180,255,.14);animation-duration:34s;animation-direction:alternate-reverse}
-.mist i:nth-child(3){left:58%;top:-12%;width:44vw;height:30vw;background:rgba(4,14,70,.3);animation-duration:41s}
-@keyframes drift{from{transform:translate3d(-3%,-2%,0) scale(1)}to{transform:translate3d(4%,3%,0) scale(1.12)}}
-#stage{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+  background:linear-gradient(160deg,#0a2a9c 0%,#1b5ee6 60%,#5aa9ff 100%) fixed}
+/* the scene: one picture for each step (generated, assets/img/scene-*.jpg). The step that is showing decides which is lit,
+   so the room itself changes with the reading. Behind the inner pages it steps back: blurred and dimmed under their sheets. */
+.scene{position:fixed;inset:0;z-index:0;overflow:hidden;background:#0b2a8a;transition:filter .8s var(--ease)}
+.scene i{position:absolute;inset:-2%;background:center/cover no-repeat;opacity:0;transition:opacity 1.8s ease;animation:breathe 40s ease-in-out infinite alternate}
+.scene i.clear{background-image:url(img/scene-clear.jpg)}.scene i.watch{background-image:url(img/scene-watch.jpg)}
+.scene i.warning{background-image:url(img/scene-warning.jpg)}.scene i.outbreak{background-image:url(img/scene-outbreak.jpg)}
+[data-state=clear] .scene i.clear,[data-state=watch] .scene i.watch,[data-state=unconfirmed] .scene i.watch,[data-state=warning] .scene i.warning,[data-state=outbreak] .scene i.outbreak{opacity:1}
+.scene::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,40,.34) 0%,rgba(4,12,40,.1) 34%,rgba(4,12,40,.2) 62%,rgba(4,12,40,.62) 100%)}
+html:not([data-page=now]) .scene{filter:blur(22px) brightness(.62) saturate(1.1)}
+@keyframes breathe{from{transform:scale(1)}to{transform:scale(1.045) translate3d(-.6%,-.4%,0)}}
 button{font:inherit;color:inherit}
 
 /* navigation. One glass capsule holds the seven pages; a soft highlight slides to the open one. It is the only glass on the screen. */
@@ -70,87 +70,77 @@ main{position:relative;z-index:2;margin-left:var(--rail);min-height:100vh}
 .page.on{position:relative;left:auto;right:auto;height:auto;min-height:100vh;overflow:visible;visibility:visible;pointer-events:auto;animation:page .45s var(--ease)}
 @keyframes page{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-/* ---------- the first screen: one word, one sentence, one action, on the scene itself. Three sizes of type only. ---------- */
-#p-now.on{height:auto;min-height:100vh;padding:calc(var(--head) + clamp(0px,3vh,34px)) var(--pad) clamp(14px,3vh,30px) var(--pad);display:block;animation:none}
-[data-nav=rail] #p-now.on{padding:clamp(20px,6vh,64px) var(--pad) clamp(14px,3vh,30px) clamp(20px,3.4vw,52px)}
-.read{position:relative;display:grid;justify-items:start;max-width:min(46vw,580px)}
+/* ---------- the first screen: one reading on the scene (after Oura's home). Eye order: the arc and the step, the action, the button. ---------- */
+#p-now.on{height:auto;min-height:100vh;padding:clamp(54px,9vh,92px) clamp(18px,4vw,56px) clamp(18px,4vh,40px);display:grid;justify-items:center;align-content:start;animation:none}
+.when{position:absolute;right:clamp(18px,3vw,40px);top:var(--top);margin:0;font-size:13.5px;line-height:30px;color:rgba(255,255,255,.9);text-align:right;white-space:nowrap}
+.when b{font-weight:700;color:#fff}
+.read{position:relative;display:grid;justify-items:center;text-align:center;width:min(100%,720px)}
 .label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}   /* for screen readers: what the word is, and the classifier and rule behind it (both are in the Why sheet for the eye) */
+.top{margin:0 0 12px;font-size:13.5px}.top:has(.flag[hidden]){display:none}
+.flag{padding:5px 12px;border-radius:999px;background:rgba(4,12,40,.5);font-weight:600;color:#fff}
 
-/* the ladder: one thin line with four points; only the lit one is the step */
-.steps{position:relative;list-style:none;display:flex;margin:0 0 clamp(10px,2.2vh,22px);padding:0;width:176px;height:12px}
-.steps::before,.steps::after{content:"";position:absolute;left:4px;top:5px;height:1.5px;width:75%;background:rgba(255,255,255,.3)}
-.steps::after{width:calc(75% * var(--k,0));background:#fff;transition:width .9s var(--ease)}
-.steps li{position:relative;z-index:1;flex:1;transition:opacity .5s}
-.steps li span{position:absolute;left:-6px;top:16px;padding:4px 9px;border-radius:8px;background:rgba(6,16,60,.8);font-size:12.5px;font-weight:600;white-space:nowrap;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .25s,transform .25s var(--ease)}
-.steps li:hover span{opacity:1;transform:none}
-.steps li::before{content:"";position:absolute;left:0;top:1px;width:9px;height:9px;border-radius:50%;background:#aab3c4;transition:background .6s,transform .6s var(--ease)}
-.steps li.past{opacity:.86}.steps li.past::before{background:#fff}
-.steps li.on{opacity:1}.steps li.on::before{background:var(--acc);transform:scale(1.35)}
-.steps li.on::after{content:"";position:absolute;left:0;top:1px;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--acc);animation:ring var(--beat,3.6s) ease-out infinite}
-@keyframes ring{from{transform:scale(1.2);opacity:.8}to{transform:scale(3.2);opacity:0}}
+/* three discs: one fact each, and each is the door to its proof */
+.discs{display:flex;justify-content:center;gap:clamp(14px,3vw,34px)}
+.disc{display:grid;justify-items:center;gap:8px;width:clamp(92px,11vw,118px);color:#fff;text-decoration:none}
+.disc b{display:grid;place-content:center;justify-items:center;width:clamp(72px,8.6vw,92px);aspect-ratio:1;border-radius:50%;font-size:clamp(19px,2.3vw,25px);font-weight:600;letter-spacing:-.02em;line-height:1;
+  background:rgba(255,255,255,.14);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .35s var(--ease),background .3s}
+.disc b small{display:block;margin-top:3px;font-size:.5em;font-weight:600;letter-spacing:0;opacity:.85}
+.disc span{font-size:13px;line-height:1.25;color:rgba(255,255,255,.92);text-wrap:balance}
+.disc:hover b{transform:translateY(-3px) scale(1.04);background:rgba(255,255,255,.24)}.disc:active b{transform:scale(.96)}
+
+/* the arc: the four steps as one scale; the thick part runs from Clear to the step that is showing */
+.gauge{position:relative;width:100%;margin-top:clamp(4px,1.6vh,18px)}
+#arc{display:block;width:100%;height:auto;overflow:visible}
+#arc path{fill:none;stroke-linecap:round}
+#arc .rail{stroke:rgba(255,255,255,.62);stroke-width:2.5}
+#arc .fill{stroke:#fff;stroke-width:7;stroke-dasharray:0 100;transition:stroke-dasharray 1.1s var(--ease)}
+#arc .tick{fill:#fff;opacity:.85}
+#arc text{font:600 15px var(--sans);fill:rgba(255,255,255,.72);transition:fill .5s}#arc text.on{fill:#fff}
+#arcDot{transition:transform 1.1s var(--ease)}
+#arcDot .dot{fill:var(--acc);stroke:#fff;stroke-width:3;transition:fill .8s}
+#arcDot .halo{fill:none;stroke:#fff;stroke-width:1.5;transform-box:fill-box;transform-origin:center;animation:ring var(--beat,3.6s) ease-out infinite}
+@keyframes ring{from{transform:scale(.7);opacity:.9}to{transform:scale(2.3);opacity:0}}
 [data-state=clear]{--beat:5.2s}[data-state=watch]{--beat:3.6s}[data-state=warning]{--beat:2.4s}[data-state=outbreak]{--beat:1.5s}
-[data-look=c] .steps{display:none}
-
-.big{margin:0 0 clamp(6px,1.6vh,16px) -.04em;font-weight:800;letter-spacing:-.045em;line-height:.94;font-size:clamp(60px,min(17vh,9.6vw),150px);overflow:hidden;padding:.02em .04em .1em}
-.big b{display:inline-block;font-weight:inherit;padding-bottom:.07em;background:linear-gradient(var(--acc),var(--acc)) 0 100%/100% .055em no-repeat}
+.steps{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0;padding:0}   /* the same four steps as a list, for screen readers */
+.big{position:absolute;left:0;right:0;bottom:-6%;margin:0;font-weight:600;letter-spacing:-.045em;line-height:1;font-size:clamp(58px,min(15vh,11vw),132px);text-shadow:0 2px 30px rgba(4,12,40,.35)}
+.big b{display:inline-block;font-weight:inherit}
 .big b.roll{animation:roll .8s var(--ease) both}
-@keyframes roll{from{transform:translateY(.5em);opacity:0;background-size:0 .055em}55%{background-size:0 .055em}to{transform:none;opacity:1;background-size:100% .055em}}
+@keyframes roll{from{transform:translateY(.4em);opacity:0}to{transform:none;opacity:1}}
 h1{margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.04;font-size:clamp(28px,min(6.2vh,4vw),58px);text-wrap:balance}
-#head{font-size:clamp(20px,min(3.8vh,2.4vw),30px);font-weight:600;letter-spacing:-.018em;line-height:1.22;max-width:22em;text-wrap:balance}
-.basis{margin:clamp(16px,3.6vh,38px) 0 0;font-size:14px;line-height:1.5;max-width:34em;color:rgba(255,255,255,.82)}.basis b{font-weight:700;color:#fff}
-.top{margin:0 0 clamp(8px,1.6vh,14px);font-size:13.5px}.top:has(.flag[hidden]){display:none}
-.flag{padding:4px 11px;border-radius:999px;background:rgba(4,12,52,.5);font-weight:600;color:#fff}
-.do{margin:clamp(14px,3.2vh,34px) 0 0;max-width:27em;font-size:clamp(16px,min(2.7vh,1.6vw),19px);font-weight:700;letter-spacing:-.008em;line-height:1.35}
-.do .k{display:block;font-weight:500;opacity:.78;font-size:14px;margin-bottom:2px}
-.read .row{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;margin-top:clamp(12px,2.6vh,26px)}
+#head{margin-top:clamp(18px,3.4vh,34px);font-size:clamp(19px,min(3.2vh,2.2vw),26px);font-weight:600;letter-spacing:-.015em;line-height:1.25;max-width:24em;text-shadow:0 1px 18px rgba(4,12,40,.4)}
+.do{margin:clamp(8px,1.6vh,14px) 0 0;max-width:30em;font-size:clamp(15px,2.2vh,17px);font-weight:600;line-height:1.4;color:#fff;text-shadow:0 1px 14px rgba(4,12,40,.45)}
+.do .k{font-weight:500;opacity:.82;margin-right:.5em}
+.read .row{display:flex;align-items:center;justify-content:center;gap:10px 18px;flex-wrap:wrap;margin-top:clamp(14px,3vh,28px)}
 /* the main button is the landing page's own: on hover the dot grows to fill it, the label slides, an arrow arrives */
 .go{--fg:var(--dark);position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:14px;border:0;border-radius:999px;cursor:pointer;
-  padding:clamp(11px,1.9vh,15px) 20px clamp(11px,1.9vh,15px) 26px;font:600 16px/1 var(--sans);color:var(--fg);background:#fff;box-shadow:0 14px 40px rgba(16,24,38,.3);transition:transform .25s var(--ease),box-shadow .5s ease,opacity .3s}
-.go::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--dark);clip-path:circle(0 at calc(100% - 24px) 50%);transition:clip-path .6s var(--swing)}
+  padding:clamp(12px,1.9vh,16px) 22px clamp(12px,1.9vh,16px) 28px;font:600 16px/1 var(--sans);color:var(--fg);background:#fff;box-shadow:0 14px 40px rgba(4,12,40,.34);transition:transform .25s var(--ease),box-shadow .5s ease,opacity .3s}
+.go::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--dark);clip-path:circle(0 at calc(100% - 26px) 50%);transition:clip-path .6s var(--swing)}
 .go .lab{transition:transform .55s var(--swing),color .35s ease}
-.go .arr{position:absolute;left:20px;top:50%;opacity:0;transform:translate(-14px,-50%);color:#fff;transition:transform .55s var(--swing),opacity .3s ease}
+.go .arr{position:absolute;left:22px;top:50%;opacity:0;transform:translate(-14px,-50%);color:#fff;transition:transform .55s var(--swing),opacity .3s ease}
 .go .dot{width:8px;height:8px;border-radius:50%;background:var(--mark);transition:transform .4s var(--swing)}
-.go:not(:disabled):hover::before,.go:not(:disabled):focus-visible::before{clip-path:circle(160% at calc(100% - 24px) 50%)}
+.go:not(:disabled):hover::before,.go:not(:disabled):focus-visible::before{clip-path:circle(160% at calc(100% - 26px) 50%)}
 .go:not(:disabled):hover .lab,.go:not(:disabled):focus-visible .lab{transform:translateX(20px);color:#fff}
 .go:not(:disabled):hover .arr,.go:not(:disabled):focus-visible .arr{opacity:1;transform:translate(0,-50%)}
 .go:not(:disabled):hover .dot,.go:not(:disabled):focus-visible .dot{transform:scale(0)}
 .go:active{transform:scale(.96)}.go:disabled{opacity:.6;cursor:default}
-.quiet{border:0;border-radius:999px;padding:clamp(10px,1.8vh,13px) 17px;font:600 14.5px/1 var(--sans);color:#fff;cursor:pointer;background:rgba(255,255,255,.14);transition:background .3s,transform .25s var(--ease)}
-.quiet:hover{background:rgba(255,255,255,.24)}.quiet:active{transform:scale(.96)}
-.whybtn{border:0;background:none;padding:0 0 3px;cursor:pointer;font-weight:600;font-size:15px;color:#fff;background:linear-gradient(#fff,#fff) 0 100%/100% 1.5px no-repeat;transition:background-size .45s var(--swing)}
+.quiet{border:0;border-radius:999px;padding:clamp(11px,1.8vh,14px) 18px;font:600 14.5px/1 var(--sans);color:#fff;cursor:pointer;background:rgba(255,255,255,.16);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background .3s,transform .25s var(--ease)}
+.quiet:hover{background:rgba(255,255,255,.28)}.quiet:active{transform:scale(.96)}
+.whybtn{border:0;background:none;padding:0 0 3px;cursor:pointer;font-weight:600;font-size:15px;color:#fff;background:linear-gradient(#fff,#fff) 0 100%/100% 1.5px no-repeat;transition:background-size .45s var(--swing);text-shadow:0 1px 14px rgba(4,12,40,.45)}
 .whybtn:hover{background-size:38% 1.5px}
 :focus-visible{outline:2px solid #fff;outline-offset:3px}
 
-/* only while the replay runs: the real weeks being added */
-.strip{display:grid;gap:6px;margin-top:clamp(8px,2vh,20px);max-width:min(100%,420px);animation:up .6s var(--ease)}
+/* only while the replay runs: what the added weeks showed, in one line */
+.strip{display:grid;justify-items:center;gap:6px;margin-top:clamp(12px,2.4vh,22px);max-width:34em;animation:up .6s var(--ease)}
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.strip p{margin:0;font-size:14px;line-height:1.4;color:rgba(255,255,255,.9)}.strip p b{font-weight:700;color:#fff}
-.bars{position:relative;height:clamp(30px,7vh,60px);width:min(100%,420px);display:flex;align-items:flex-end;gap:3px}
-.bars i{position:relative;flex:1;min-width:2px;border-radius:3px 3px 0 0;background:rgba(255,255,255,.45);transform-origin:bottom;transition:height .7s var(--ease),background .5s}
-.bars i.y{background:var(--yellow)}.bars i.o{background:var(--orange)}.bars i.now{background:#fff}
-.bars i.new{animation:grow .7s var(--ease)}
-@keyframes grow{from{transform:scaleY(0)}to{transform:none}}
-.bars i.sig::after{content:"";position:absolute;left:50%;bottom:calc(100% + 6px);width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--sun)}
-.bars u{position:absolute;left:0;right:0;border-top:1.5px dashed var(--k);text-decoration:none;pointer-events:none}
-.bars u b{position:absolute;left:0;bottom:3px;padding:1px 7px;border-radius:7px;background:rgba(10,18,40,.5);font-size:12px;font-weight:600;color:var(--k);white-space:nowrap}
-.bars u:nth-of-type(2) b{left:132px}
-[data-look=b] .bars,[data-look=d][data-replay="1"] .bars{display:none}   /* the signal treatment draws these weeks as the scene itself */
-.tip{position:fixed;z-index:5;margin:0;max-width:300px;padding:12px 15px;border-radius:16px;background:rgba(20,28,42,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:14px;line-height:1.42;pointer-events:none;transform:translateY(-100%);animation:up .35s var(--ease)}
-.tip b{display:block;font-size:16px;margin-bottom:2px}.tip span{display:block;margin-top:5px;color:rgba(255,255,255,.78);font-size:13px}
+.strip p{margin:0;font-size:14px;line-height:1.45;color:rgba(255,255,255,.94);text-shadow:0 1px 14px rgba(4,12,40,.5)}.strip p b{font-weight:700;color:#fff}
+.bars{display:none}
 
-/* every line of the first screen arrives the same way, once the reading is known */
-html:not([data-ready]) #p-now .read>*{opacity:0}
+/* every part of the first screen arrives the same way, once the reading is known */
+html:not([data-ready]) #p-now .read>*,html:not([data-ready]) .when{opacity:0}
 html[data-ready] #p-now .read>*{animation:rise .9s var(--ease) both}
-#p-now .read>:nth-child(2){animation-delay:.05s}#p-now .read>:nth-child(3){animation-delay:.12s}#p-now .read>:nth-child(4){animation-delay:.2s}#p-now .read>:nth-child(5){animation-delay:.27s}
-#p-now .read>:nth-child(6){animation-delay:.32s}#p-now .read>:nth-child(7){animation-delay:.39s}#p-now .read>:nth-child(8){animation-delay:.46s}#p-now .read>:nth-child(9){animation-delay:.5s}
+#p-now .read>:nth-child(3){animation-delay:.06s}#p-now .read>:nth-child(4){animation-delay:.14s}#p-now .read>:nth-child(5){animation-delay:.3s}
+#p-now .read>:nth-child(6){animation-delay:.36s}#p-now .read>:nth-child(7){animation-delay:.42s}#p-now .read>:nth-child(8){animation-delay:.5s}
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-
-/* review copy only */
-.review{display:none}
-[data-review] .review{position:fixed;z-index:30;left:50%;bottom:12px;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:5px 6px;border-radius:999px;background:rgba(12,18,30,.82);font-size:12.5px;white-space:nowrap}
-.review span{padding:0 6px 0 10px;color:rgba(255,255,255,.7)}
-.review button{border:0;border-radius:999px;padding:6px 11px;background:none;color:#fff;font:600 12.5px/1 var(--sans);cursor:pointer;opacity:.75}
-.review button.on{background:#fff;color:var(--dark);opacity:1}
 
 
 /* ---------- the pages that carry the team's features: white type for the page title, paper sheets for the content ---------- */
@@ -230,7 +220,7 @@ tr.undone td{color:var(--mute);text-decoration:line-through}tr.undone td:last-ch
 .replay{display:none}
 [data-replay="1"]:not([data-page=now]) .replay{display:block;position:relative;z-index:3;max-width:1180px;margin:0;padding:8px clamp(18px,3.4vw,52px) 0;font-size:13.5px;line-height:1.45;color:rgba(255,255,255,.9)}
 .replay a{color:#fff}.replay button{font:inherit;font-size:12.5px;font-weight:600;color:var(--ink);margin:0 4px;padding:3px 11px;border:1px solid #c9d3e3;border-radius:999px;background:#fff;cursor:pointer}
-.about{font-size:13px;line-height:1.45}.about summary{display:inline-block;cursor:pointer;list-style:none;font-weight:600;opacity:.85;border-bottom:1px solid rgba(255,255,255,.45)}
+.about{font-size:13px;line-height:1.45;color:#fff;text-align:center}.about summary{display:inline-block;cursor:pointer;list-style:none;font-weight:600;opacity:.85;border-bottom:1px solid rgba(255,255,255,.45)}
 .about summary::-webkit-details-marker{display:none}.about summary:hover{opacity:1}.about p{margin:6px 0 0;max-width:86ch;opacity:.92}
 
 /* the "why this reading" sheet: the app's own alert card, summary and action table */
@@ -268,21 +258,18 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
 @keyframes land-rail{from{opacity:0}to{opacity:1}}
 
 /* short windows (about 1000 x 520) */
-@media (max-height:600px){.read{max-width:min(54vw,580px)}.big{font-size:clamp(54px,min(15vh,9vw),150px);margin-bottom:4px}.steps{margin-bottom:6px}.do,.read .row{margin-top:12px}.basis{margin-top:14px}#p-now.on{padding-top:calc(var(--head) + 8px)}
-  [data-nav=rail] .rail a span{font-size:11px}[data-nav=rail] .rail svg{width:24px;height:24px}[data-nav=rail] .rail a{padding:2px 0}.rail a{padding:7px 12px}}
-/* phone: the rail becomes a strip across the top (never the bottom) */
+@media (max-height:640px){#p-now.on{padding-top:clamp(44px,8vh,60px)}.disc b{width:64px;font-size:18px}.disc{gap:5px}.disc span{font-size:12px}.read{width:min(100%,600px)}.big{font-size:clamp(50px,13vh,96px)}
+  #head{margin-top:14px}.read .row{margin-top:12px}[data-nav=rail] .rail a span{font-size:11px}[data-nav=rail] .rail svg,[data-nav=rail] .rail img{width:24px;height:24px}[data-nav=rail] .rail a{padding:2px 0}}
 @media (max-width:860px){.grid2{grid-template-columns:1fr}}
 @media (max-width:760px){
   :root,[data-nav=rail]{--rail:0px;--head:calc(var(--top) + 96px)}
-  .rail,[data-nav=rail] .rail{left:10px;right:10px;top:calc(var(--top) + 40px);bottom:auto;width:auto;max-height:none;transform:none;flex-direction:row;justify-content:flex-start;padding:4px;border-radius:999px;overflow:auto hidden;scrollbar-width:none}
-  [data-nav=rail] .rail{border-radius:20px}[data-nav=rail] .rail a{width:54px;padding:3px 0}[data-nav=rail] .rail svg{width:26px;height:26px}
+  .rail,[data-nav=rail] .rail{left:10px;right:10px;top:calc(var(--top) + 40px);bottom:auto;width:auto;max-height:none;transform:none;flex-direction:row;justify-content:flex-start;gap:2px;padding:5px 6px;border-radius:22px;overflow:auto hidden;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 84%,transparent);mask-image:linear-gradient(90deg,#000 84%,transparent)}
+  [data-nav=rail] .rail a{width:58px;padding:4px 0}[data-nav=rail] .rail svg,[data-nav=rail] .rail img{width:28px;height:28px}
   .page,.page.on,[data-nav=rail] .page{padding:14px 16px 28px}
-  /* on a phone the living object owns a band under the navigation, and the words follow it */
-  #stage{position:absolute;top:calc(var(--top) + 84px);height:max(30vh,224px);-webkit-mask-image:linear-gradient(#000 80%,transparent);mask-image:linear-gradient(#000 80%,transparent)}
-  #p-now.on,[data-nav=rail] #p-now.on{height:auto;min-height:100vh;padding:calc(var(--top) + 90px + max(30vh,224px)) 18px 64px}
-  .rail{-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent)}
-  .review{left:8px!important;right:8px;transform:none!important;overflow:auto hidden}
-  .read,[data-look=b] .read{max-width:none}
+  #p-now.on,[data-nav=rail] #p-now.on{padding:calc(var(--top) + 150px) 16px 40px}
+  .when{left:16px;right:16px;top:calc(var(--top) + 112px);text-align:center;white-space:normal;line-height:1.4}
+  .disc{width:31%}.disc b{width:76px}.big{font-size:clamp(54px,17vw,84px);bottom:-10%}#arc text{font-size:22px}
   .stamp,[data-nav=rail] .stamp,[data-page=now] .stamp{position:relative;bottom:auto;padding:var(--head) 16px 0}
   .sheet{left:8px;right:8px;width:auto}
 }

@@ -27,6 +27,16 @@
     root.dataset.page = id; scrollTo(0, 0); $("sheet").hidden = true; slideHl();
     resize();   // charts and the map were laid out off screen; let them take their real size now
   }
+  // ---------- the arc: the four steps as one scale, the way a gauge shows where a reading sits ----------
+  const ARC = (() => { const R = 380.3, cx = 340, cy = 444.3, al = Math.asin(310 / R), at = (t) => { const th = -al + 2 * al * t; return [cx + R * Math.sin(th), cy - R * Math.cos(th)]; }; return { at, d: `M${at(0).map((v) => v.toFixed(1)).join(" ")}A${R} ${R} 0 0 1 ${at(1).map((v) => v.toFixed(1)).join(" ")}` }; })();
+  function arc(si) {
+    const svg = $("arc"); if (!svg) return;
+    if (!svg.firstChild) svg.innerHTML = `<path class="rail" d="${ARC.d}"/><path class="fill" id="arcFill" d="${ARC.d}" pathLength="100"/>` +
+      STEPS.map((k, i) => { const [x, y] = ARC.at(i / 3), ax = i === 0 ? "start" : i === 3 ? "end" : "middle", dx = i === 0 ? -6 : i === 3 ? 6 : 0; return `<circle class="tick" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4"/><text data-i="${i}" x="${(x + dx).toFixed(1)}" y="${(y + (i === 0 || i === 3 ? 30 : -18)).toFixed(1)}" text-anchor="${ax}">${STEP[k].name}</text>`; }).join("") +
+      `<g id="arcDot"><circle class="halo" r="15"/><circle class="dot" r="8"/></g>`;
+    const [x, y] = ARC.at(si / 3); $("arcFill").style.strokeDasharray = `${(si / 3) * 100} 100`; $("arcDot").style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
+    svg.querySelectorAll("text").forEach((t) => t.classList.toggle("on", +t.dataset.i === si));
+  }
   // one soft highlight slides to the page that is open; it is the only glass on the screen
   function slideHl() { const a = document.querySelector(".rail a.on"), h = document.querySelector(".rail .hl"); if (!a || !h) return;
     h.style.transform = `translate(${a.offsetLeft}px,${a.offsetTop}px)`; h.style.width = a.offsetWidth + "px"; h.style.height = a.offsetHeight + "px"; h.style.opacity = 1; }
@@ -78,8 +88,13 @@
     if ($("pct").textContent !== word) { const b = $("pct"); b.textContent = word; b.classList.remove("roll"); void b.offsetWidth; b.classList.add("roll"); }
     const when = lastIso ? `<b>${dmy(lastIso)}</b>` : `<b>${wk(a.last)}</b>`;
     const now = new Date(), today = `${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
-    $("basis").innerHTML = (REPLAY || c.sim || c.own ? "" : `Today is <b>${today}</b>. `) +
-      (c.sim ? `A what-if drill, not a reading: it runs to the week of ${when}.` : c.own ? `Your uploaded series to the week of ${when}.` : REPLAY && pure ? `Replay on real national data to the week of ${when}.` : REPLAY ? `Replay with uploaded weeks, not verified, to the week of ${when}.` : `The newest national figures are from the week of ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind. This step is the reading for the weeks not published yet.` : ", current to this week."));
+    // top right: the date, and what the figures run to. A glance, not a sentence.
+    $("basis").innerHTML = c.sim ? `<b>What-if drill</b> · invented weeks to the week of ${when}` : c.own ? `<b>Your uploaded series</b> · to the week of ${when}` : REPLAY && pure ? `<b>Replay</b> · real national data to the week of ${when}` : REPLAY ? `<b>Replay</b> · with uploaded weeks, not verified, to the week of ${when}` : `<b>${today}</b> · newest national figures: week of ${when}`;
+    // three discs, one fact each, each a door to its proof: the newest reading, how old the data is, how often this step was followed by a rise
+    $("d1").textContent = f1(a.pLast) + "%"; $("d1l").textContent = `of ${c.own ? "your" : "flu"} tests positive`;
+    $("d2").innerHTML = c.lag > 0 ? `${c.lag}<small>wk</small>` : "0<small>wk</small>"; $("d2l").textContent = c.lag > 0 ? "data behind today" : "data is current";
+    $("d3").innerHTML = band ? `${band.rises}<small>of ${band.weeks}</small>` : c.rise.off ? "Off" : "Rule"; $("d3l").textContent = band ? `${STEP[st.band].name} weeks then a rise` : c.rise.off ? "classifier, own series" : "set by the alert rule";
+    arc(STEPS.indexOf(st.key));
     $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls
     const n = STATE.lab.length, nr = REPLAY && !c.own ? nextRow(c) : null, done = REPLAY && nr === null;
@@ -91,7 +106,7 @@
     // the app's own words on how the replay is built: one click away on this screen, in full on every other page
     const bar = $("replayBar"); bar.querySelectorAll('a[href="./"]').forEach((x) => x.setAttribute("href", "dashboard.html#/now"));
     document.querySelectorAll('a[href="?replay=1"]').forEach((x) => x.setAttribute("href", "dashboard.html?replay=1&fresh=1#/now"));
-    if (REPLAY) $("rpAbout").innerHTML = bar.innerHTML.split(/ (?:Newer weeks are loaded|Drop in <a)/)[0];
+    if (REPLAY) $("rpAbout").innerHTML = bar.innerHTML.split(/ (?:Newer weeks are loaded|Drop in <a)/)[0] + ` This is what a planner sees with each week's own lab counts in hand. Public data alone arrives about ${D.pub_lag} weeks later.`;
     icons(c);
     // hand the living object what it draws: the app's own weekly values, alert lines, step and wording (nothing is computed here)
     const N = 40, ser = c.series, len = ser.length, grew = lastLen > 0 && len > lastLen ? len - lastLen : 0; lastLen = len;
@@ -127,8 +142,7 @@
     $("bars").innerHTML = vals.map((v, i) => `<i class="${v >= c.th.orange ? "o" : v >= c.th.yellow ? "y" : ""}${i === vals.length - 1 ? " now" : ""}${i >= vals.length - fresh ? " new" : ""}${first && d[i] === first ? " sig" : ""}" style="height:${h(v)}%" title="Week of ${d[i] ? dmy(d[i]) : wk(ser[i])}: ${f1(v)}%"></i>`).join("") +
       `<u style="bottom:${h(c.th.orange)}%;--k:${css("--orange")}"><b>Alert line ${f1(c.th.orange)}%</b></u><u style="bottom:${h(c.th.yellow)}%;--k:${css("--yellow")}"><b>Watch line ${f1(c.th.yellow)}%</b></u>`;
     $("bars").setAttribute("aria-label", `Weekly flu positivity, last ${vals.length} weeks; newest ${f1(vals[vals.length - 1])}%`);
-    $("stripNote").innerHTML = (first ? `<b>${firstName} first shown on data to the week of ${dm(first)}.</b>` + (ms.outbreak && ms.outbreak > first ? ` Outbreak on data to the week of ${dm(ms.outbreak)}, <b>${days(first, ms.outbreak)} days later</b>.` : ms.outbreak ? "" : " The alert rule has not called Outbreak yet.") : "Each bar is one real week: the share of flu tests that came back positive.") +
-      `<span class="small"><br>This is what a planner sees with each week's own lab counts in hand. Public data alone arrives about ${D.pub_lag} weeks later.</span>`;
+    $("stripNote").innerHTML = (first ? `<b>${firstName} first shown on data to the week of ${dm(first)}.</b>` + (ms.outbreak && ms.outbreak > first ? ` Outbreak on data to the week of ${dm(ms.outbreak)}, <b>${days(first, ms.outbreak)} days later</b>.` : ms.outbreak ? "" : " The alert rule has not called Outbreak yet.") : "Each press adds one real week of national lab counts.");
   }
 
   async function replayFile() {
