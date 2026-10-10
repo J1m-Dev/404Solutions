@@ -452,3 +452,10 @@ html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
 }
 @keyframes land-scene{from{transform:scale(1.12)}to{transform:none}}
 @keyframes land-rail{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+/* Jim, 06:58: "How reliable" leaves the first screen (the count reads as a score without its context; the full record is the Trust page). The replay tile takes its room. */
+#p-now .tile.rel{display:none}
+@media (min-width:901px){#p-now .tile.play{grid-column:span 2}[data-replay="1"] #p-now .tile.play{grid-column:span 3}}
+/* the replay button has room for its label when the arrow slides in on hover: nothing is cut */
+.tile.play .go{padding:11px 34px 11px 22px;white-space:nowrap}
+.tile.play .go .arr{left:14px}
+.tile.play .go:not(:disabled):hover .lab,.tile.play .go:not(:disabled):focus-visible .lab{transform:translateX(14px)}
