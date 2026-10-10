@@ -1,118 +1,290 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-state="green">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DOM · Control room</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%2334579a' stroke='white' stroke-width='2'/%3E%3Ccircle cx='20' cy='17' r='4' fill='%23ff6a3d'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/dash.css">
+<link rel="stylesheet" href="vendor/leaflet.min.css">
+<link rel="stylesheet" href="assets/room.css">
 <script>try { if (sessionStorage.getItem("dom-dive")) { sessionStorage.removeItem("dom-dive"); document.documentElement.classList.add("arrive"); } } catch (e) {}</script>
 </head>
 <body>
-<div class="depth" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<!-- DOM control room. The look, the pages and the first screen are ours (assets/room.css, assets/room.js).
+     Every feature, number and rule comes from the team's own code, loaded unchanged: assets/app.js and assets/model.js.
+     The sections below are the same elements as index.html, with the same ids, arranged one feature to a page. -->
+<canvas id="contours" aria-hidden="true"></canvas>
 
-<nav class="rail" aria-label="Views">
-  <a class="logo" href="landing.html" aria-label="DOM, back to the start"><span>D</span><i></i><span>M</span></a>
-  <div class="tabs" id="tabs">
-    <button data-view="now" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Now</span></button>
-    <button data-view="forecast"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 8-9"/><path d="M3 21h18"/></svg><span>Forecast</span></button>
-    <button data-view="map"><svg viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg><span>Map</span></button>
-    <button data-view="proof"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.500-1-8-4-8-9V6l8-3z"/><path d="M8.500 12l2.500 2.500 4.500-5"/></svg><span>Proof</span></button>
-    <button data-view="data"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/></svg><span>Data</span></button>
-  </div>
-  <a class="back" href="landing.html">Back to start</a>
+<nav class="rail" aria-label="Pages">
+  <a class="logo" href="landing.html" aria-label="DOM, back to the start"><i></i></a>
+  <a href="#/now" data-go="now"><svg id="ic-now" viewBox="0 0 44 44"></svg><span>Now</span></a>
+  <a href="#/forecast" data-go="forecast"><svg id="ic-forecast" viewBox="0 0 44 44"></svg><span>Forecast</span></a>
+  <a href="#/sim" data-go="sim"><svg id="ic-sim" viewBox="0 0 44 44"></svg><span>What if</span></a>
+  <a href="#/atlas" data-go="atlas"><svg id="ic-atlas" viewBox="0 0 44 44"></svg><span>Map</span></a>
+  <a href="#/dengue" data-go="dengue"><svg id="ic-dengue" viewBox="0 0 44 44"></svg><span>Dengue</span></a>
+  <a href="#/proof" data-go="proof"><svg id="ic-proof" viewBox="0 0 44 44"></svg><span>Proof</span></a>
+  <a href="#/history" data-go="history"><svg id="ic-history" viewBox="0 0 44 44"></svg><span>Data</span></a>
+  <a href="#/stakes" data-go="stakes"><svg id="ic-stakes" viewBox="0 0 44 44"></svg><span>About</span></a>
 </nav>
 
 <main>
-  <header class="top">
-    <div class="seg" id="disease" role="tablist" aria-label="Disease">
-      <button data-d="flu" class="on">Influenza</button><button data-d="dengue">Dengue</button>
+<div id="stamp" class="stamp"></div>
+<div id="replayBar" class="replay" hidden></div>
+
+<section class="page on" id="p-now" data-page="now">
+  <header class="top"><span class="flag" id="flag" hidden></span><span class="lvl" id="lvl"></span></header>
+  <div class="read">
+    <h1 id="head"></h1>
+    <p class="label" id="label"></p>
+    <div class="big"><b id="pct">0</b><em>%</em></div>
+    <p class="basis" id="basis"></p>
+    <p class="do"><small>Do first</small><span id="first"></span></p>
+    <div class="row">
+      <button class="btn sun" id="rpGo"></button>
+      <button class="btn ghost" id="rpAgain" hidden>Start again</button>
+      <button class="btn ghost" id="rpLeave" hidden>Leave replay</button>
+      <button class="whybtn" id="whyBtn">Why this reading</button>
     </div>
-    <div class="fresh" id="fresh"></div>
-  </header>
+  </div>
+  <div class="strip" id="strip" hidden>
+    <p id="stripNote"></p>
+    <div class="bars" id="bars" role="img"></div>
+  </div>
+</section>
 
-  <section class="view on" id="v-now">
-    <div class="verdict">
-      <span class="lvl" id="lvl"></span>
-      <h1 id="head"></h1>
-      <p id="sub"></p>
+<section class="page" id="p-forecast" data-page="forecast">
+  <header class="phead"><h1>Where it is heading</h1><p>The share of flu tests that came back positive, and the weeks ahead.</p></header>
+<section id="forecast" class="card">
+  <h2>Sentinel influenza positivity <span class="chip real">Real data</span> <span class="chip est">Estimated</span></h2>
+  <p class="note">Share of sentinel lab samples that tested positive for influenza, Malaysia. This is not a count of cases.</p>
+  <div class="chartbox"><canvas id="chart"></canvas></div>
+  <div id="signals" class="signals"></div>
+</section>
+</section>
+
+<section class="page" id="p-sim" data-page="sim">
+  <header class="phead"><h1>What if it spreads faster?</h1><p>Draw a possible outbreak and watch the alert, the classifier and the plan respond. Invented weeks, never data.</p></header>
+<section id="sim" class="card">
+  <h2>What-if simulator <span class="chip sim">Simulated</span></h2>
+  <p class="note">Draw a possible outbreak and watch the alert, the classifier, the proposed action and the hospital plan respond. The factor effects are our own assumptions for illustration. They are not estimated from Malaysian data and this is not a forecast.</p>
+  <div class="grid2">
+    <div>
+      <label class="row"><input type="checkbox" id="simOn"> <b>Simulation on</b></label>
+      <label>Weeks from now: <b id="simWeekV"></b><input type="range" id="simWeek" min="0" max="11" step="1" value="0"></label>
+      <h3>Outbreak shape</h3>
+      <label>Base weekly growth: <b id="simBaseV"></b><input type="range" id="simBase" min="0" max="60" step="1" value="15"></label>
+      <label>Weeks of growth: <b id="simWeeksV"></b><input type="range" id="simWeeks" min="1" max="8" step="1" value="5"></label>
+      <h3>Factors <span class="chip exp">Assumed effects</span></h3>
+      <label class="row"><input type="checkbox" id="simSchool" checked> Schools in session</label>
+      <label>New strain meeting low immunity (0 to 100): <b id="simStrainV"></b><input type="range" id="simStrain" min="0" max="100" step="5" value="50"></label>
+      <label>Vaccination coverage: <b id="simVaxV"></b><input type="range" id="simVax" min="0" max="60" step="5" value="10"></label>
+      <label class="row"><input type="checkbox" id="simTravel"> Festive travel or mass gathering</label>
+      <label class="row"><input type="checkbox" id="simRain"> Rainy, humid season</label>
+      <p class="note" id="simGrowth"></p>
     </div>
-    <div class="three">
-      <article class="card" id="cardChance">
-        <h2>Chance of a rapid rise</h2>
-        <div class="ring"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="80"/><circle class="arc" id="arc" cx="100" cy="100" r="80" transform="rotate(-90 100 100)"/></svg><b><span id="pct">0</span><em>%</em></b></div>
-        <p id="chanceLine">that flu positives rise by half within four weeks</p>
-        <p class="quiet" id="chanceProof"></p>
-      </article>
-      <article class="card">
-        <h2>Why</h2>
-        <ul class="why" id="why"></ul>
-        <button class="link" id="lang">Baca dalam Bahasa Melayu</button>
-        <p class="quiet" id="summary" hidden></p>
-      </article>
-      <article class="card" id="cardDo">
-        <h2>Do first</h2>
-        <p class="first" id="first"></p>
-        <p class="who" id="who"></p>
-        <ul class="then" id="then"></ul>
-        <p class="quiet">Proposed actions, not official guidance.</p>
-      </article>
+    <div id="simOut"></div>
+  </div>
+</section>
+</section>
+<section class="page" id="p-atlas" data-page="atlas">
+  <header class="phead"><h1>Where to be ready</h1><p>Every state, Selangor's districts, and each registered hospital and clinic.</p>
+    <div class="subtabs" id="atlasTabs"><button data-sub="map" class="on">Map</button><button data-sub="beds">Districts and beds</button><button data-sub="trend">Trend by state</button></div></header>
+  <div class="sub on" data-sub="map"><section id="atlas" class="card">
+  <h2>Map: Malaysia and Selangor <span class="chip real">State figures: real data</span> <span class="chip exp" id="mapChip">Exploratory</span></h2>
+  <p class="note" id="stSrc"></p>
+  <p class="note" id="mapNote"></p>
+  <div class="histctl" id="stCtl">
+    <label>Disease <select id="stDisease"><option value="flu">Influenza</option><option value="dengue">Dengue</option></select></label>
+    <label>Shade states by <select id="stMeasure"></select></label>
+    <label id="stYearRow">Year: <b id="stYearV"></b> <input type="range" id="stYear" min="0" max="10" step="1" value="10"></label>
+    <button type="button" id="stPlay">Play years</button>
+  </div>
+  <div class="histctl">
+    <label id="mapModeRow">Selangor districts show <select id="mapMode"><option value="hot">Hotspots: where cases and clusters are</option><option value="pop">Population (exposure proxy)</option><option value="pupils">School pupils (exposure proxy)</option></select></label>
+    <span class="viewbtns"><button type="button" id="viewAll">Whole Malaysia</button> <button type="button" id="viewSel">Zoom to Selangor</button></span>
+  </div>
+  <div class="toggles" id="layerToggles">
+    <label class="tog"><input type="checkbox" id="ly_state" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#fdd0a2,#8c2d04)"></i>State shading</label>
+    <label class="tog"><input type="checkbox" id="ly_shade" checked><span class="sw"></span>District shading</label>
+    <label class="tog"><input type="checkbox" id="ly_heat" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#ffe08a,#e31a1c)"></i>Cluster heat</label>
+    <label class="tog"><input type="checkbox" id="ly_hot" checked><span class="sw"></span><i class="dot" style="background:#e0393f"></i>Hotspot circles</label>
+    <label class="tog"><input type="checkbox" id="ly_government" checked><span class="sw"></span><i class="dot" style="background:#0b6e6e"></i><span>Public hospitals (<span id="n_government"></span>)</span></label>
+    <label class="tog"><input type="checkbox" id="ly_private" checked><span class="sw"></span><i class="dot" style="background:#b5179e"></i><span>Private hospitals (<span id="n_private"></span>)</span></label>
+    <label class="tog"><input type="checkbox" id="ly_clinic" checked><span class="sw"></span><i class="dot" style="background:#e07a00"></i><span>Health clinics (<span id="n_clinic"></span>)</span></label>
+    <button type="button" id="lyAll">All on</button><button type="button" id="lyNone">All off</button>
+  </div>
+  <p class="note" id="mapHint"></p>
+  <div id="map"></div>
+  <p class="legend" id="stLegend"></p>
+</section></div>
+  <div class="sub" data-sub="beds"><section class="card">
+  <div class="grid2">
+    <div>
+      <h3>Selangor districts: influenza</h3>
+      <div id="hotRank"></div>
     </div>
-    <div class="replay" id="replay"></div>
-  </section>
-
-  <section class="view" id="v-forecast">
-    <div class="vhead"><h1>Where it is heading</h1><p id="fcLead"></p></div>
-    <article class="card wide"><canvas id="fc" class="plot"></canvas><div class="legend" id="fcLegend"></div><p class="quiet" id="fcNote"></p></article>
-  </section>
-
-  <section class="view" id="v-map">
-    <div class="vhead"><h1>Where to be ready</h1><p>Selangor's districts, public and private hospitals, and clinics. Shading shows where people live, not where flu is: no district flu data is published.</p></div>
-    <div class="two">
-      <article class="card"><canvas id="mapc" class="plot tall"></canvas><div class="legend" id="mapLegend"></div></article>
-      <article class="card">
-        <h2 id="dName">Move patients before wards fill</h2>
-        <p class="quiet" id="dInfo">Hover a district to see who lives there and its nearest hospitals.</p>
-        <label class="sl">Usual weekly respiratory admissions <b id="admV"></b><input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
-        <label class="sl">Occupancy assumed where none is reported <b id="occV"></b><input type="range" id="occ" min="40" max="95" step="5" value="70"></label>
-        <label class="sl">Share of free beds usable for flu <b id="shareV"></b><input type="range" id="share" min="5" max="100" step="5" value="25"></label>
-        <div id="plan"></div>
-        <p class="quiet" id="planNote"></p>
-      </article>
+    <div>
+      <h3>Exploratory capacity heuristic <span class="chip est" id="bedChip"></span></h3>
+      <label>Baseline weekly respiratory admissions, Selangor (assumption): <b id="admV"></b>
+        <input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
+      <label>Occupancy assumed where none is reported: <b id="occV"></b>
+        <input type="range" id="occ" min="40" max="95" step="5" value="70"></label>
+      <label>Share of free beds usable for flu (assumption): <b id="shareV"></b>
+        <input type="range" id="share" min="5" max="100" step="5" value="25"></label>
+      <p class="note" id="planNote"></p>
+      <div id="plan"></div>
     </div>
-  </section>
-
-  <section class="view" id="v-proof">
-    <div class="vhead"><h1>Does it work?</h1><p>Every result, pass or fail. Rules were fixed before the unseen weeks were scored.</p></div>
-    <div class="kpis" id="kpis"></div>
-    <div class="two"><article class="card" id="proofA"></article><article class="card" id="proofB"></article></div>
-  </section>
-
-  <section class="view" id="v-data">
-    <div class="vhead"><h1>Bring it up to date</h1><p>Public numbers arrive about four weeks late. Adding this week's lab counts is what makes the warning early.</p></div>
-    <div class="two">
-      <article class="card">
-        <h2>Replay October 2025</h2>
-        <p>Step through the real weeks before last year's surge and watch the verdict change.</p>
-        <div class="row"><button class="btn" id="rpStart"></button><button class="btn ghost" id="rpNext">Add the next real week</button></div>
-        <p class="quiet" id="rpState"></p>
-      </article>
-      <article class="card">
-        <h2>Add your own weekly counts</h2>
-        <p>Drop a CSV with the columns <code>year, week, samples_tested, influenza_positive</code>. It stays in this browser only.</p>
-        <label class="drop" id="drop"><input type="file" id="file" accept=".csv" hidden><span>Drop a CSV here, or click to choose</span></label>
-        <p class="quiet" id="upState"></p>
-        <div class="row"><a class="btn ghost" href="templates/template_lab_counts.csv" download>Get the template</a><button class="btn ghost" id="reset">Clear what was added</button></div>
-      </article>
+  </div>
+</section></div>
+  <div class="sub" data-sub="trend"><section class="card">
+  <div id="trendBox">
+    <h3>Trend by state <span class="chip est">Projections estimated</span></h3>
+    <p class="note" id="stNote"></p>
+    <div class="histctl">
+      <label id="stViewRow">View <select id="stView"><option value="weekly">Weekly by state, 2010 to 2015 and 2020 to 2024</option><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 1999 to 2023</option></select></label>
     </div>
-  </section>
+    <div class="toggles" id="stToggles"></div>
+    <div class="chartbox"><canvas id="stChart"></canvas></div>
+    <div id="stBody"></div>
+  </div>
+</section></div>
+</section>
 
-  <footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support, not medical advice. Data: WHO FluNet, OpenDengue, OpenDOSM, geoBoundaries, OpenStreetMap contributors. <a href="index.html">Full technical page</a></footer>
+<section class="page" id="p-dengue" data-page="dengue">
+  <header class="phead"><h1>Dengue</h1><p>A second disease on the same method: weekly cases, rebuilt to August 2026.</p></header>
+<section id="dengue" class="card">
+  <h2>Dengue: second-disease experiment, rebuilt to August 2026 <span class="chip real">Real data</span> <span class="chip est">Some weeks estimated</span></h2>
+  <p class="note" id="dengueNote"></p>
+  <div class="chartbox"><canvas id="dengueChart"></canvas></div>
+  <div id="dengueBody"></div>
+</section>
+</section>
+
+<section class="page" id="p-proof" data-page="proof">
+  <header class="phead"><h1>Does it work?</h1><p>Every result, pass or fail.</p></header>
+<section id="proof" class="card">
+  <h2>Does it work? Every result, pass or fail</h2>
+  <div id="proofBody"></div>
+</section>
+</section>
+
+<section class="page" id="p-history" data-page="history">
+  <header class="phead"><h1>Bring it up to date</h1><p>Public numbers arrive about four weeks late. Your newer figures are what make the warning early.</p><button id="uploadBtn" class="btn sun">Upload newest data</button></header>
+<section id="history" class="card">
+  <h2>Upload history <span class="chip ai" id="roleChip"></span></h2>
+  <p class="note" id="histNote"></p>
+  <div class="histctl">
+    <label>Your name or role, shown beside your uploads <input type="text" id="byIn" maxlength="60" placeholder="for example: District officer, Klang"></label>
+    <label id="passRow" hidden>Passcode <input type="password" id="passIn" autocomplete="off"> <button type="button" id="passBtn">Use passcode</button></label>
+  </div>
+  <div id="histBody"></div>
+  <p class="err" id="histMsg"></p>
+</section>
+</section>
+
+<section class="page" id="p-stakes" data-page="stakes">
+  <header class="phead"><h1>Who it is for</h1><p>The user, what is at stake, and where the facilities come from.</p></header>
+<section class="card hero" id="hero">
+  <h1>Know an influenza surge has started in the week it starts, not four weeks later.</h1>
+  <p>Public influenza figures for Malaysia run about four weeks behind. FluSentinel takes a planner's own newer lab figures and returns an alert level, the kind of wave, a proposed action and the reason for it. A machine-learning classifier adds the chance of a rapid rise in the next four weeks. Every test result is shown, including the ones that failed.</p>
+  <p><a class="btn" href="?replay=1">Run the October 2025 replay</a> <a class="btn ghost" href="#proof">See the proof</a></p>
+</section>\n<section id="stakes" class="card">
+  <h2>Who this is for, and what is at stake</h2>
+  <div class="grid2">
+    <div>
+      <h3>The user <span class="chip exp">Hypothesis</span></h3>
+      <p>A planner who must act on influenza but does not see the Ministry of Health's internal figures: for example the infection-control lead of a private hospital group, or a state-government public-health planner.</p>
+      <p><b>The decision:</b> when to start school-cluster response and vaccination outreach, and which hospitals to put on standby.</p>
+      <p class="note">Not yet tested with a person in this role. The tested alert thresholds come from the national sentinel series; a planner's own series would need its own thresholds.</p>
+      <h3>Published costs <span class="chip real">Published figures</span></h3>
+      <ul class="why">
+        <li>Direct medical cost of influenza in Malaysia: MYR 310.9 million over 2016 to 2018, almost all of it hospital admissions.</li>
+        <li>One admission for severe respiratory infection: about MYR 3,900 to 5,400. One clinic visit: about MYR 43 to 60.</li>
+      </ul>
+      <p class="note">Source: "Cross-sectional study of influenza trends and costs in Malaysia between 2016 and 2018", PLOS ONE, 2024. Direct medical costs only. We claim no savings: that needs a user's own admission counts, response costs and what they would do differently.</p>
+    </div>
+    <div>
+      <h3>The 2025 surge, week by week <span class="chip real">Real data</span></h3>
+      <table>
+        <tr><th>When</th><th>What happened</th><th>Source</th></tr>
+        <tr><td>Week ending 27 Sep</td><td>Selangor's surge period begins (week 39)</td><td>Selangor State Assembly answer, Nov 2025</td></tr>
+        <tr><td>9 Oct</td><td>Ministry reports clusters up from 14 to 97 in one week; 43 are in Selangor</td><td>Ministry of Health statement, reported by Bernama</td></tr>
+        <tr><td>5 to 11 Oct</td><td>National sentinel positivity reaches 37%, above our alert line</td><td>WHO FluNet</td></tr>
+        <tr><td>25 Oct</td><td>Selangor total reaches 3,239 cases in 268 clusters; 81% of clusters are in institutions</td><td>Selangor State Assembly answer</td></tr>
+        <tr><td>10 Nov</td><td>Selangor's school vaccination programme starts in four districts</td><td>Selangor State Assembly answer</td></tr>
+      </table>
+      <p class="note">This shows how fast a surge moves compared with public reporting. It does not show that this tool would have changed any decision.</p>
+    </div>
+  </div>
+</section>\n<section id="guide" class="card">
+  <h2>Facilities on the map</h2>
+  <p class="note" id="facNote"></p>
+  <h3>How to verify registered private GP clinics (klinik swasta)</h3>
+  <p class="note">Under Malaysian law (Act 586), private clinics and doctors must be registered with CKAPS, the Private Medical Practice Control Section of the Ministry of Health. Private GP clinics are not plotted here; to check one:</p>
+  <ul class="why">
+    <li><b>CKAPS directory (Ministry of Health):</b> hq.moh.gov.my/medicalprac, under the register of Klinik Perubatan Swasta (Am).</li>
+    <li><b>Malaysian Medical Council:</b> mmc.gov.my, to check that a practitioner is licensed.</li>
+    <li><b>data.gov.my:</b> the Ministry of Health facilities dataset, filtered by Selangor postcodes.</li>
+  </ul>
+</section>
+</section>
+<footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, WHO dengue situation updates, Ministry of Health Malaysia open data and facility registry, OpenDengue, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
 </main>
 
+<aside class="sheet" id="sheet" hidden>
+  <button class="x" id="sheetX" aria-label="Close">×</button>
+
+  <div class="card" id="alertCard"></div>
+  <div class="card">
+    <h3>Summary <span class="chip ai" id="sumChip">Template</span></h3>
+    <label class="tog"><input type="checkbox" id="aiOn"><span class="sw"></span><span>AI wording (experimental)</span></label> <span class="note" id="aiNote">Off: the text below is a fixed template. On: an AI service rewords the same figures; its text is rejected if it contains any number not in them.</span>
+    <p id="sumEn" class="summary"></p>
+    <p id="sumBm" class="summary bm"></p>
+    <h3>Proposed action <span class="chip exp">Proposal</span></h3>
+    <div id="action"></div>
+  </div>
+
+</aside>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlgForm">
+    <h2>Upload newest data</h2>
+    <p class="note" id="upNote"></p>
+    <label>Data type
+      <select id="utype">
+        <option value="lab">Weekly lab counts (updates the forecast and alert)</option>
+        <option value="ili">Weekly ILI clinic rate (supporting signal)</option>
+        <option value="clusters">Cluster counts by district (map)</option>
+        <option value="clusterlist">Cluster list with sizes and locations (map hotspots)</option>
+        <option value="beds">Hospital beds available (planner)</option>
+      </select></label>
+    <label class="row" id="ownRow"><input type="checkbox" id="ownSeries"> <span>These figures are from <b>my own lab network</b>, not the national sentinel system. They replace the national series on screen (at least 12 weeks in a row; 52 or more to get alert lines fitted to your data).</span></label>
+    <p>Template: <a id="tpl" download></a></p>
+    <div id="drop" class="drop" role="button" tabindex="0">
+      <b>Drag and drop files or a folder here</b>
+      <span>CSV or Excel. The data type is recognised from the columns. Or click to browse.</span>
+      <span id="dropName" class="dropname"></span>
+      <span id="dropInfo" class="note"></span>
+    </div>
+    <input type="file" id="ufile" accept=".csv,.xlsx,.xls" multiple hidden>
+    <p class="or">or type one row</p>
+    <div id="manual"></div>
+    <button type="button" id="addRow">Add typed row</button>
+    <div id="preview"></div>
+    <div id="uerr" class="err"></div>
+    <menu>
+      <button value="cancel">Cancel</button>
+      <button type="button" id="confirm" class="primary" disabled>Confirm and use</button>
+    </menu>
+  </form>
+</dialog>
+
+<script src="vendor/chart.umd.min.js"></script>
+<script src="vendor/leaflet.min.js"></script>
+<script src="vendor/leaflet-heat.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
 <script src="assets/model.js"></script>
-<script src="assets/dash.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/room.js"></script>
 </body>
 </html>
