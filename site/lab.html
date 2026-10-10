@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-dir="number" data-room="blue" data-state="green">
+<html lang="en" data-state="green">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DOM · Control room (two directions)</title>
+<title>DOM · Control room</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%2334579a' stroke='white' stroke-width='2'/%3E%3Ccircle cx='20' cy='17' r='4' fill='%23ff6a3d'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/lab.css">
 </head>
@@ -21,54 +21,34 @@
 </nav>
 
 <main>
-  <header class="top">
-    <div class="word">D<i></i>M <span>Influenza · Malaysia</span></div>
-    <!-- comparison switches: only on this trial page -->
-    <div class="lab" role="group" aria-label="Compare">
-      <span>Compare</span>
-      <div class="sw" id="swDir"><button data-v="number" class="on">1 One number</button><button data-v="map">2 Living map</button></div>
-      <div class="sw" id="swRoom"><button data-v="blue" class="on">Room stays blue</button><button data-v="warm">Room warms</button></div>
-    </div>
-    <div class="fresh" id="fresh"></div>
-  </header>
+  <header class="top"><span class="lvl" id="lvl"></span></header>
 
-  <!-- direction 2 only: the country is the stage -->
-  <div class="stage" id="stage">
-    <svg id="my" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of Malaysia's states">
-      <defs><pattern id="dots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.5" fill="#fff"/></pattern></defs>
-      <g id="states"></g>
-    </svg>
-    <p class="stagenote" id="stageNote"></p>
-    <div class="statecard" id="stateCard" hidden></div>
-  </div>
-
-  <section class="read" id="read">
-    <div class="figure">
-      <span class="lvl" id="lvl"></span>
-      <div class="big"><b id="pct">0</b><em>%</em></div>
-      <p class="cap">chance that flu positives rise by half within four weeks</p>
-    </div>
-    <div class="say">
-      <h1 id="head"></h1>
-      <p class="sub" id="sub"></p>
-      <div class="do"><small>Do first</small><p id="first"></p><span id="who"></span></div>
-      <button class="whybtn" id="whyBtn" aria-expanded="false">Why this reading</button>
+  <section class="read">
+    <h1 id="head"></h1>
+    <p class="label" id="label"></p>
+    <div class="big"><b id="pct">0</b><em>%</em></div>
+    <p class="basis" id="basis"></p>
+    <p class="do"><small>Do first</small><span id="first"></span></p>
+    <div class="row">
+      <button class="btn sun" id="rpGo"></button>
+      <button class="btn ghost" id="rpLeave" hidden>Leave replay</button>
+      <button class="whybtn" id="whyBtn">Why this reading</button>
     </div>
   </section>
 
-  <section class="strip">
+  <!-- shown only while the replay runs: the real weeks being added -->
+  <section class="strip" id="strip" hidden>
+    <p id="stripNote"></p>
     <div class="bars" id="bars" role="img"></div>
-    <div class="ctl">
-      <p id="stripNote"></p>
-      <div class="btns"><button class="btn sun" id="rpGo"></button><button class="btn ghost" id="rpLeave" hidden>Leave replay</button></div>
-    </div>
   </section>
 </main>
 
 <aside class="sheet" id="sheet" hidden>
   <button class="x" id="sheetX" aria-label="Close">×</button>
   <h2>Why this reading</h2>
+  <p class="sub" id="sub"></p>
   <ul id="why"></ul>
+  <p class="who" id="who"></p>
   <p class="quiet" id="proofLine"></p>
   <p class="quiet">Proposed actions, not official guidance. Decision support, not medical advice.</p>
 </aside>
