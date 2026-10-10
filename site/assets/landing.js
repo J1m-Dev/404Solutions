@@ -191,11 +191,7 @@
   }
 
   // ---- today's reading, from the app's own data and model ----
-  function readData(D) {
-    const now = window.FluModel.riseSignal(D.series, D.rise.current);
-    todayP = now.prob;
-    $("nowPct").textContent = Math.round(now.prob * 100); $("nowWord").textContent = now.prob >= 0.5 ? "rise likely" : now.prob >= 0.25 ? "watch" : "calm";
-  }
+  function readData(D) { todayP = window.FluModel.riseSignal(D.series, D.rise.current).prob; }   // sets how far the pulse on Malaysia reaches
 
   // ---- pointer: the Earth leans toward it, beads lift under it, the fog shifts; dragging turns the Earth on the first screen ----
   addEventListener("pointermove", (e) => {
@@ -236,6 +232,7 @@
     net.push({ x: Math.random(), y: Math.random(), z: 0.3 + Math.random() * 0.7, p, n: String(20 + Math.floor(Math.random() * 79)), delay: Math.random() * 0.7, ph: Math.random() * 6 }); }
   for (let i = 0; i < 60; i++) snow.push({ x: Math.random(), y: Math.random(), z: Math.random() });
 
+  document.querySelectorAll(".spread").forEach((el) => { el.innerHTML = [...el.textContent].map((ch, i) => `<span style="--i:${i};--j:${i % 2}">${ch}</span>`).join(""); });
   const names = (list) => list.concat(list).map((n) => `<div>${n}</div>`).join("");
   $("namesL").innerHTML = names(STATES); $("namesR").innerHTML = names(STATES.slice(8).concat(STATES.slice(0, 8)));
   Promise.all([fetch("data/dots.json").then((r) => r.json()), fetch("data/site.json").then((r) => r.json()), document.fonts ? document.fonts.ready : 0]).then(([d, D]) => {

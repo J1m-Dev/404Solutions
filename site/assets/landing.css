@@ -76,6 +76,11 @@ h2{font-size:clamp(24px,min(4.2vw,7.4vh),66px)}
 .mark{position:relative;white-space:nowrap}
 .mark::after{content:"";position:absolute;left:0;right:0;bottom:-.06em;height:.09em;border-radius:.05em;background:var(--mark);transform:scaleX(0);transform-origin:left;transition:transform .9s var(--swing) .7s}
 body.ready .mark::after{transform:scaleX(1)}
+/* "spreads." starts to drift apart, then snaps back as the line lands under "outbreak": caught before it spreads */
+.spread{white-space:nowrap}
+.spread span{display:inline-block}
+body.ready .spread span{animation:spread 1.75s var(--swing) .25s both}
+@keyframes spread{0%{transform:none;opacity:1}50%,70%{transform:translateX(calc(var(--i)*.1em)) translateY(calc((var(--j) - .5)*.1em));opacity:.85}100%{transform:none;opacity:1}}
 
 .s1{display:grid;grid-template-rows:auto minmax(0,1fr);padding-top:clamp(62px,12vh,128px);padding-bottom:clamp(14px,3vh,34px)}
 .s1 .copy{gap:clamp(8px,1.8vh,18px)}
@@ -127,5 +132,6 @@ body.leaving main,body.leaving .bar,body.leaving .tag,body.leaving .hud{opacity:
   html{scroll-behavior:auto}
   .mist,.mist i,.hint::before,.names div{animation:none;transition:none}
   .bar,.s1 .copy>*,.hint,.mark::after{transition:none}
+  body.ready .spread span{animation:none}
   .btn::before,.btn .lab,.btn .arr,.btn .dot{transition:none}
 }
