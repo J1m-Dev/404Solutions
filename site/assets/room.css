@@ -459,3 +459,6 @@ html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
 .tile.play .go{padding:11px 34px 11px 22px;white-space:nowrap}
 .tile.play .go .arr{left:14px}
 .tile.play .go:not(:disabled):hover .lab,.tile.play .go:not(:disabled):focus-visible .lab{transform:translateX(14px)}
+/* the live button in the plan reads as live beside the two that are switched off */
+.sheet .tg .quiet{background:rgba(255,255,255,.28);box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}.sheet .tg .quiet:hover{background:rgba(255,255,255,.4)}
+.tile.play .row{justify-content:flex-start}
