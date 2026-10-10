@@ -86,7 +86,6 @@ html = f'''<!doctype html>
   {door("forecast", "Signal")}
   {door("trust", "Trust")}
   {door("atlas", "Where")}
-  {door("track", "Record")}
   {door("stakes", "Who for")}
   {door("more", "More")}
   {door("ask", "Ask", "svg", "ask")}

@@ -21,7 +21,7 @@
   const afters = []; window.Room = { fold, resize, starts, dm, dmy, after: (fn) => { afters.push(fn); if (root.dataset.ready) { try { fn(); } catch (e) { console.error("room", e); } } } };
 
   // ---------- pages ----------
-  const pages = [...document.querySelectorAll(".page")].map((p) => p.dataset.page);
+  const pages = [...document.querySelectorAll(".page")].map((p) => p.dataset.page).filter((p) => p !== "track");   // the Record page is hidden (Jim, 11 Oct): its section stays in the page for the app, with no door and no route
   function show(id) {
     if (!pages.includes(id)) id = "now";
     document.querySelectorAll(".page").forEach((p) => p.classList.toggle("on", p.dataset.page === id));
