@@ -27,6 +27,8 @@
   function readAcc(now) { if (now - accAt < 120) return; accAt = now; const m = getComputedStyle(root).getPropertyValue("--acc").match(/[\d.]+/g) || [];
     if (m.length >= 3) acc = m.slice(0, 3).map(Number); else { const h = getComputedStyle(root).getPropertyValue("--acc").trim().replace("#", ""); if (h.length === 6) acc = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); } }
   const WARM = { y: [255, 207, 74], o: [255, 138, 72], r: [255, 106, 90] };
+  let GC = ["#8f9cb3", "#5f6c85", "#3e4960", "#303a4f"], gcAt = -9999;   // the Earth's body colours follow the room (--g1..--g4 in room.css)
+  function readGlobe(now) { if (now - gcAt < 400) return; gcAt = now; const cs = getComputedStyle(root), v = [1, 2, 3, 4].map((i) => cs.getPropertyValue("--g" + i).trim()); if (v.every(Boolean)) GC = v; }
 
   addEventListener("room:update", (e) => { const d = e.detail, first = !S;
     if (S && d.vals.length && d.fresh > 0 && !STILL) { slide = 1; slideAt = performance.now(); }
@@ -53,8 +55,8 @@
     let gr = g.createRadialGradient(x, y, R * 0.9, x, y, R * 1.5 + 40); const hc = [mix(226, acc[0], warm * 0.16), mix(238, acc[1], warm * 0.16), mix(252, acc[2], warm * 0.16)];
     gr.addColorStop(0, rgb(hc, (0.34 + 0.1 * br * warm + 0.12 * beat) * A)); gr.addColorStop(1, rgb(hc, 0)); g.fillStyle = gr; g.beginPath(); g.arc(x, y, R * 1.5 + 40, 0, 7); g.fill();
     g.save(); g.beginPath(); g.arc(x, y, R, 0, 7); g.clip(); g.globalAlpha = A;
-    gr = g.createRadialGradient(x - R * 0.42, y - R * 0.5, R * 0.05, x, y, R * 1.08); gr.addColorStop(0, "#8f9cb3"); gr.addColorStop(0.45, "#5f6c85"); gr.addColorStop(0.85, "#3e4960"); gr.addColorStop(1, "#303a4f"); g.fillStyle = gr; g.fillRect(x - R, y - R, R * 2, R * 2);
-    gr = g.createLinearGradient(x - R * 0.6, y - R * 0.7, x + R * 0.7, y + R * 0.8); gr.addColorStop(0.35, "rgba(10,16,30,0)"); gr.addColorStop(1, "rgba(10,16,30,.46)"); g.fillStyle = gr; g.fillRect(x - R, y - R, R * 2, R * 2);
+    gr = g.createRadialGradient(x - R * 0.42, y - R * 0.5, R * 0.05, x, y, R * 1.08); gr.addColorStop(0, GC[0]); gr.addColorStop(0.45, GC[1]); gr.addColorStop(0.85, GC[2]); gr.addColorStop(1, GC[3]); g.fillStyle = gr; g.fillRect(x - R, y - R, R * 2, R * 2);
+    gr = g.createLinearGradient(x - R * 0.6, y - R * 0.7, x + R * 0.7, y + R * 0.8); gr.addColorStop(0.35, "rgba(4,12,60,0)"); gr.addColorStop(1, "rgba(4,12,60,.5)"); g.fillStyle = gr; g.fillRect(x - R, y - R, R * 2, R * 2);
     gr = g.createRadialGradient(x - R * 0.4, y - R * 0.5, 0, x - R * 0.4, y - R * 0.5, R * 0.62); gr.addColorStop(0, "rgba(255,255,255,.28)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(x - R, y - R, R * 2, R * 2);
     g.restore(); g.globalAlpha = 1;
     g.strokeStyle = rgb([255, 255, 255], 0.1 * A); g.lineWidth = 1; g.beginPath();
@@ -135,7 +137,7 @@
     const dt = Math.min(60, now - last); last = now; requestAnimationFrame(draw);
     const onNow = root.dataset.page === "now"; if (!S) return; if (!onNow && dim < 0.02 && !cv._clean) { g.clearRect(0, 0, W, H); cv._clean = true; return; } if (!onNow && cv._clean) return; cv._clean = false;
     box = cv.getBoundingClientRect(); if (Math.abs(box.width - W) > 1 || Math.abs(box.height - H) > 1) size(); ptr.cx = ptr.x - box.left; ptr.cy = ptr.y - box.top;
-    readAcc(now); dim += ((onNow ? 1 : 0) - dim) * (STILL ? 1 : 0.12);
+    readAcc(now); readGlobe(now); dim += ((onNow ? 1 : 0) - dim) * (STILL ? 1 : 0.12);
     arrive = STILL ? 1 : clamp((now - arrivedAt - 250) / 1500, 0, 1); if (slide > 0) slide = STILL ? 0 : Math.max(0, 1 - (now - slideAt) / 1100);
     stepK += (Math.max(0, S.step) - stepK) * (STILL ? 1 : 0.06); ptr.k += ((ptr.on ? 1 : 0) - ptr.k) * 0.14;
     phase += STILL ? 0 : (dt / mix(TEMPO[Math.floor(clamp(stepK, 0, 3))], TEMPO[Math.ceil(clamp(stepK, 0, 3))], stepK % 1)) * 6.2832;

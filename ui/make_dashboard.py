@@ -35,7 +35,7 @@ def page(ident, title, lead, body, extra=""):
 {body}
 </section>'''
 def door(ident, name):
-    return f'<a href="#/{ident}" data-go="{ident}"><svg id="ic-{ident}" viewBox="0 0 44 44"></svg><span>{name}</span></a>'
+    return f'<a href="#/{ident}" data-go="{ident}"><img src="assets/img/ic-{ident}.png" alt="" width="38" height="38"><span>{name}</span></a>'
 
 html = f'''<!doctype html>
 <html lang="en" data-state="clear">
@@ -50,7 +50,7 @@ html = f'''<!doctype html>
 <link rel="stylesheet" href="assets/room.css?v={V}">
 <script>try {{ var d = document.documentElement, q = new URLSearchParams(location.search);
   if (sessionStorage.getItem("dom-dive")) {{ sessionStorage.removeItem("dom-dive"); d.classList.add("arrive"); }}
-  d.dataset.look = q.get("look") || sessionStorage.getItem("dom-look") || "b"; d.dataset.nav = q.get("nav") || sessionStorage.getItem("dom-nav") || "top";
+  d.dataset.look = "d"; d.dataset.nav = "rail"; d.dataset.tone = q.get("tone") || sessionStorage.getItem("dom-tone") || "picture";
   if (q.get("review") || sessionStorage.getItem("dom-review")) {{ d.dataset.review = "1"; sessionStorage.setItem("dom-review", "1"); }} }} catch (e) {{}}</script>
 </head>
 <body>
@@ -81,12 +81,11 @@ html = f'''<!doctype html>
 
 <section class="page on" id="p-now" data-page="now">
   <div class="read">
-    <p class="label" id="label"></p>
+    <p class="label"><span id="label"></span> <span id="lvl"></span></p>
+    <p class="top"><span class="flag" id="flag" hidden></span></p>
     <ol class="steps" id="steps" aria-label="The four early-warning steps"></ol>
     <div class="big word"><b id="pct"></b></div>
     <h1 id="head"></h1>
-    <p class="basis" id="basis"></p>
-    <p class="top"><span class="flag" id="flag" hidden></span><span class="lvl" id="lvl"></span></p>
     <p class="do"><span class="k">Do first</span><span id="first"></span></p>
     <div class="row">
       <button class="go" id="rpGo"><span class="arr" aria-hidden="true">→</span><span class="lab" id="rpGoLab"></span><span class="dot" aria-hidden="true"></span></button>
@@ -94,6 +93,7 @@ html = f'''<!doctype html>
       <button class="quiet" id="rpLeave" hidden>Leave replay</button>
       <button class="whybtn" id="whyBtn">Why this step, and the plan</button>
     </div>
+    <p class="basis" id="basis"></p>
     <div class="strip" id="strip" hidden>
       <p id="stripNote"></p>
       <div class="bars" id="bars" role="img"></div>
@@ -113,14 +113,13 @@ html = f'''<!doctype html>
 </section>
 {page("track", "Track record", "What the system said before the figures were published, to be scored when they are.", track)}
 {page("stakes", "Who it is for", "The user, the decision, what is at stake, and the 2025 surge week by week.", hero + chr(10) + stakes)}
-{page("more", "More underneath", "Full results, the second disease, state trends, the what-if drill, uploads and sources.", more, '<button id="uploadBtn" class="btn sun">Upload newest data</button>')}
+{page("more", "More underneath", "Full results, the second disease, state trends, the what-if drill, uploads and sources.", more, '<button id="uploadBtn" class="quiet">Upload newest data</button>')}
 {footer}
 </main>
 
 <!-- REVIEW COPY ONLY (dashboard.html?review=1): the switch between first-screen treatments. Removed once one is chosen. -->
 <div class="review" id="review">
-  <span>The living object</span><button data-look="a">1 Earth</button><button data-look="b">2 Signal</button><button data-look="c">3 Ladder</button><button data-look="d">4 Earth, then Signal in the replay</button>
-  <span>Pages</span><button data-nav="top">Words on top</button><button data-nav="rail">Rail with pictures</button>
+  <span>The blue</span><button data-tone="azure">1 Azure</button><button data-tone="cobalt">2 Cobalt</button><button data-tone="ocean">3 Ocean</button><button data-tone="picture">4 Generated picture</button>
 </div>
 
 <aside class="sheet" id="sheet" hidden>

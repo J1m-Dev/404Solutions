@@ -68,16 +68,18 @@
     $("flag").hidden = !(c.sim || c.own || c.uploaded);
     $("flag").textContent = c.sim ? `Simulation on: the newest ${c.nSim} week${c.nSim > 1 ? "s are" : " is"} invented` : c.own ? "Your own uploaded series, not verified" : REPLAY && pure ? "Replay of real weeks" : REPLAY ? "Replay with uploaded weeks, not verified" : "Includes uploaded weeks, not verified";
     // the sentence under the step word is the app's own sub-line, read from its alert card so the two can never differ
-    const sub = document.querySelector("#alertCard .level .sub"), say = a.dataWarning || !sub ? (a.dataWarning ? "Data warning: check the newest week before acting" : H.head) : sub.textContent.trim();
+    // under the step word: the app's own headline for the step, without repeating the word it starts with
+    const name = STEP[st.key].name, raw = a.dataWarning ? "Data warning: check the newest week before acting" : H.head, cut = raw.startsWith(name + ": ") ? raw.slice(name.length + 2) : raw, say = cut.charAt(0).toUpperCase() + cut.slice(1);
     $("head").textContent = say + (/[.!?]$/.test(say) ? "" : ".");
-    if (!$("steps").children.length) $("steps").innerHTML = STEPS.map((k) => `<li>${STEP[k].name}</li>`).join("");
+    if (!$("steps").children.length) $("steps").innerHTML = STEPS.map((k) => `<li title="${STEP[k].name}"><span>${STEP[k].name}</span></li>`).join("");
     const si = STEPS.indexOf(st.key); [...$("steps").children].forEach((li, i) => { li.className = i === si ? "on" : i < si ? "past" : ""; }); $("steps").style.setProperty("--k", si / 3);
     $("label").textContent = "Early-warning step, " + (c.own ? "your own lab network" : "Malaysia");
     const word = a.dataWarning ? "Check" : STEP[st.key].name;
     if ($("pct").textContent !== word) { const b = $("pct"); b.textContent = word; b.classList.remove("roll"); void b.offsetWidth; b.classList.add("roll"); }
     const when = lastIso ? `<b>${dmy(lastIso)}</b>` : `<b>${wk(a.last)}</b>`;
-    $("basis").innerHTML = (band ? `In six past years a rapid rise followed ${band.rises} of ${band.weeks} ${STEP[st.band].name} weeks. ` : H.byRule && !a.dataWarning ? "Set by the alert rule on the data. " : "") +
-      (c.sim ? `A what-if drill, not a reading: it runs to the week of ${when}.` : c.own ? `Your uploaded series to the week of ${when}.` : REPLAY && pure ? `Replay on real national data to the week of ${when}.` : REPLAY ? `Replay with uploaded weeks, not verified, to the week of ${when}.` : `National data to the week of ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
+    const now = new Date(), today = `${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][now.getDay()]} ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+    $("basis").innerHTML = (REPLAY || c.sim || c.own ? "" : `Today is <b>${today}</b>. `) +
+      (c.sim ? `A what-if drill, not a reading: it runs to the week of ${when}.` : c.own ? `Your uploaded series to the week of ${when}.` : REPLAY && pure ? `Replay on real national data to the week of ${when}.` : REPLAY ? `Replay with uploaded weeks, not verified, to the week of ${when}.` : `The newest national figures are from the week of ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind. This step is the reading for the weeks not published yet.` : ", current to this week."));
     $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls
     const n = STATE.lab.length, nr = REPLAY && !c.own ? nextRow(c) : null, done = REPLAY && nr === null;
@@ -88,6 +90,7 @@
     if (REPLAY && !c.sim && !c.own) { fresh = lastCount >= 0 && n > lastCount ? n - lastCount : 0; lastCount = n; bars(c, iso); }
     // the app's own words on how the replay is built: one click away on this screen, in full on every other page
     const bar = $("replayBar"); bar.querySelectorAll('a[href="./"]').forEach((x) => x.setAttribute("href", "dashboard.html#/now"));
+    document.querySelectorAll('a[href="?replay=1"]').forEach((x) => x.setAttribute("href", "dashboard.html?replay=1&fresh=1#/now"));
     if (REPLAY) $("rpAbout").innerHTML = bar.innerHTML.split(/ (?:Newer weeks are loaded|Drop in <a)/)[0];
     icons(c);
     // hand the living object what it draws: the app's own weekly values, alert lines, step and wording (nothing is computed here)
@@ -149,7 +152,7 @@
   $("rpAgain").onclick = () => { if (SIM.on) { SIM.on = false; if ($("simOn")) $("simOn").checked = false; } resetState(); };
   $("rpLeave").onclick = () => { location.href = "dashboard.html#/now"; };
   $("whyBtn").onclick = () => { $("sheet").hidden = false; $("sheet").scrollTop = 0; $("sheetX").focus({ preventScroll: true }); }; $("sheetX").onclick = () => { $("sheet").hidden = true; $("whyBtn").focus({ preventScroll: true }); };
-  addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && !e.repeat && REPLAY && root.dataset.page === "now" && $("sheet").hidden && !document.querySelector("dialog[open]") && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && !e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && REPLAY && root.dataset.page === "now" && $("sheet").hidden && !document.querySelector("dialog[open]") && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
 
   // ---------- the rail: each page is a small live picture ----------
   let myPath = "";
@@ -185,8 +188,8 @@
   }).catch(() => {});
 
   // ---------- review copy only: switch the first-screen treatment and the navigation without reloading ----------
-  const rv = $("review"); if (rv) { const mark = () => rv.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x.dataset.look === root.dataset.look || x.dataset.nav === root.dataset.nav)); mark();
-    rv.addEventListener("click", (e) => { const x = e.target.closest("button"); if (!x) return; for (const k of ["look", "nav"]) if (x.dataset[k]) { root.dataset[k] = x.dataset[k]; try { sessionStorage.setItem("dom-" + k, x.dataset[k]); } catch (err) {} }
+  const rv = $("review"); if (rv) { const mark = () => rv.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x.dataset.tone === root.dataset.tone)); mark();
+    rv.addEventListener("click", (e) => { const x = e.target.closest("button"); if (!x) return; for (const k of ["tone"]) if (x.dataset[k]) { root.dataset[k] = x.dataset[k]; try { sessionStorage.setItem("dom-" + k, x.dataset[k]); } catch (err) {} }
       mark(); requestAnimationFrame(() => { slideHl(); resize(); }); }); }
 
   // ---------- join the team's render loop: after every render of theirs, refresh the first screen ----------

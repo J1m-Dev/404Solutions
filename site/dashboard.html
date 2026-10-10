@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="vendor/leaflet.min.css">
-<link rel="stylesheet" href="assets/room.css?v=1791661739">
+<link rel="stylesheet" href="assets/room.css?v=1791663445">
 <script>try { var d = document.documentElement, q = new URLSearchParams(location.search);
   if (sessionStorage.getItem("dom-dive")) { sessionStorage.removeItem("dom-dive"); d.classList.add("arrive"); }
-  d.dataset.look = q.get("look") || sessionStorage.getItem("dom-look") || "b"; d.dataset.nav = q.get("nav") || sessionStorage.getItem("dom-nav") || "top";
+  d.dataset.look = "d"; d.dataset.nav = "rail"; d.dataset.tone = q.get("tone") || sessionStorage.getItem("dom-tone") || "picture";
   if (q.get("review") || sessionStorage.getItem("dom-review")) { d.dataset.review = "1"; sessionStorage.setItem("dom-review", "1"); } } catch (e) {}</script>
 </head>
 <body>
@@ -27,13 +27,13 @@
 
 <nav class="rail" aria-label="Pages">
   <i class="hl" aria-hidden="true"></i>
-  <a href="#/now" data-go="now"><svg id="ic-now" viewBox="0 0 44 44"></svg><span>Now</span></a>
-  <a href="#/forecast" data-go="forecast"><svg id="ic-forecast" viewBox="0 0 44 44"></svg><span>Signal</span></a>
-  <a href="#/trust" data-go="trust"><svg id="ic-trust" viewBox="0 0 44 44"></svg><span>Trust</span></a>
-  <a href="#/atlas" data-go="atlas"><svg id="ic-atlas" viewBox="0 0 44 44"></svg><span>Where</span></a>
-  <a href="#/track" data-go="track"><svg id="ic-track" viewBox="0 0 44 44"></svg><span>Record</span></a>
-  <a href="#/stakes" data-go="stakes"><svg id="ic-stakes" viewBox="0 0 44 44"></svg><span>Who for</span></a>
-  <a href="#/more" data-go="more"><svg id="ic-more" viewBox="0 0 44 44"></svg><span>More</span></a>
+  <a href="#/now" data-go="now"><img src="assets/img/ic-now.png" alt="" width="38" height="38"><span>Now</span></a>
+  <a href="#/forecast" data-go="forecast"><img src="assets/img/ic-forecast.png" alt="" width="38" height="38"><span>Signal</span></a>
+  <a href="#/trust" data-go="trust"><img src="assets/img/ic-trust.png" alt="" width="38" height="38"><span>Trust</span></a>
+  <a href="#/atlas" data-go="atlas"><img src="assets/img/ic-atlas.png" alt="" width="38" height="38"><span>Where</span></a>
+  <a href="#/track" data-go="track"><img src="assets/img/ic-track.png" alt="" width="38" height="38"><span>Record</span></a>
+  <a href="#/stakes" data-go="stakes"><img src="assets/img/ic-stakes.png" alt="" width="38" height="38"><span>Who for</span></a>
+  <a href="#/more" data-go="more"><img src="assets/img/ic-more.png" alt="" width="38" height="38"><span>More</span></a>
 </nav>
 
 <main>
@@ -42,12 +42,11 @@
 
 <section class="page on" id="p-now" data-page="now">
   <div class="read">
-    <p class="label" id="label"></p>
+    <p class="label"><span id="label"></span> <span id="lvl"></span></p>
+    <p class="top"><span class="flag" id="flag" hidden></span></p>
     <ol class="steps" id="steps" aria-label="The four early-warning steps"></ol>
     <div class="big word"><b id="pct"></b></div>
     <h1 id="head"></h1>
-    <p class="basis" id="basis"></p>
-    <p class="top"><span class="flag" id="flag" hidden></span><span class="lvl" id="lvl"></span></p>
     <p class="do"><span class="k">Do first</span><span id="first"></span></p>
     <div class="row">
       <button class="go" id="rpGo"><span class="arr" aria-hidden="true">→</span><span class="lab" id="rpGoLab"></span><span class="dot" aria-hidden="true"></span></button>
@@ -55,6 +54,7 @@
       <button class="quiet" id="rpLeave" hidden>Leave replay</button>
       <button class="whybtn" id="whyBtn">Why this step, and the plan</button>
     </div>
+    <p class="basis" id="basis"></p>
     <div class="strip" id="strip" hidden>
       <p id="stripNote"></p>
       <div class="bars" id="bars" role="img"></div>
@@ -180,7 +180,7 @@
 </section>
 
 <section class="page" id="p-more" data-page="more">
-  <header class="phead"><h1>More underneath</h1><p>Full results, the second disease, state trends, the what-if drill, uploads and sources.</p><button id="uploadBtn" class="btn sun">Upload newest data</button></header>
+  <header class="phead"><h1>More underneath</h1><p>Full results, the second disease, state trends, the what-if drill, uploads and sources.</p><button id="uploadBtn" class="quiet">Upload newest data</button></header>
 <details id="proof" class="card fold">
   <summary><h2>Every result, pass or fail</h2><span class="note">the alert rule, the classifier, the forecast that did not work, the stress test</span></summary>
   <div id="proofBody"></div>
@@ -251,8 +251,7 @@
 
 <!-- REVIEW COPY ONLY (dashboard.html?review=1): the switch between first-screen treatments. Removed once one is chosen. -->
 <div class="review" id="review">
-  <span>The living object</span><button data-look="a">1 Earth</button><button data-look="b">2 Signal</button><button data-look="c">3 Ladder</button><button data-look="d">4 Earth, then Signal in the replay</button>
-  <span>Pages</span><button data-nav="top">Words on top</button><button data-nav="rail">Rail with pictures</button>
+  <span>The blue</span><button data-tone="azure">1 Azure</button><button data-tone="cobalt">2 Cobalt</button><button data-tone="ocean">3 Ocean</button><button data-tone="picture">4 Generated picture</button>
 </div>
 
 <aside class="sheet" id="sheet" hidden>
@@ -310,7 +309,7 @@
 <script src="vendor/xlsx.full.min.js"></script>
 <script src="assets/model.js"></script>
 <script src="assets/app.js"></script>
-<script src="assets/stage.js?v=1791661739"></script>
-<script src="assets/room.js?v=1791661739"></script>
+<script src="assets/stage.js?v=1791663445"></script>
+<script src="assets/room.js?v=1791663445"></script>
 </body>
 </html>

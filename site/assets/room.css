@@ -3,7 +3,9 @@
    TO CHANGE THE COLOURS: edit :root. The room stays blue; --acc is the one colour that follows the alert. */
 @property --acc{syntax:"<color>";inherits:true;initial-value:#ffffff}
 :root{
-  --fog-1:#5a667d; --fog-2:#687489; --fog-3:#434e64; --dark:#18212e;   /* the landing page's own fog: the room is the same place */
+  --dark:#0b1a44;
+  --bg-a:#0a2a9c; --bg-b:#1b5ee6; --bg-c:#5aa9ff;        /* the room: a lively blue, deep where the words sit and bright behind the living object */
+  --g1:#8fc0ff; --g2:#3a78ec; --g3:#1a48b8; --g4:#0d2f86;   /* the Earth's body, lit from the upper left (read by assets/stage.js) */
   --sun:#ffcf4a;                                          /* the one highlight: main buttons, the selected page */
   --mark:#ff6a3d;                                         /* the orange point from the logo */
   --paper:#f6f8fc; --ink:#12203a; --mute:#566583; --line:#dfe6f1; --brand:#2f5196;   /* the sheets that carry tables and charts */
@@ -20,17 +22,22 @@
 [data-state=outbreak]{--acc:var(--red)}
 [data-state=unconfirmed]{--acc:#b8c2d2}
 [data-nav=rail]{--rail:calc(var(--pad) + 82px)}
+[data-tone=cobalt]{--bg-a:#06145c;--bg-b:#1034bd;--bg-c:#3672f2;--g1:#7fa6ff;--g2:#2b5ee0;--g3:#12339c;--g4:#081f6c;--dark:#081347}
+[data-tone=ocean]{--bg-a:#0b1e4a;--bg-b:#1b4a96;--bg-c:#4f93dd;--g1:#9cc4f2;--g2:#3f7ac6;--g3:#1f4b8e;--g4:#12305f;--dark:#0b1a3c}
+[data-tone=picture]{--bg-a:#04196e;--g1:#9ccbff;--g2:#2f74ee;--g3:#123fb4;--g4:#0a2a86}
 
 *{box-sizing:border-box}[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;color:#fff;font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;
-  background:linear-gradient(90deg,rgba(18,25,38,.5) 0%,rgba(18,25,38,.26) 34%,rgba(18,25,38,0) 60%) fixed,linear-gradient(180deg,var(--fog-1) 0%,var(--fog-2) 55%,var(--fog-3) 100%) fixed}
+  background:linear-gradient(90deg,rgba(3,10,46,.5) 0%,rgba(3,10,46,.22) 36%,rgba(3,10,46,0) 62%) fixed,linear-gradient(128deg,var(--bg-a) 0%,var(--bg-b) 54%,var(--bg-c) 100%) fixed}
+[data-tone=picture] body{background:linear-gradient(90deg,rgba(3,10,46,.46) 0%,rgba(3,10,46,.16) 40%,rgba(3,10,46,0) 64%) fixed,url(img/room-blue.jpg) center/cover fixed}
+[data-tone=picture] .mist{display:none}
 /* slow fog, as on the landing page; the bright part sits low and to the right, behind the living object */
 .mist{position:fixed;inset:-12%;pointer-events:none}
 .mist i{position:absolute;border-radius:50%;filter:blur(90px);animation:drift 26s ease-in-out infinite alternate}
-.mist i:nth-child(1){left:46%;top:42%;width:52vw;height:40vw;background:rgba(214,226,242,.24)}
-.mist i:nth-child(2){left:8%;top:66%;width:44vw;height:30vw;background:rgba(190,204,224,.1);animation-duration:34s;animation-direction:alternate-reverse}
-.mist i:nth-child(3){left:58%;top:-12%;width:44vw;height:30vw;background:rgba(24,33,50,.26);animation-duration:41s}
+.mist i:nth-child(1){left:46%;top:42%;width:52vw;height:40vw;background:rgba(170,214,255,.3)}
+.mist i:nth-child(2){left:8%;top:66%;width:44vw;height:30vw;background:rgba(120,180,255,.14);animation-duration:34s;animation-direction:alternate-reverse}
+.mist i:nth-child(3){left:58%;top:-12%;width:44vw;height:30vw;background:rgba(4,14,70,.3);animation-duration:41s}
 @keyframes drift{from{transform:translate3d(-3%,-2%,0) scale(1)}to{transform:translate3d(4%,3%,0) scale(1.12)}}
 #stage{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
 button{font:inherit;color:inherit}
@@ -47,7 +54,9 @@ button{font:inherit;color:inherit}
 [data-nav=rail] .rail{left:var(--pad);top:calc(var(--top) + 30px + clamp(10px,2vh,18px));transform:none;max-height:calc(100vh - var(--top) - 30px - clamp(10px,2vh,18px) - 14px);width:70px;flex-direction:column;gap:clamp(1px,.6vh,6px);padding:clamp(6px,1.2vh,10px) 5px;overflow:hidden auto;scrollbar-width:none;border-radius:26px}
 [data-nav=rail] .rail a{display:grid;justify-items:center;gap:1px;width:60px;padding:5px 0;flex:none;border-radius:16px;font-size:12px}
 [data-nav=rail] .rail svg{display:block;width:34px;height:34px;transition:transform .35s var(--ease)}
-[data-nav=rail] .rail a:hover svg{transform:scale(1.08)}
+[data-nav=rail] .rail a:hover svg,[data-nav=rail] .rail a:hover img{transform:scale(1.1)}
+.rail img{display:block;width:38px;height:38px;object-fit:contain;transition:transform .4s var(--ease)}
+.rail a.on img{transform:scale(1.06)}
 [data-nav=rail] .rail .hl{border-radius:16px}
 .logo{position:fixed;z-index:7;left:var(--pad);top:var(--top);display:flex;align-items:center;gap:3px;color:#fff;text-decoration:none;font:700 22px/1 "Unbounded",var(--sans);view-transition-name:dom-logo}
 .logo canvas{width:30px;height:30px;display:block}
@@ -65,13 +74,15 @@ main{position:relative;z-index:2;margin-left:var(--rail);min-height:100vh}
 #p-now.on{height:auto;min-height:100vh;padding:calc(var(--head) + clamp(0px,3vh,34px)) var(--pad) clamp(14px,3vh,30px) var(--pad);display:block;animation:none}
 [data-nav=rail] #p-now.on{padding:clamp(20px,6vh,64px) var(--pad) clamp(14px,3vh,30px) clamp(20px,3.4vw,52px)}
 .read{position:relative;display:grid;justify-items:start;max-width:min(46vw,580px)}
-.label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}   /* read by screen readers; the ladder says it to the eye */
+.label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}   /* for screen readers: what the word is, and the classifier and rule behind it (both are in the Why sheet for the eye) */
 
 /* the ladder: one thin line with four points; only the lit one is the step */
-.steps{position:relative;list-style:none;display:flex;margin:0 0 clamp(8px,2vh,20px);padding:0;width:min(100%,400px);font-size:13.5px;font-weight:600}
-.steps::before,.steps::after{content:"";position:absolute;left:4px;top:5px;height:1px;width:75%;background:rgba(255,255,255,.32)}
+.steps{position:relative;list-style:none;display:flex;margin:0 0 clamp(10px,2.2vh,22px);padding:0;width:176px;height:12px}
+.steps::before,.steps::after{content:"";position:absolute;left:4px;top:5px;height:1.5px;width:75%;background:rgba(255,255,255,.3)}
 .steps::after{width:calc(75% * var(--k,0));background:#fff;transition:width .9s var(--ease)}
-.steps li{position:relative;z-index:1;flex:1;padding-top:17px;opacity:.72;transition:opacity .5s}
+.steps li{position:relative;z-index:1;flex:1;transition:opacity .5s}
+.steps li span{position:absolute;left:-6px;top:16px;padding:4px 9px;border-radius:8px;background:rgba(6,16,60,.8);font-size:12.5px;font-weight:600;white-space:nowrap;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .25s,transform .25s var(--ease)}
+.steps li:hover span{opacity:1;transform:none}
 .steps li::before{content:"";position:absolute;left:0;top:1px;width:9px;height:9px;border-radius:50%;background:#aab3c4;transition:background .6s,transform .6s var(--ease)}
 .steps li.past{opacity:.86}.steps li.past::before{background:#fff}
 .steps li.on{opacity:1}.steps li.on::before{background:var(--acc);transform:scale(1.35)}
@@ -85,14 +96,12 @@ main{position:relative;z-index:2;margin-left:var(--rail);min-height:100vh}
 .big b.roll{animation:roll .8s var(--ease) both}
 @keyframes roll{from{transform:translateY(.5em);opacity:0;background-size:0 .055em}55%{background-size:0 .055em}to{transform:none;opacity:1;background-size:100% .055em}}
 h1{margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.04;font-size:clamp(28px,min(6.2vh,4vw),58px);text-wrap:balance}
-#head{font-size:clamp(17px,min(3vh,1.9vw),23px);font-weight:600;letter-spacing:-.012em;line-height:1.32;max-width:31em;text-wrap:pretty}
-.basis,.top{margin:clamp(6px,1.4vh,12px) 0 0;font-size:14px;line-height:1.45;max-width:44em;color:rgba(255,255,255,.84)}.basis b{font-weight:700;color:#fff}
-.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:4px;color:rgba(255,255,255,.74)}
-.flag{padding:3px 10px;border-radius:999px;background:rgba(14,20,32,.42);font-weight:600;color:#fff}
-.lvl{display:inline-flex;align-items:center;gap:8px}
-.lvl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--acc)}
-.do{margin:clamp(12px,2.6vh,26px) 0 0;max-width:31em;font-size:clamp(17px,min(3vh,1.9vw),23px);font-weight:700;letter-spacing:-.012em;line-height:1.3}
-.do .k{font-weight:500;opacity:.74;margin-right:.5em}
+#head{font-size:clamp(20px,min(3.8vh,2.4vw),30px);font-weight:600;letter-spacing:-.018em;line-height:1.22;max-width:22em;text-wrap:balance}
+.basis{margin:clamp(16px,3.6vh,38px) 0 0;font-size:14px;line-height:1.5;max-width:34em;color:rgba(255,255,255,.82)}.basis b{font-weight:700;color:#fff}
+.top{margin:0 0 clamp(8px,1.6vh,14px);font-size:13.5px}.top:has(.flag[hidden]){display:none}
+.flag{padding:4px 11px;border-radius:999px;background:rgba(4,12,52,.5);font-weight:600;color:#fff}
+.do{margin:clamp(14px,3.2vh,34px) 0 0;max-width:27em;font-size:clamp(16px,min(2.7vh,1.6vw),19px);font-weight:700;letter-spacing:-.008em;line-height:1.35}
+.do .k{display:block;font-weight:500;opacity:.78;font-size:14px;margin-bottom:2px}
 .read .row{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;margin-top:clamp(12px,2.6vh,26px)}
 /* the main button is the landing page's own: on hover the dot grows to fill it, the label slides, an arrow arrives */
 .go{--fg:var(--dark);position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:14px;border:0;border-radius:999px;cursor:pointer;
@@ -153,7 +162,7 @@ html[data-ready] #p-now .read>*{animation:rise .9s var(--ease) both}
 .subtabs button.on{background:#fff;color:var(--ink);opacity:1}
 #p-atlas>.sub{position:absolute;left:0;right:0;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
 #p-atlas>.sub.on{position:static;height:auto;overflow:visible;visibility:inherit;pointer-events:inherit}
-html{background:var(--fog-3)}
+html{background:var(--bg-a)}
 
 .card{max-width:1180px;margin:0 0 16px;padding:clamp(16px,2.4vw,26px);border-radius:22px;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.5;min-width:0;overflow-x:auto}
 .card h1{font-size:24px;letter-spacing:-.01em;line-height:1.2}
@@ -259,7 +268,7 @@ footer{max-width:1180px;margin:0;padding:6px clamp(18px,3.4vw,52px) 26px;font-si
 @keyframes land-rail{from{opacity:0}to{opacity:1}}
 
 /* short windows (about 1000 x 520) */
-@media (max-height:600px){.read{max-width:min(54vw,580px)}.big{font-size:clamp(54px,min(15vh,9vw),150px);margin-bottom:4px}.steps{margin-bottom:6px}.top{flex-wrap:nowrap;white-space:nowrap}.do,.read .row{margin-top:10px}#p-now.on{padding-top:calc(var(--head) + 8px)}
+@media (max-height:600px){.read{max-width:min(54vw,580px)}.big{font-size:clamp(54px,min(15vh,9vw),150px);margin-bottom:4px}.steps{margin-bottom:6px}.do,.read .row{margin-top:12px}.basis{margin-top:14px}#p-now.on{padding-top:calc(var(--head) + 8px)}
   [data-nav=rail] .rail a span{font-size:11px}[data-nav=rail] .rail svg{width:24px;height:24px}[data-nav=rail] .rail a{padding:2px 0}.rail a{padding:7px 12px}}
 /* phone: the rail becomes a strip across the top (never the bottom) */
 @media (max-width:860px){.grid2{grid-template-columns:1fr}}
