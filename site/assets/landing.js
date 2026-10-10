@@ -242,5 +242,7 @@
     buf = [0, 1, 2, 3, 4, 5].map(() => new Float32Array(land.length * 3));
     if (STILL) { introDone = true; $("intro").remove(); document.body.classList.add("ready"); document.body.classList.remove("loading"); }
     introStart = performance.now(); requestAnimationFrame(draw);
+  }).catch((e) => {   // the globe's data did not load: skip the opening so the headline and the way in still work
+    console.error("landing", e); introDone = true; const i = $("intro"); if (i) i.remove(); document.body.classList.add("ready"); document.body.classList.remove("loading");
   });
 })();

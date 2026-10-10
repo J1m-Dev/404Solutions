@@ -90,12 +90,13 @@ html = f'''<!doctype html>
   <div class="strip" id="strip" hidden>
     <p id="stripNote"></p>
     <div class="bars" id="bars" role="img"></div>
+    <details class="about"><summary>About this replay</summary><p id="rpAbout"></p></details>
   </div>
 </section>
 {page("forecast", "The signal", "The share of flu tests that came back positive, week by week.", forecast)}
 {page("trust", "Why trust it", "Six past years: how often each step was right, and where it was wrong.", trust)}
 <section class="page" id="p-atlas" data-page="atlas">
-  <header class="phead"><h1>Where to be ready</h1><p>Every state, Selangor's districts, and each registered hospital and clinic.</p>
+  <header class="phead"><h1>Where to be ready</h1><p>Every state, Selangor's districts, and the hospitals and health clinics plotted on the map.</p>
     <div class="subtabs" id="atlasTabs"><button data-sub="map" class="on">Map</button><button data-sub="beds">Districts and beds</button></div></header>
   <div class="sub on" data-sub="map">{map_part}</div>
   <div class="sub" data-sub="beds"><section class="card">

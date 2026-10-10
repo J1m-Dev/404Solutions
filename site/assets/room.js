@@ -11,7 +11,10 @@
   const css = (v) => getComputedStyle(root).getPropertyValue(v).trim();
   const STILL = matchMedia("(prefers-reduced-motion:reduce)").matches;
   const REPLAY_FILE = "templates/demo_real_replay_2025_W38_W41.csv", BARS = 44;
-  let replayRows = null, fresh = 0, lastCount = -1;
+  let replayRows = null, fresh = 0, lastCount = -1, busy = false;
+  root.dataset.replay = REPLAY ? "1" : "";
+  // the Monday an ISO week starts on (4 January is always in week 1)
+  const monday = (y, w) => { const d = new Date(Date.UTC(y, 0, 4)); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) + (w - 1) * 7); return d.toISOString().slice(0, 10); };
   const resize = () => requestAnimationFrame(() => { if (typeof map !== "undefined" && map) map.invalidateSize(); dispatchEvent(new Event("resize")); });
 
   // ---------- pages ----------
@@ -29,39 +32,51 @@
     const id = location.hash.replace(/^#\/?/, "");
     if (location.hash && !location.hash.startsWith("#/")) history.replaceState(null, "", location.pathname + location.search + "#/" + id);
     if (id && !pages.includes(id)) { const el = document.getElementById(id), pg = el && el.closest(".page");
-      if (pg) { show(pg.dataset.page); if (el.tagName === "DETAILS") el.open = true; requestAnimationFrame(() => el.scrollIntoView({ block: "start" })); return; } }
+      if (pg) { show(pg.dataset.page); openSub(el); if (el.tagName === "DETAILS") el.open = true; requestAnimationFrame(() => el.scrollIntoView({ block: "start" })); return; } }
     show(id);
   };
   addEventListener("hashchange", route);
   $("atlasTabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return;
     $("atlasTabs").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
-    document.querySelectorAll("#p-atlas .sub").forEach((s) => s.classList.toggle("on", s.dataset.sub === b.dataset.sub));
+    document.querySelectorAll("#p-atlas > .sub").forEach((s) => s.classList.toggle("on", s.dataset.sub === b.dataset.sub));
     resize(); });
+  function openSub(el) { const sub = el.closest("#p-atlas > .sub"), b = sub && !sub.classList.contains("on") && $("atlasTabs").querySelector(`[data-sub="${sub.dataset.sub}"]`); if (b) b.click(); }
 
-  // the Monday each week of the series starts on: public weeks carry it, newer weeks follow on
-  function starts(series) { const out = []; series.forEach((s, i) => out.push(s.start || (i ? plus(out[i - 1], 7) : null))); return out; }
+  // The Monday each week of the series starts on. Public weeks carry it. An uploaded week that directly follows the row
+  // before it (by the app's own nextWeek) is dated seven days on; any other uploaded week is dated from its own year and week.
+  function starts(series) { const out = []; series.forEach((s, i) => { const p = i ? series[i - 1] : null, q = p && nextWeek(p);
+    out.push(s.start || (out[i - 1] && q.year === s.year && q.week === s.week ? plus(out[i - 1], 7) : Number.isFinite(s.year) && Number.isFinite(s.week) ? monday(s.year, s.week) : null)); }); return out; }
+  // ---------- the replay file: which of its weeks comes next, and whether everything loaded so far came from it ----------
+  const sameWeek = (x, r) => +x.year === r.year && +x.week === r.week;
+  // undefined: the file is still loading. null: no week of the file follows the newest real row.
+  function nextRow(c) { if (!replayRows) return undefined; const nx = nextWeek(c.real[c.real.length - 1]); return replayRows.find((x) => sameWeek(x, nx)) || null; }
+  const pureReplay = () => !replayRows || STATE.lab.every((r) => replayRows.some((x) => sameWeek(x, r) && +x.samples_tested === r.n && +x.influenza_positive === r.pos));
 
   // ---------- the first screen: the app's own early-warning step (Clear, Watch, Warning, Outbreak), never a percentage ----------
   function update() {
-    const c = context(), a = c.a, st = stepOf(c), H = headOf(c), iso = starts(c.series), lastIso = iso[iso.length - 1];
+    const c = context(), a = c.a, st = stepOf(c), H = headOf(c), iso = starts(c.series), lastIso = iso[iso.length - 1], pure = pureReplay();
     const ES = typeof evStats === "function" ? evStats() : null, band = ES && st.band && !H.byRule ? ES.bands[st.band] : null;
     root.dataset.state = a.dataWarning ? "unconfirmed" : st.key; root.dataset.ready = "1";
     $("lvl").textContent = c.rise.off ? "Classifier off for your own series" : `Classifier: ${STEP[c.rise.band].name} · Alert rule: ${RULE_WORDS[a.level]}`;
     $("flag").hidden = !(c.sim || c.own || c.uploaded);
-    $("flag").textContent = c.sim ? `Simulation on: the newest ${c.nSim} week${c.nSim > 1 ? "s are" : " is"} invented` : c.own ? "Your own uploaded series, not verified" : REPLAY ? "Replay of real weeks" : "Includes uploaded weeks, not verified";
+    $("flag").textContent = c.sim ? `Simulation on: the newest ${c.nSim} week${c.nSim > 1 ? "s are" : " is"} invented` : c.own ? "Your own uploaded series, not verified" : REPLAY && pure ? "Replay of real weeks" : REPLAY ? "Replay with uploaded weeks, not verified" : "Includes uploaded weeks, not verified";
     $("head").textContent = (a.dataWarning ? "Data warning: check the newest week before acting" : H.head) + ".";
     $("label").textContent = "Early-warning step, " + (c.own ? "your own lab network" : "Malaysia");
     $("pct").textContent = a.dataWarning ? "Check" : STEP[st.key].name;
     const when = lastIso ? `<b>${dmy(lastIso)}</b>` : `<b>${wk(a.last)}</b>`;
     $("basis").innerHTML = (band ? `In six past years a rapid rise followed ${band.rises} of ${band.weeks} ${STEP[st.band].name} weeks. ` : H.byRule && !a.dataWarning ? "Set by the alert rule on the data. " : "") +
-      (c.sim ? `A what-if drill, not a reading: it runs to ${when}.` : REPLAY ? `Replay on real national data to ${when}.` : `${c.own ? "Your uploaded series" : "National data"} to ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
+      (c.sim ? `A what-if drill, not a reading: it runs to ${when}.` : c.own ? `Your uploaded series to ${when}.` : REPLAY && pure ? `Replay on real national data to ${when}.` : REPLAY ? `Replay with uploaded weeks, not verified, to ${when}.` : `National data to ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
     $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls
-    const n = STATE.lab.length, total = replayRows ? replayRows.length : 4;
-    $("rpGo").textContent = REPLAY ? (n < total ? "Add the next real week" : "Replay finished") : "Replay October 2025"; $("rpGo").disabled = REPLAY && n >= total;
-    $("rpAgain").hidden = !(REPLAY && n > 0); $("rpLeave").hidden = !REPLAY;
-    $("strip").hidden = !REPLAY;
-    if (REPLAY) { fresh = lastCount >= 0 && n > lastCount ? n - lastCount : 0; lastCount = n; bars(c, iso); }
+    const n = STATE.lab.length, nr = REPLAY && !c.own ? nextRow(c) : null, done = REPLAY && nr === null;
+    $("rpGo").textContent = REPLAY ? (done ? "Replay finished" : "Add the next real week") : "Replay October 2025"; $("rpGo").disabled = done || busy; $("rpGo").hidden = REPLAY && c.own;
+    $("rpAgain").hidden = !(REPLAY && (n > 0 || c.sim)); $("rpLeave").hidden = !REPLAY;
+    // the strip describes the real replay weeks only: it steps aside while the what-if drill or an own series is on screen
+    $("strip").hidden = !REPLAY || c.sim || c.own;
+    if (REPLAY && !c.sim && !c.own) { fresh = lastCount >= 0 && n > lastCount ? n - lastCount : 0; lastCount = n; bars(c, iso); }
+    // the app's own words on how the replay is built: one click away on this screen, in full on every other page
+    const bar = $("replayBar"); bar.querySelectorAll('a[href="./"]').forEach((x) => x.setAttribute("href", "dashboard.html#/now"));
+    if (REPLAY) $("rpAbout").innerHTML = bar.innerHTML.split(/ (?:Newer weeks are loaded|Drop in <a)/)[0];
     icons(c);
     // the data-status line matters on the first screen only when something unusual is on (uploads or a simulation)
     $("stamp").classList.toggle("quiet", !(c.sim || STATE.stamp));
@@ -82,7 +97,7 @@
   function milestones() {
     const base = D.series.slice(0, D.replay_cut_index + 1), t = D.rise.current.tiers || { watch: 0.5, warning: 0.5 }, m = {};
     for (let k = 0; k <= STATE.lab.length; k++) { const ser = base.concat(STATE.lab.slice(0, k)), lag = Math.max(0, D.pub_lag - k), a = M.assess(ser, D.models.replay, D, D.thresholds, lag), p = M.riseSignal(ser, D.rise.replay).prob;
-      const step = Math.max(p >= t.warning ? 2 : p >= t.watch ? 1 : 0, RULE_RANK[a.level]), iso = plus(base[base.length - 1].start, 7 * k);
+      const step = Math.max(p >= t.warning ? 2 : p >= t.watch ? 1 : 0, RULE_RANK[a.level]), iso = starts(ser).pop();
       STEPS.forEach((s, i) => { if (i && !m[s] && step >= i) m[s] = iso; }); }
     return m;
   }
@@ -97,20 +112,27 @@
   }
 
   async function replayFile() {
-    if (!replayRows) { const wb = XLSX.read(await (await fetch(REPLAY_FILE)).text(), { type: "string" }); replayRows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" }); }
+    if (!replayRows) { const r = await fetch(REPLAY_FILE); if (!r.ok) throw new Error("The replay file did not load.");
+      const wb = XLSX.read(await r.text(), { type: "string" }); replayRows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" }); }
     return replayRows;
   }
   $("rpGo").onclick = async () => {
     if (!REPLAY) { location.href = "dashboard.html?replay=1#/now"; return; }
-    const rows = await replayFile(), k = STATE.lab.length; if (k >= rows.length) return;
-    const { errs, out } = validate("lab", [rows[k]], false);
-    if (errs.length) { $("stripNote").textContent = errs.join(" "); return; }
-    const msg = await saveUpload("lab", out); render(); if (msg) $("stripNote").textContent = msg + " Enter a passcode under More, Uploads, roles and history.";
+    if (busy) return; busy = true; $("rpGo").disabled = true;   // one week per press, however fast the presses come
+    let note = "";
+    try {
+      await replayFile(); const row = nextRow(context(0)); if (!row) return;   // the week after the newest real row, whatever was undone
+      const { errs, out } = validate("lab", [row], false);
+      if (errs.length) note = errs.join(" ");
+      else { const msg = await saveUpload("lab", out); if (msg) note = msg + " Enter a passcode under More, Uploads, roles and history."; }
+    } catch (e) { note = "The next week could not be loaded. Check the connection and press again."; console.error("room", e); }
+    finally { busy = false; render(); if (note) { $("strip").hidden = false; $("stripNote").textContent = note; } }
   };
-  $("rpAgain").onclick = () => resetState();
+  // Start again also leaves the what-if drill, the same way the app's own "Exit simulation" button does
+  $("rpAgain").onclick = () => { if (SIM.on) { SIM.on = false; if ($("simOn")) $("simOn").checked = false; } resetState(); };
   $("rpLeave").onclick = () => { location.href = "dashboard.html#/now"; };
   $("whyBtn").onclick = () => { $("sheet").hidden = false; }; $("sheetX").onclick = () => { $("sheet").hidden = true; };
-  addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && REPLAY && root.dataset.page === "now" && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && !e.repeat && REPLAY && root.dataset.page === "now" && $("sheet").hidden && !document.querySelector("dialog[open]") && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
 
   // ---------- the rail: each page is a small live picture ----------
   let myPath = "";
@@ -162,6 +184,7 @@
   // ---------- join the team's render loop: after every render of theirs, refresh the first screen ----------
   const theirs = window.render;
   window.render = function () { const r = theirs.apply(this, arguments); try { update(); } catch (e) { console.error("room", e); } return r; };
-  if (REPLAY) replayFile();
+  if (REPLAY) replayFile().then(() => { if (typeof D !== "undefined" && D && STATE) update(); }).catch((e) => console.error("room", e));
   route();
+  if (typeof D !== "undefined" && D && typeof STATE !== "undefined" && STATE) { try { update(); } catch (e) { console.error("room", e); } }
 })();

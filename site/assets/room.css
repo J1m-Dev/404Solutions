@@ -91,8 +91,8 @@ h1{margin:0;font-weight:800;letter-spacing:-.03em;line-height:1.04;font-size:cla
 .subtabs{display:inline-flex;padding:4px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2)}
 .subtabs button{border:0;border-radius:999px;padding:8px 16px;background:transparent;color:#fff;font-weight:600;font-size:14px;cursor:pointer;opacity:.85}
 .subtabs button.on{background:#fff;color:var(--ink);opacity:1}
-.sub{position:absolute;left:0;right:0;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
-.sub.on{position:static;height:auto;overflow:visible;visibility:inherit;pointer-events:inherit}
+#p-atlas>.sub{position:absolute;left:0;right:0;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
+#p-atlas>.sub.on{position:static;height:auto;overflow:visible;visibility:inherit;pointer-events:inherit}
 html{background:var(--sky-1)}
 
 .card{max-width:1180px;margin:0 0 16px;padding:clamp(16px,2.4vw,26px);border-radius:22px;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.5;min-width:0;overflow-x:auto}
@@ -154,7 +154,13 @@ tr.undone td{color:var(--mute);text-decoration:line-through}tr.undone td:last-ch
 .stamp b.unv,.stamp .simflag{color:var(--yellow)}.stamp button{margin-left:8px;padding:3px 11px;font-size:12.5px}
 [data-page=now] .stamp{position:absolute;left:0;right:0;top:0;padding-left:clamp(20px,5vw,84px);padding-right:240px}
 [data-page=now] .stamp.quiet{display:none}
-.replay{display:none}   /* the app's own replay bar; the first screen carries the replay buttons instead */
+/* the app's own replay bar, in its own words: on every page during the replay except the first screen, which carries
+   the replay buttons and keeps the same words one click away under "About this replay" */
+.replay{display:none}
+[data-replay="1"]:not([data-page=now]) .replay{display:block;position:relative;z-index:3;max-width:1180px;margin:0;padding:8px clamp(18px,3.4vw,52px) 0;font-size:13.5px;line-height:1.45;color:rgba(255,255,255,.9)}
+.replay a{color:#fff}.replay button{font:inherit;font-size:12.5px;font-weight:600;color:var(--ink);margin:0 4px;padding:3px 11px;border:1px solid #c9d3e3;border-radius:999px;background:#fff;cursor:pointer}
+.about{font-size:13px;line-height:1.45}.about summary{display:inline-block;cursor:pointer;list-style:none;font-weight:600;opacity:.85;border-bottom:1px solid rgba(255,255,255,.45)}
+.about summary::-webkit-details-marker{display:none}.about summary:hover{opacity:1}.about p{margin:6px 0 0;max-width:86ch;opacity:.92}
 
 /* the "why this reading" sheet: the app's own alert card, summary and action table */
 .sheet{position:fixed;z-index:20;right:14px;top:14px;bottom:14px;width:min(520px,calc(100vw - 28px));overflow:auto;padding:26px 24px 20px;border-radius:24px;color:var(--ink);background:var(--paper);box-shadow:0 30px 90px rgba(8,18,48,.45);animation:sheet .4s var(--ease)}
