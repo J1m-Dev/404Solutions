@@ -42,7 +42,7 @@
     form.addEventListener("submit", (e) => { e.preventDefault(); const v = pin.value; if (!v) return; mem = v; try { localStorage.setItem(KEY, v); } catch (err) {}
       pin.value = ""; form.hidden = true; say("Passcode kept on this device. Press Send."); send.focus({ preventScroll: true }); });
     send.addEventListener("click", async () => { const s = now(); if (!s || busy || s.c.sim) return;
-      const pass = stored(); if (!pass) { form.hidden = false; say("Enter the passcode once"); pin.focus({ preventScroll: true }); return; }
+      const pass = stored();   // no passcode is asked for unless the function says one is set (a 401)
       // everything sent is read from the app now: the step's name, its first action and who acts, the app's own deadline, and the Now page's first line
       const act = actionsOf(s.c)[0] || [], when = s.c.a.dataWarning ? "today" : PLAN_WHEN[s.key];
       let action = String(act[0] || "").trim(); if ((action.length > 160 || MARKUP.test(action)) && action.endsWith(".")) action = action.slice(0, -1);
@@ -51,8 +51,8 @@
       busy = true; send.disabled = true; say("Sending..."); let code = 0;
       try { code = (await fetch("/api/alert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(15000) })).status; } catch (e) { code = 0; }
       busy = false;
-      if (code === 401) { mem = ""; try { localStorage.removeItem(KEY); } catch (e) {} form.hidden = false; }
-      say(code === 200 ? "Sent to the channel, " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : code === 401 ? "Wrong passcode"
+      if (code === 401) { mem = ""; try { localStorage.removeItem(KEY); } catch (e) {} form.hidden = false; pin.focus({ preventScroll: true }); }
+      say(code === 200 ? "Sent to the channel, " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : code === 401 ? (pass ? "Wrong passcode" : "Enter the passcode once")
         : code === 404 || code === 501 || (!code && LOCAL) ? "Alerts are sent from the live address only" : code === 429 ? "Wait a few seconds" : code === 503 ? "The bot is not connected yet"
         : code === 502 ? "Telegram did not accept it" : "It was not sent. Try again.");
       sync(); });

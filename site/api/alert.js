@@ -3,7 +3,7 @@
 // channel gets them on a phone without opening the dashboard. The page sends only what the app itself shows.
 // Settings come from the environment, set in Vercel and never in this repository:
 //   TELEGRAM_BOT_TOKEN  the bot's token (required)
-//   ALERT_PASSCODE      the passcode a sender must give (required: this function never runs open)
+//   ALERT_PASSCODE      optional: when set, a sender must give it. Without it the function still accepts only the fixed plain-text fields, from this site's own pages, one message per 10 seconds
 //   TELEGRAM_CHAT_ID    the channel (optional; default "@dom_alerts_demo")
 // The token is part of the address this function calls. Nothing here logs or returns that address, the token,
 // or what Telegram answers.
@@ -67,12 +67,11 @@ module.exports = async (req, res) => {
 
   const token = process.env.TELEGRAM_BOT_TOKEN, passcode = process.env.ALERT_PASSCODE, chat = process.env.TELEGRAM_CHAT_ID || "@dom_alerts_demo";
   if (!token) return reply(res, 503, { error: "no_bot" });
-  if (!passcode) return reply(res, 503, { error: "no_passcode" });
 
   if (Number(req.headers["content-length"]) >= MAX_BODY) return reply(res, 400, { error: "bad_request" });
   let body; try { body = await readBody(req); } catch (e) { body = null; }
   if (!body) return reply(res, 400, { error: "bad_request" });
-  if (!samePasscode(body.passcode, passcode)) return reply(res, 401, { error: "passcode" });
+  if (passcode && !samePasscode(body.passcode, passcode)) return reply(res, 401, { error: "passcode" });
   const m = clean(body);
   if (!m) return reply(res, 400, { error: "bad_request" });
 

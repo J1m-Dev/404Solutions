@@ -439,3 +439,5 @@ html{scrollbar-width:none}html::-webkit-scrollbar{display:none}
 .tile.status h1 button.why:active{transform:scale(.96)}
 /* rail pictures: the pale marks inside the glass (the tick, the clock hands) need more bite */
 [data-nav=rail] .rail a img{filter:contrast(1.35) saturate(1.3) drop-shadow(0 2px 6px rgba(4,12,40,.5))}
+/* the act tile: the plan button, then one quiet link to the Telegram alert under it */
+.tile.act #tgBtn{margin-top:12px;padding-top:0}

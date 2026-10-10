@@ -104,6 +104,7 @@ html = f'''<!doctype html>
       <b id="first"></b>
       <span class="s" id="who"></span>
       <button class="go" id="planBtn"><span class="arr" aria-hidden="true">→</span><span class="lab">Full plan</span></button>
+      <button class="link" id="tgBtn">Send alert to Telegram</button>
     </article>
     <a class="tile" href="#/forecast">
       <span class="k">Newest reading</span>
