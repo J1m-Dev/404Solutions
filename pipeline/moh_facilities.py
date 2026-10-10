@@ -6,7 +6,8 @@ clinics that see walk-in patients (Klinik Kesihatan, Klinik Komuniti, mother-and
 clinics (Klinik Desa), dental clinics, offices and laboratories are left out.
 
 Private hospitals are added from data/raw/facilities/private_hospitals_licensed.json when that file
-exists (built by private_hospitals.py from the Ministry's list of hospitals licensed under Act 586).
+exists. private_hospitals.py builds it from the hospital layer of MyGeoCKAPS, the Ministry's public map of
+private facilities licensed under Act 586, and cross-checks each point against OpenStreetMap.
 Private GP clinics are not plotted: no public source gives their positions.
 
     py -3.13 moh_facilities.py fetch   # download the registry again
@@ -38,7 +39,7 @@ CLINIC = {"KLINIK KESIHATAN": "Health clinic (Klinik Kesihatan)", "KLINIK KOMUNI
           "KLINIK KESIHATAN IBU DAN ANAK": "Mother and child clinic"}
 STATE = {"WILAYAH PERSEKUTUAN KUALA LUMPUR": "Kuala Lumpur", "WILAYAH PERSEKUTUAN LABUAN": "Labuan", "WILAYAH PERSEKUTUAN PUTRAJAYA": "Putrajaya",
          "WILAYAH PERSEKUTUAN KUALA LUMPUR DAN PUTRAJAYA": "Kuala Lumpur and Putrajaya"}
-KEEP_UPPER = {"KK", "HSAAS", "UPM", "UKM", "USM", "UM", "UMS", "UNIMAS", "UIAM", "IIUM", "HCTM", "ATM", "TUDM", "TLDM", "KKIA", "UTC", "RTC", "PPUM", "PPUKM", "KLIA", "FELDA", "FELCRA", "IJN", "II", "III", "IV"}
+KEEP_UPPER = {"KK", "HSAAS", "KPJ", "KMI", "KMC", "KPMC", "DBM", "UCSI", "MSU", "IMU", "QHC", "PJU", "USJ", "UEP", "MAA", "LPPKN", "UPM", "UKM", "USM", "UM", "UMS", "UNIMAS", "UIAM", "IIUM", "HCTM", "ATM", "TUDM", "TLDM", "KKIA", "UTC", "RTC", "PPUM", "PPUKM", "KLIA", "FELDA", "FELCRA", "IJN", "II", "III", "IV"}
 FIX = {"UITM": "UiTM", "UNISZA": "UniSZA", "KKOM": "KKom"}
 LEAD = {"KK": "Klinik Kesihatan", "KKom": "Klinik Komuniti", "KKIA": "Klinik Kesihatan Ibu dan Anak"}  # registry abbreviations at the start of a name
 
@@ -127,18 +128,39 @@ def build():
                      "state": state, "district": nice(r["DAERAH"]), "address": ", ".join(x for x in (nice(r["ALAMAT"]), town) if x),
                      "lat": round(lat, 5), "lon": round(lon, 5), "approximate": False, **({"osm": True} if osm else {})})
     bed_matched, bed_missed = beds.attach(rows)  # real bed counts for the hospital pop-ups
-    private = {"listed": 0, "located": 0, "approximate": 0, "not_located": 0, "source": None}
+    private = {"listed": 0, "located": 0, "approximate": 0, "not_located": 0, "source": None, "note": ""}
     if PRIVATE.exists():
         src = json.load(open(PRIVATE, encoding="utf-8"))
         items = src["rows"] if isinstance(src, dict) else src
-        private.update(listed=len(items), source=(src.get("source") if isinstance(src, dict) else None) or "the Ministry of Health's public map of licensed private hospitals (MyGeoCKAPS, retrieved 11 October 2026)")
+        private.update(listed=len(items), source="the Ministry of Health's public map of licensed private facilities (MyGeoCKAPS, hospital layer, retrieved 11 October 2026)")
+        shared = Counter((p.get("name") or "").strip().upper() for p in items)  # several branches carry the same name
+        at_osm = small = 0
         for p in items:
             if p.get("lat") is None or p.get("lon") is None:
                 private["not_located"] += 1
                 continue
             private["approximate" if p.get("approximate") else "located"] += 1
-            rows.append({"name": nice(p["name"]), "kind": "private", "type": "Private hospital licensed under Act 586", "pos": "Position: " + (p.get("located_by") or "matched by name"), "state": p.get("state") or "", "district": "",
-                         "address": p.get("address") or "", "lat": round(float(p["lat"]), 5), "lon": round(float(p["lon"]), 5), "approximate": bool(p.get("approximate"))})
+            raw, by = (p.get("name") or "").strip(), p.get("located_by") or ""
+            name = nice(raw) if raw else nice(p.get("osm_name") or "Unnamed private hospital")
+            if raw and shared[raw.upper()] > 1 and p.get("town"):
+                name += f", {nice(p['town'])}"
+            if p.get("approximate"):
+                pos = "Approximate position: placed on the street in its address"
+            elif by.startswith("OpenStreetMap"):
+                pos, at_osm = "Position from OpenStreetMap, matched by name: the Ministry's map point was clearly off", at_osm + 1
+            else:
+                pos = "Position from the Ministry of Health's map of licensed private facilities"
+            if not raw:
+                pos += ". The Ministry record has no name; the name shown is OpenStreetMap's"
+            row = {"name": name, "kind": "private", "type": "Private hospital licensed under Act 586", "pos": pos, "state": p.get("state") or "", "district": nice(p.get("district") or ""),
+                   "address": nice(p.get("address") or ""), "lat": round(float(p["lat"]), 5), "lon": round(float(p["lon"]), 5), "approximate": bool(p.get("approximate"))}
+            if p.get("beds"):
+                row.update(beds=int(p["beds"]), beds_note="Ministry licence record")
+                small += int(p["beds"]) < 30
+            rows.append(row)
+        private["note"] = (f"{private['located'] - at_osm} are at the Ministry's own map point, {at_osm} at a same-name OpenStreetMap hospital because the Ministry's point was clearly off, and "
+                           f"{private['approximate']} is placed on the street in its address (hollow marker). The Ministry gives no as-at date for this list. It includes small maternity and "
+                           f"specialist centres: {small} of the {private['listed']} have fewer than 30 beds.")
     counts = Counter(r["kind"] for r in rows)
     meta = {"source": "Ministry of Health Malaysia, facilities_master.csv (github.com/MoH-Malaysia/data-resources-public)", "as_at": AS_AT,
             "counts": dict(counts), "registry_coordinates_wrong_repositioned": repaired, "registry_coordinates_wrong_left_off": dropped, "just_outside_simplified_outline": len(other_state), "private": private,
