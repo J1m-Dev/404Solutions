@@ -64,5 +64,12 @@
   "lat": 3.2431336,
   "lon": 101.6474818,
   "beds_simulated": 50
+ },
+ {
+  "name": "Hospital Tengku Ampuan Jemaah",
+  "lat": 3.76328,
+  "lon": 100.98448,
+  "beds_simulated": 15,
+  "approximate": true
  }
 ]

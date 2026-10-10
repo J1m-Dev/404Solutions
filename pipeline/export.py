@@ -130,6 +130,10 @@ def main():
             "validation": val,
             "rise": {"current": rise_model(), "replay": rise_model(__import__("datetime").date.fromisoformat(series[cut]["start"])),
                      "test": json.loads((c.ROOT / "outputs" / "flu_cases.json").read_text())["same_test"]["outbreak"][1]}}
+    wf = c.ROOT / "outputs" / "walkforward.json"
+    if wf.exists():
+        site["rise"]["walk"] = json.loads(wf.read_text())
+    site["prospective"] = [json.loads(f.read_text()) for f in sorted((c.ROOT / "outputs" / "prospective").glob("*.json"))]
     c.dump(site, SITE / "data" / "site.json")
 
     # map: Selangor districts with latest population (thousands)
@@ -155,6 +159,13 @@ def main():
         if key and not any(h["name"] == key for h in hosp):
             hosp.append({"name": key, "lat": e.get("lat") or e["center"]["lat"], "lon": e.get("lon") or e["center"]["lon"],
                          "beds_simulated": HOSPITALS[key]})
+    # Hospitals not found by name in OpenStreetMap fall back to the geocoded facility list (town-level position).
+    fac = SITE / "data" / "facilities.json"
+    if fac.exists():
+        for f in json.loads(fac.read_text(encoding="utf-8")):
+            key = next((k for k in HOSPITALS if f["name"].startswith(k)), None)
+            if key and not any(h["name"] == key for h in hosp):
+                hosp.append({"name": key, "lat": f["lat"], "lon": f["lon"], "beds_simulated": HOSPITALS[key], "approximate": bool(f.get("approximate"))})
     c.dump(hosp, SITE / "data" / "hospitals.json")
     print("districts", [(f["properties"]["name"], f["properties"]["pop_thousand"]) for f in feats])
     print("hospitals", len(hosp), sorted(set(HOSPITALS) - {h["name"] for h in hosp}))

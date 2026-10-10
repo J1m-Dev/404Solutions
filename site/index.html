@@ -27,6 +27,7 @@
   <div class="card" id="alertCard"></div>
   <div class="card">
     <h3>Summary <span class="chip ai" id="sumChip">Template</span></h3>
+    <label class="tog"><input type="checkbox" id="aiOn"><span class="sw"></span><span>AI wording (experimental)</span></label> <span class="note" id="aiNote">Off: the text below is a fixed template. On: an AI service rewords the same figures; its text is rejected if it contains any number not in them.</span>
     <p id="sumEn" class="summary"></p>
     <p id="sumBm" class="summary bm"></p>
     <h3>Proposed action <span class="chip exp">Proposal</span></h3>
@@ -81,7 +82,7 @@
       <div id="hotRank"></div>
     </div>
     <div>
-      <h3>Capacity planner <span class="chip sim" id="bedChip">Simulated</span></h3>
+      <h3>Exploratory capacity heuristic <span class="chip sim" id="bedChip">Simulated</span></h3>
       <label>Baseline weekly respiratory admissions, Selangor (assumption): <b id="admV"></b>
         <input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
       <label>Share of listed beds available for flu: <b id="shareV"></b>
@@ -161,6 +162,7 @@
         <option value="clusterlist">Cluster list with sizes and locations (map hotspots)</option>
         <option value="beds">Hospital beds available (planner)</option>
       </select></label>
+    <label class="row" id="ownRow"><input type="checkbox" id="ownSeries"> <span>These figures are from <b>my own lab network</b>, not the national sentinel system. They replace the national series on screen (at least 12 weeks in a row; 52 or more to get alert lines fitted to your data).</span></label>
     <p>Template: <a id="tpl" download></a></p>
     <div id="drop" class="drop" role="button" tabindex="0">
       <b>Drag and drop files or a folder here</b>

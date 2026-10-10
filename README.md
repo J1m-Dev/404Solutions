@@ -40,3 +40,11 @@ Real data / Estimated / Exploratory / Simulated / Uploaded, not verified. Bed nu
 - **Facilities map**: `pipeline/facilities.py` looks up the team's hospital and clinic list in OpenStreetMap.
 - Rebuild order: `evaluate.py test`, `gbm.py test`, `dengue.py`, `flu_cases.py`, `export.py`, `parity.py`.
 - Not in the repo (too large): the 500 MB OpenDengue temporal extract. The Malaysia rows used are in `data/raw/opendengue/mys_weekly_national.csv`.
+
+## Added on the simulation-spread-feature branch
+- **What-if simulator, cluster hotspots, map layer switches** (see the commit before this one).
+- **Own lab network series**: in the upload window, tick "my own lab network". The series replaces the national one on screen; alert lines are fitted to it once it has 52 weeks, and are marked uncalibrated before that.
+- **Upload sanity checks**: an implausible jump or sample count asks for a second confirmation.
+- **AI wording** is a switch, off by default; without a key the template is shown.
+- **Proof**: year-by-year test of the classifier (`pipeline/walkforward.py`) and a record made in advance (`pipeline/archive.py`).
+- Each week, after downloading a newer FluNet file: `py archive.py score <new csv>`, then `py archive.py record`, then commit.

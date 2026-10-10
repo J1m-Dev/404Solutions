@@ -50,3 +50,6 @@ head = ["name", "district", "cases", "setting", "lat", "lon"]
 w("demo_SIMULATED_cluster_list.csv", head, clusters)
 w("template_cluster_list.csv", head, [["Example school", "Petaling", 25, "Secondary school", 3.0738, 101.5183]])
 print(len(clusters), "simulated clusters; largest", max(r[2] for r in clusters))
+
+# A short own-network series (the first 20 simulated weeks) to show the "uncalibrated" state.
+w("demo_SIMULATED_own_series_20_weeks.csv", ["year", "week", "samples_tested", "influenza_positive", "a_h3", "a_h1n1", "b"], lab[:20])

@@ -63,16 +63,27 @@ async function api(method, path, body) {
   } catch { return null; }
 }
 // Falls back to this browser's storage when the API is not reachable (static hosting).
-const emptyState = () => ({ lab: [], ili: [], clusters: [], beds: [], clusterlist: [], stamp: null });
+const emptyState = () => ({ lab: [], ili: [], clusters: [], beds: [], clusterlist: [], own: false, stamp: null });
 async function loadState() {
   const remote = await api("GET", `/api/state?mode=${MODE}`);
   if (!remote) SERVER = false;
   STATE = { ...emptyState(), ...(remote || JSON.parse(localStorage.getItem("fs_" + MODE) || "null") || {}) };
 }
-async function saveUpload(type, rows) {
-  const s = await api("POST", `/api/state?mode=${MODE}`, { type, rows });
-  if (s) STATE = s;
-  else { STATE[type] = type === "beds" || type === "clusterlist" ? rows : STATE[type].concat(rows); STATE.stamp = new Date().toISOString(); localStorage.setItem("fs_" + MODE, JSON.stringify(STATE)); }
+async function saveUpload(type, rows, own) {
+  const s = await api("POST", `/api/state?mode=${MODE}`, { type, rows, own: !!own });
+  if (s) STATE = { ...emptyState(), ...s };
+  else { if (type === "lab" && own) { STATE.lab = rows; STATE.own = true; }
+    else STATE[type] = type === "beds" || type === "clusterlist" ? rows : STATE[type].concat(rows);
+    STATE.stamp = new Date().toISOString(); localStorage.setItem("fs_" + MODE, JSON.stringify(STATE)); }
+}
+// Alert lines for an uploaded own-network series: the same formula as the national ones, from the uploader's
+// own weeks (leaving out the newest four). Under a year of history, the national lines are used and flagged.
+const OWN_MIN_WEEKS = 52;
+function ownThresholds(rows) {
+  if (rows.length < OWN_MIN_WEEKS) return { ...D.thresholds, calibrated: false, weeks: rows.length };
+  const p = rows.slice(0, -4).map(M.pct).sort((a, b) => a - b), med = p[Math.floor(p.length / 2)];
+  const dev = p.map((v) => Math.abs(v - med)).sort((a, b) => a - b), sd = 1.4826 * dev[Math.floor(dev.length / 2)];
+  return { median: med, robust_sd: sd, yellow: med + sd, orange: med + 2 * sd, calibrated: true, weeks: rows.length };
 }
 async function resetState() {
   STATE = (await api("DELETE", `/api/state?mode=${MODE}`)) || emptyState();
@@ -81,17 +92,19 @@ async function resetState() {
 }
 
 function context(k) {
-  const base = REPLAY ? D.series.slice(0, D.replay_cut_index + 1) : D.series;
-  const real = base.concat(STATE.lab.map((r) => ({ ...r, uploaded: true })));
+  const own = !!(STATE.own && STATE.lab.length);
+  const base = own ? STATE.lab.map((r) => ({ ...r, uploaded: true })) : REPLAY ? D.series.slice(0, D.replay_cut_index + 1) : D.series;
+  const real = own ? base : base.concat(STATE.lab.map((r) => ({ ...r, uploaded: true })));
+  const th = own ? ownThresholds(base) : D.thresholds;
   const nSim = SIM.on ? (k ?? SIM.week) : 0;
   const series = nSim ? real.concat(simRows(real).slice(0, nSim)) : real;
-  const extra = STATE.lab.length + nSim;
-  const lag = Math.max(0, D.pub_lag - extra);
-  const a = M.assess(series, D.models[REPLAY ? "replay" : "current"], D, D.thresholds, lag);
+  const extra = (own ? 0 : STATE.lab.length) + nSim, lagBase = own ? 0 : D.pub_lag;
+  const lag = Math.max(0, lagBase - extra);
+  const a = M.assess(series, D.models[REPLAY ? "replay" : "current"], D, th, lag);
   // "Today" is the public week plus the reporting delay, unless newer weeks already run past it.
-  const today = extra > D.pub_lag ? series[series.length - 1] : nextWeek(base[base.length - 1], D.pub_lag);
+  const today = extra > lagBase || own ? series[series.length - 1] : nextWeek(base[base.length - 1], D.pub_lag);
   const rise = M.riseSignal(series, D.rise[REPLAY ? "replay" : "current"]);
-  return { base, real, series, lag, a, today, rise, th: D.thresholds, uploaded: STATE.lab.length > 0, sim: nSim > 0, nSim };
+  return { base, real, series, lag, a, today, rise, th, own, uploaded: STATE.lab.length > 0, sim: nSim > 0, nSim };
 }
 
 function figures(c) {
@@ -126,45 +139,51 @@ function numbersOk(text, fg) {
 async function renderSummary(c) {
   const fg = figures(c), t = template(fg);
   $("sumEn").textContent = t.en; $("sumBm").textContent = t.bm; $("sumChip").textContent = "Template";
-  if (c.sim) return; // simulated figures are never sent to the AI service
+  if (c.sim || !$("aiOn").checked) return; // simulated figures are never sent; AI wording is opt-in
+  $("sumChip").textContent = "Template (asking the AI service...)";
   const r = await api("POST", "/api/summary", fg);
   if (r && r.en && r.bm && numbersOk(r.en + " " + r.bm, fg) && JSON.stringify(figures(context())) === JSON.stringify(fg)) {
     $("sumEn").textContent = r.en; $("sumBm").textContent = r.bm; $("sumChip").textContent = `AI-written (${r.model}) from the figures on this page`;
-  }
+  } else $("sumChip").textContent = r && r.en ? "Template (AI text rejected: it used a number not in the figures)" : "Template (AI wording unavailable)";
 }
 
 function renderAlert(c) {
-  const RT = D.rise.test.models.gradient_boosted;
+  const RT = D.rise.walk ? D.rise.walk.pooled.gradient_boosted : D.rise.test.models.gradient_boosted;
   const a = c.a, th = c.th;
-  const L = a.dataWarning ? { head: "Data warning: check the newest week before acting", sub: `Rule result on this data: ${LEVELS[a.level].head}` } : LEVELS[a.level];
+  let L = a.dataWarning ? { head: "Data warning: check the newest week before acting", sub: `Rule result on this data: ${LEVELS[a.level].head}` } : LEVELS[a.level];
+  if (c.own && !th.calibrated && !a.dataWarning) L = { head: L.head, sub: "Uncalibrated: these alert lines were not learned from your data. Treat the level with caution." };
   const why = [];
   why.push(`Newest data (${wk(a.last)}): ${f1(a.pLast)}% of sentinel samples positive, ${a.phase} from ${f1(a.p2)}% two weeks earlier.`);
   why.push(c.lag > 0 ? `That data is ${c.lag} week${c.lag > 1 ? "s" : ""} behind today, so today's level is projected, not observed.` : `Data is current to this week, so the level is observed.`);
   why.push(`Highest level expected over the coming weeks: ${f1(Math.max(...a.ahead))}%. Watch line ${f1(th.yellow)}%, alert line ${f1(th.orange)}%.`);
   why.push(a.wave === "Mixed" ? "No single virus type dominates the last four weeks." : `${a.wave} makes up ${Math.round(a.waveShare * 100)}% of typed positives in the last four weeks.`);
+  if (c.own) why.push(th.calibrated ? `Alert lines are computed from your own ${th.weeks} weeks, by the same formula as the national ones.` : `Alert lines are the national ones and may not fit your lab network: ${OWN_MIN_WEEKS} weeks of your own history are needed to compute yours, and you have ${th.weeks}.`);
+  if (c.own) why.push("The rapid-rise classifier and the projection were trained on the national series, not on yours.");
   if (a.dataWarning) why.push(`Only ${a.last.n} samples were tested in the newest week, under half the usual ${a.medN}. Check the data before acting.`);
   $("alertCard").innerHTML = `
     <div class="level ${a.level}"><div class="dot"></div><div><h1>${L.head}</h1><div class="sub">${L.sub}</div></div></div>
     <div class="cats"><span class="cat">Level: <b>${a.level.toUpperCase()}</b></span><span class="cat">Type: <b>${a.wave}</b></span>
       <span class="cat">Phase: <b>${a.phase}</b></span>${a.dataWarning ? '<span class="cat warn">Data warning</span>' : ""}
-      ${c.sim ? '<span class="chip sim">Simulated scenario: not real data</span>' : c.uploaded ? '<span class="chip unv">Uses uploaded, unverified data</span>' : '<span class="chip real">Public data only</span>'}</div>
+      ${c.own ? `<span class="chip ${th.calibrated ? "est" : "exp"}">Thresholds ${th.calibrated ? "calibrated to your data" : "uncalibrated"}</span>` : ""}
+      ${c.sim ? '<span class="chip sim">Simulated scenario: not real data</span>' : c.own ? '<span class="chip unv">Your own series, uploaded, not verified</span>' : c.uploaded ? '<span class="chip unv">Uses uploaded, unverified data</span>' : '<span class="chip real">Public data only</span>'}</div>
     <div class="rise ${c.rise.yes ? "on" : ""}"><b>Rapid-rise risk: ${Math.round(c.rise.prob * 100)}% (${c.rise.yes ? "likely" : "unlikely"})</b> <span class="chip est">Machine-learning classifier</span><br>
-      <span class="note">Chance that weekly positives rise by half or more within the next four weeks. On unseen weeks the classifier caught ${RT.tp} of ${RT.tp + RT.fn} such rises with ${RT.fp} false alarms (recall ${Math.round(RT.recall * 100)}%, precision ${Math.round(RT.precision * 100)}%). It is a lead signal with modest evidence and does not change the alert level.</span></div>
+      <span class="note">Chance that weekly positives rise by half or more within the next four weeks. Tested year by year on weeks it had not seen, the classifier caught ${RT.tp} of ${RT.tp + RT.fn} such rises with ${RT.fp} false alarms (recall ${Math.round(RT.recall * 100)}%, precision ${Math.round(RT.precision * 100)}%). It is a lead signal with modest evidence and does not change the alert level.</span></div>
     <h3>Why this level</h3><ul class="why">${why.map((w) => `<li>${w}</li>`).join("")}</ul>
-    <p class="note">The level is set by a fixed rule tested on past data. Thresholds are project thresholds, not the Ministry of Health's.</p>`;
+    <p class="note">The level is set by a fixed rule tested on ${c.own ? "the national series, not on your data" : "past data"}. Thresholds are project thresholds, not the Ministry of Health's.</p>`;
   $("action").innerHTML = `<table><tr><th>Action</th><th>Who acts</th></tr>${ACTIONS[a.level].map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table>
     <p class="note">Proposed actions for discussion with a health professional; not official guidance.</p>`;
 }
 
 function renderStamp(c) {
   const b = c.base[c.base.length - 1], past = STATE.lab.length > D.pub_lag;
-  let h = `Public data through <b>${wk(b)}</b> (WHO FluNet). ` + (past ? `Uploaded data now runs to <b>${wk(c.today)}</b>.` : `Today is about <b>${wk(c.today)}</b>, so public data is ${D.pub_lag} weeks behind.`);
+  let h = c.own ? `Showing <b>your own uploaded series</b>: ${c.base.length} weeks, ${wk(c.base[0])} to ${wk(b)}. The national data is not mixed in. Alert lines: <b>${c.th.calibrated ? "calibrated to your data" : `uncalibrated (${OWN_MIN_WEEKS} weeks needed, ${c.base.length} given)`}</b>.`
+    : `Public data through <b>${wk(b)}</b> (WHO FluNet). ` + (past ? `Uploaded data now runs to <b>${wk(c.today)}</b>.` : `Today is about <b>${wk(c.today)}</b>, so public data is ${D.pub_lag} weeks behind.`);
   if (STATE.stamp) h += ` &nbsp;|&nbsp; <b class="unv">Uploaded, not verified</b> (${SERVER ? "shared on this server" : "kept in this browser only"}): ${STATE.lab.length} lab week(s), ${STATE.ili.length} ILI, ${STATE.clusters.length} cluster rows, ${STATE.clusterlist.length} listed clusters, ${STATE.beds.length} bed rows, last at ${new Date(STATE.stamp).toLocaleString()} <button id="reset">Reset to public data</button>`;
   if (c.sim) h = `<b class="simflag">SIMULATION ON: the newest ${c.nSim} week(s) are invented, not data.</b> <button id="simOff">Exit simulation</button> &nbsp;|&nbsp; ` + h;
   $("stamp").innerHTML = h;
   if ($("reset")) $("reset").onclick = resetState;
   if ($("simOff")) $("simOff").onclick = () => { SIM.on = false; $("simOn").checked = false; render(); };
-  $("replayBar").hidden = false; $("hero").hidden = REPLAY;
+  $("replayBar").hidden = c.own; $("hero").hidden = REPLAY || c.own;
   $("replayBar").innerHTML = REPLAY
     ? `<b>Replay of real data.</b> The site is shown as it looked with public data through ${wk(b)}. ` + (STATE.lab.length ? `Newer weeks are loaded. Press Reset above to run it again.` : `Drop in <a href="templates/demo_real_replay_2025_W38_W41.csv" download>the four real weeks that followed</a>, or <button id="playNext">Load those four weeks</button>.`) + ` <a href="./">Leave replay</a>`
     : `<b>New here?</b> <a href="?replay=1">Run the replay of the October 2025 surge</a> to see the alert change as newer data arrives.`;
@@ -306,12 +325,12 @@ function renderPlan(c) {
   const naive = Object.fromEntries(cap.map((h) => [h.name, 0]));
   const rows = ds.map((d) => { const near = cap.map((h) => ({ h, km: hav(d.c, [h.lat, h.lon]) })).sort((x, y) => x.km - y.km);
     naive[near[0].h.name] += d.need; let need = d.need; const got = [];
-    for (const x of near) { if (!need) break; const take = Math.min(need, x.h.left); if (take > 0) { x.h.left -= take; need -= take; got.push(`${x.h.name.replace("Hospital ", "")} ${take} (${Math.round(x.km)} km)`); } }
+    for (const x of near) { if (!need) break; const take = Math.min(need, x.h.left); if (take > 0) { x.h.left -= take; need -= take; got.push(`${x.h.name.replace("Hospital ", "")} ${take} (${x.h.approximate ? "about " : ""}${Math.round(x.km)} km)`); } }
     unmet += need;
     return `<tr><td>${d.name}</td><td class="num">${d.need}</td><td>${got.join(", ") || "none"}</td><td class="num">${need || ""}</td></tr>`; });
   cap.forEach((h) => { if (naive[h.name] > Math.floor((up[h.name] ?? h.beds_simulated) * share)) overflowNearest++; });
-  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${f1(mult)} (today's positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), split by population. Assumes admissions scale with positivity. Distances are straight-line and approximate.`;
-  $("plan").innerHTML = `<table><tr><th>District</th><th class="num">Need</th><th>Nearest hospitals with assumed space</th><th class="num">Unmet</th></tr>${rows.join("")}</table>
+  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${f1(mult)} (today's positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), split by population. Assumes admissions scale with positivity. This is an illustration on assumed beds, not a recommended allocation. Distances are straight-line and approximate.`;
+  $("plan").innerHTML = `<table><tr><th>District</th><th class="num">Need</th><th>Nearest hospitals with assumed space under this scenario</th><th class="num">Unmet</th></tr>${rows.join("")}</table>
     <p class="note"><b>${unmet}</b> admissions unplaced under this scenario. If every district simply used its nearest hospital, <b>${overflowNearest}</b> hospital(s) would be over their assumed capacity.</p>`;
 }
 
@@ -320,20 +339,31 @@ function renderProof() {
   const passed = v.per_horizon.filter((h) => h.passed).length, R = D.rise.test, G = R.models.gradient_boosted, S = R.models.already_in_outbreak_now;
   const cmRow = (name, m) => `<tr><td>${name}</td><td class="num">${m.tp}</td><td class="num">${m.fp}</td><td class="num">${m.tn}</td><td class="num">${m.fn}</td><td class="num">${Math.round(m.recall * 100)}%</td><td class="num">${Math.round(m.precision * 100)}%</td></tr>`;
   const cmHead = `<tr><th>Method</th><th class="num">TP</th><th class="num">FP</th><th class="num">TN</th><th class="num">FN</th><th class="num">Recall</th><th class="num">Precision</th></tr>`;
-  const w0 = v.week_level.find((x) => x.lag === 0), w4 = v.week_level.find((x) => x.lag !== 0);
+  const w0 = v.week_level.find((x) => x.lag === 0), w4 = v.week_level.find((x) => x.lag !== 0), W = D.rise.walk;
   $("proofBody").innerHTML = `
   <p class="note">All results are on ${v.per_horizon[0].n} unseen weeks (${v.test_start} to ${v.test_end}). Models learned from 2022 to ${v.train_end} only; the split is by date. Rules and settings were frozen with git tags before each scoring.</p>
   <div class="kpis">
-    <div class="kpi"><b>${Math.round(G.recall * 100)}% recall, ${Math.round(G.precision * 100)}% precision</b><span>Rapid-rise classifier, against ${Math.round(S.recall * 100)}% and ${Math.round(S.precision * 100)}% for the simple rule.</span></div>
+    <div class="kpi"><b>${Math.round((W ? W.pooled.gradient_boosted : G).recall * 100)}% recall, ${Math.round((W ? W.pooled.gradient_boosted : G).precision * 100)}% precision</b><span>Rapid-rise classifier${W ? ", tested year by year" : ""}, against ${Math.round((W ? W.pooled.already_in_outbreak_now : S).recall * 100)}% and ${Math.round((W ? W.pooled.already_in_outbreak_now : S).precision * 100)}% for the simple rule.</span></div>
     <div class="kpi"><b>${s0.lead_weeks === 0 ? "Same week" : s0.lead_weeks + " weeks ahead"}</b><span>With current data, the alert fired in the week the October 2025 surge crossed the alert line.</span></div>
     <div class="kpi"><b>${-s4.lead_weeks}-week delay removed</b><span>With public data alone the same alert fired ${-s4.lead_weeks} weeks later, because public data runs ${D.pub_lag} weeks behind.</span></div>
     <div class="kpi"><b class="${passed ? "pass" : "fail"}">${passed} of 8 passed</b><span>Forecasts of the level itself: none beat "same as last week". That is why we classify instead.</span></div>
   </div>
 
+  <h3>What is learned, what is a rule, what is assumed</h3>
+  <table><tr><th>Learned from data</th><th>Fixed rules we wrote</th><th>Assumed, for illustration</th></tr>
+  <tr><td>Rapid-rise classifier (gradient-boosted).<br>Forecast of the level (tested, did not beat the baseline).</td><td>Alert level and its two lines (statistics of training weeks).<br>Wave type, phase, data warning.<br>Proposed action for each level.</td><td>Hospital bed numbers and demand.<br>Simulator factor effects.<br>District shading by population.</td></tr></table>
+
   <h3>1. The predictive model: rapid-rise classifier <span class="chip real">Measured</span></h3>
   <p class="note">Question it answers: will weekly positives be at least 50% higher than four weeks earlier, at any point in the next four weeks? A gradient-boosted classifier (150 one-split trees) on recent level, recent changes and time of year. ${R.test_outbreak_weeks} of ${R.n_test} unseen weeks were followed by such a rise.</p>
   <table>${cmHead}${cmRow("Simple rule: already rising now", S)}${cmRow("Logistic regression", R.models.logistic_regression)}${cmRow("Gradient-boosted classifier (used on this site)", G)}</table>
   <p class="note"><b>Read this with care.</b> The event is common (over half of these weeks), the result is retrospective, and these same weeks had already been scored for other models (list below). We call it a lead signal, not proven early warning.</p>
+
+  ${W ? `<h3>1b. The same classifier, tested year by year <span class="chip real">Measured, run afterwards</span></h3>
+  <p class="note">A second check, added after the result above was known and with no setting changed: each year is tested by a classifier trained only on earlier years (${W.n_test} weeks in all, ${W.rises} followed by a rapid rise).</p>
+  <table>${cmHead}${cmRow("Simple rule: already rising now", W.pooled.already_in_outbreak_now)}${cmRow("Logistic regression", W.pooled.logistic_regression)}${cmRow("Gradient-boosted classifier", W.pooled.gradient_boosted)}</table>
+  <table><tr><th>Year tested</th><th class="num">Weeks</th><th class="num">Rises</th><th class="num">Caught</th><th class="num">False alarms</th><th class="num">Simple rule caught</th><th class="num">Simple rule false alarms</th></tr>
+  ${W.folds.map((f) => `<tr><td>${f.year}</td><td class="num">${f.n_test}</td><td class="num">${f.rises}</td><td class="num">${f.models.gradient_boosted.tp}</td><td class="num">${f.models.gradient_boosted.fp}</td><td class="num">${f.models.already_in_outbreak_now.tp}</td><td class="num">${f.models.already_in_outbreak_now.fp}</td></tr>`).join("")}</table>
+  <p class="note">Across all years the classifier catches about twice as many rises as the simple rule, but with more false alarms: its precision here is ${Math.round(W.pooled.gradient_boosted.precision * 100)}%, lower than the ${Math.round(G.precision * 100)}% in the single split above. The year-by-year figure is the more cautious one to quote.</p>` : ""}
 
   <h3>2. The alert rule: current data against public data <span class="chip real">Measured</span></h3>
   <p class="note">Each unseen week: was the alert high (Orange or Red), and was positivity really above the alert line? One surge occurred (October 2025), so these are counts from a single event, not rates.</p>
@@ -345,6 +375,8 @@ function renderProof() {
   ${v.per_horizon.map((h) => `<tr><td>${h.h}</td><td class="num">${f1(h.mae_model)}</td><td class="num">${f1(h.mae_persist)}</td><td class="num">${f1(h.mae_seasonal)}</td><td class="num">${Math.round(h.coverage80 * 100)}%</td><td class="${h.passed ? "pass" : "fail"}">${h.passed ? "PASS" : "FAIL"}</td></tr>`).join("")}</table>
   <p class="note">Ridge regression, errors in percentage points of positivity. It beat the same-week average everywhere, lost to "last value carried forward" at 1 to 4 weeks, only matched it beyond that, and its ranges were too narrow. A gradient-boosted forecast and forecasts of weekly counts (with and without 2017 to 2019 data) did no better. The chart therefore shows the simple baseline as the main forecast.</p>
 
+  <p class="note"><b>How our alert lines compare with published practice.</b> The World Health Organization's guidance for assessing influenza severity describes setting thresholds from past seasons, for example with the moving epidemic method, and the Ministry of Health's epidemiology bulletin plots its own baseline, alert and action lines. Ours are a simpler rule in the same spirit: the middle value of the training weeks plus one and two units of their usual spread. They are not the Ministry's lines and not that method.</p>
+
   <h3>4. Stress test: does the alert survive bad data? <span class="chip real">Measured</span></h3>
   <table><tr><th>Damage applied to the data</th><th class="num">High-alert decisions unchanged</th><th class="num">Worst of ${v.stress[0].runs} runs</th></tr>
   ${v.stress.map((s) => `<tr><td>${s.test}</td><td class="num">${f1(s.high_alert_agreement * 100)}%</td><td class="num">${f1(s.worst_run * 100)}%</td></tr>`).join("")}</table>
@@ -352,7 +384,12 @@ function renderProof() {
   <h3>5. How many times were the unseen weeks scored?</h3>
   <ul class="why"><li>Ridge forecast: once (tag <code>freeze-v1</code>).</li><li>Gradient-boosted forecast: once (<code>freeze-v2</code>).</li><li>Count forecasts and the outbreak classifiers: three runs defined in advance (<code>freeze-flucases-v1</code>).</li>
   <li>The alert tables above and this note were computed afterwards from the frozen rule: with current data the level first left Green in ${v.descriptive_after_scoring.first_non_green_week_before_2025_surge}, ${v.descriptive_after_scoring.weeks_before_orange_crossing} weeks before the alert line was crossed.</li></ul>
-  <p class="note">Repeated scoring weakens every later result. The fix is a prospective record: this week's outputs archived before the truth is published.</p>
+  <p class="note">Repeated scoring weakens every later result. The fix is a record made in advance, below.</p>
+
+  <h3>6. Record made in advance <span class="chip real">Real, awaiting data</span></h3>
+  <p class="note">Public data runs about four weeks behind, so the weeks below have happened but cannot be seen yet. Each line was saved and committed on the day shown, before those figures were published, and will be marked right or wrong when they are.</p>
+  <table><tr><th>Made on</th><th>Newest data then</th><th>What the system said</th><th>Result</th></tr>
+  ${(D.prospective || []).map((r) => `<tr><td>${r.made_on}</td><td>${r.newest_published_week} (${r.newest_positivity_percent}%)</td><td>${r.claim_alert}<br>${r.claim_rise} (chance ${Math.round(r.rapid_rise_probability * 100)}%)</td><td>${r.status === "scored" ? `Alert ${r.alert_correct ? "right" : "wrong"}; rise call ${r.rise_call_correct ? "right" : "wrong"}` : "Awaiting data"}</td></tr>`).join("") || '<tr><td colspan="4">No records yet.</td></tr>'}</table>
 
   <h3>What this cannot tell you</h3>
   <ul class="why"><li>District-level influenza activity. No public data exists for it.</li><li>Whether the thresholds fit your own data. They were learned from the national sentinel series; an uploaded series from another lab network is uncalibrated.</li><li>Real hospital capacity, unless a planner uploads it.</li><li>Case counts. Positivity is a share of tested samples.</li><li>Whether uploaded figures are correct. They are marked unverified.</li></ul>`;
@@ -410,20 +447,26 @@ function render() { const c = context(); renderStamp(c); renderSim(c); renderAle
 // ---------- upload ----------
 function manualInputs() { const t = $("utype").value;
   $("manual").innerHTML = SCHEMA[t].cols.map((k) => `<input ${["district", "hospital", "name", "setting"].includes(k) ? 'type="text"' : 'type="number" step="any"'} placeholder="${k}" data-k="${k}">`).join("");
+  $("ownRow").hidden = t !== "lab"; if (t !== "lab") $("ownSeries").checked = false;
   $("tpl").href = "templates/" + SCHEMA[t].tpl; $("tpl").textContent = SCHEMA[t].tpl; pending = []; drawPreview(); }
 function drawPreview() { const t = $("utype").value, cols = SCHEMA[t].cols;
   $("preview").innerHTML = pending.length ? `<p class="note">Check what was read. Edit any cell before confirming.</p><table><tr>${cols.map((k) => `<th>${k}</th>`).join("")}</tr>${pending.map((r, i) => `<tr>${cols.map((k) => `<td><input data-i="${i}" data-k="${k}" value="${r[k] ?? ""}"></td>`).join("")}</tr>`).join("")}</table>` : "";
   $("confirm").disabled = !pending.length; $("uerr").textContent = ""; }
 function validate(t, raw) {
-  const errs = [], out = [], num = (v) => (v === "" || v == null ? NaN : Number(v)), c = context(0);
-  let prev = c.series[c.series.length - 1];
+  const errs = [], out = [], warns = [], num = (v) => (v === "" || v == null ? NaN : Number(v)), c = context(0);
+  const ns = c.series.slice(-26).map((r) => r.n).sort((a, b) => a - b), usualN = ns[Math.floor(ns.length / 2)];
+  const ownNew = t === "lab" && $("ownSeries").checked;
+  let prev = ownNew ? null : c.series[c.series.length - 1];
   raw.forEach((r, i) => { const L = `Row ${i + 1}: `;
     if (t === "lab") { const o = { year: num(r.year), week: num(r.week), n: num(r.samples_tested), pos: num(r.influenza_positive), h3: num(r.a_h3) || 0, h1: num(r.a_h1n1) || 0, b: num(r.b) || 0 };
-      const nx = nextWeek(prev);
+      const nx = prev ? nextWeek(prev) : o;
       if (![o.year, o.week, o.n, o.pos].every(Number.isFinite)) errs.push(L + "year, week, samples_tested and influenza_positive must be numbers.");
       else if (o.n <= 0 || o.pos < 0 || o.pos > o.n) errs.push(L + "influenza_positive must be between 0 and samples_tested.");
-      else if (o.year !== nx.year || o.week !== nx.week) errs.push(L + `expected week ${wk(nx)} (the week after the newest data), got ${wk(o)}.`);
-      else { out.push(o); prev = o; } }
+      else if (o.year !== nx.year || o.week !== nx.week) errs.push(L + `expected week ${wk(nx)} (the week after the ${ownNew ? "previous row" : "newest data"}), got ${wk(o)}.`);
+      else { const pp = prev ? M.pct(prev) : M.pct(o), po = M.pct(o);
+        if (Math.abs(po - pp) > 5 && (po > 2.5 * pp || po < 0.33 * pp)) warns.push(L + `positivity goes from ${f1(pp)}% to ${f1(po)}% in one week, a bigger jump than any week in the real series.`);
+        if (o.n < 0.5 * usualN || o.n > 2 * usualN) warns.push(L + `${o.n} samples tested, against about ${usualN} in a usual week.`);
+        out.push(o); prev = o; } }
     if (t === "ili") { const o = { year: num(r.year), week: num(r.week), rate: num(r.ili_rate_percent) };
       if (!(o.rate >= 0 && o.rate <= 100) || !Number.isFinite(o.year) || !(o.week >= 1 && o.week <= 53)) errs.push(L + "needs year, week 1-53 and a rate between 0 and 100."); else out.push(o); }
     if (t === "clusters") { const o = { year: num(r.year), week: num(r.week), district: String(r.district || "").trim(), clusters: num(r.clusters) };
@@ -439,10 +482,11 @@ function validate(t, raw) {
     if (t === "beds") { const o = { hospital: String(r.hospital || "").trim(), beds: num(r.beds_available) };
       if (!HOSP.some((h) => h.name === o.hospital)) errs.push(L + `hospital "${o.hospital}" is not in the list (see the template).`);
       else if (!(o.beds >= 0)) errs.push(L + "beds_available must be 0 or more."); else out.push(o); } });
-  return { errs, out };
+  if (ownNew && !errs.length && out.length < 12) errs.push(`An own-network series needs at least 12 weeks in a row; this has ${out.length}.`);
+  return { errs, out, warns };
 }
 function setupUpload() {
-  $("uploadBtn").onclick = () => { $("upNote").textContent = SERVER ? 'Uploads are saved on this server, shared with everyone using it, and marked "Uploaded, not verified".' : 'Uploads stay in this browser only, are marked "Uploaded, not verified", and can be cleared with Reset.'; $("ufile").value = ""; $("dropName").textContent = ""; $("dropInfo").textContent = ""; manualInputs(); $("dlg").showModal(); };
+  $("uploadBtn").onclick = () => { $("upNote").textContent = SERVER ? 'Uploads are saved on this server, shared with everyone using it, and marked "Uploaded, not verified".' : 'Uploads stay in this browser only, are marked "Uploaded, not verified", and can be cleared with Reset.'; $("ufile").value = ""; $("ownSeries").checked = false; $("dropName").textContent = ""; $("dropInfo").textContent = ""; manualInputs(); $("dlg").showModal(); };
   $("utype").onchange = manualInputs;
   // One file at a time goes through the confirm table; extra dropped files wait in a queue.
   let queue = [];
@@ -482,9 +526,12 @@ function setupUpload() {
   setupUpload.nextFile = nextFile;
   $("addRow").onclick = () => { const r = {}; $("manual").querySelectorAll("input").forEach((i) => (r[i.dataset.k] = i.value)); pending.push(r); drawPreview(); };
   $("preview").oninput = (e) => { const i = e.target.dataset.i; if (i != null) pending[i][e.target.dataset.k] = e.target.value; };
-  $("confirm").onclick = async () => { const t = $("utype").value, { errs, out } = validate(t, pending);
+  $("confirm").onclick = async () => { const t = $("utype").value, { errs, out, warns } = validate(t, pending);
     if (errs.length) { $("uerr").textContent = errs.join("\n"); return; }
-    await saveUpload(t, out); render();
+    const key = JSON.stringify(pending);
+    if (warns.length && setupUpload.ack !== key) { setupUpload.ack = key; $("uerr").textContent = "Please check these unusual values:\n" + warns.join("\n") + "\nIf they are right, press Confirm again."; return; }
+    setupUpload.ack = null; const ownNew = t === "lab" && $("ownSeries").checked;
+    await saveUpload(t, out, ownNew); render();
     if (setupUpload.nextFile()) return;
     $("dlg").close(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
@@ -496,5 +543,7 @@ function setupUpload() {
   await loadState(); setupUpload(); setupSim(); setupLayers(); renderProof(); renderDengue();
   $("adm").oninput = $("share").oninput = () => renderPlan(context());
   $("mapMode").onchange = () => renderMap(context());
+  $("aiOn").disabled = !SERVER; $("aiOn").onchange = () => renderSummary(context());
+  if (!SERVER) $("aiNote").textContent = "AI wording needs the local server; this hosted copy shows the template.";
   render();
 })();

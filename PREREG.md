@@ -37,3 +37,7 @@ Data: OpenDengue V1.3 national weekly counts for Malaysia, all weekly years (201
 
 ## Addendum: influenza positives per week (frozen at tag `freeze-flucases-v1`)
 Target changed from positivity to the weekly count of influenza-positive lab samples (FluNet). Method and every setting are the dengue ones in `pipeline/dengue.py`, unchanged. Three runs defined in `pipeline/flu_cases.py` before any was scored: 2022 onward only; 2017-2019 added (the only earlier years with a count for every week; testing volume then was about a seventh of today's); and the larger training set tested on the 2022-onward test weeks. The 2025-2026 test weeks have now been scored three times across models, so results on them are weaker evidence. Replace rule: the site switches to a count model only if it beats "same as last week" at all four horizons on those weeks.
+
+## Addendum: walk-forward check and advance record (10 Oct 2026)
+- `pipeline/walkforward.py` tests the rapid-rise classifier one calendar year at a time, training only on earlier years. It was written and run AFTER the single-split result was known, with no setting changed. It is extra evidence, not a pre-registered result. Outcome: recall 76%, precision 68% over 282 weeks, against 38% and 78% for the simple rule.
+- `pipeline/archive.py record` saves what the system says today about weeks that are not yet published. Each record is committed on the day it is made and never edited except by `archive.py score`, which adds the outcome. The first record is `outputs/prospective/2026-10-10.json`.

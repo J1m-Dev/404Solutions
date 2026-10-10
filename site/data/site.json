@@ -5197,6 +5197,247 @@
      "precision": 0.862
     }
    }
+  },
+  "walk": {
+   "note": "Run after the main results were known; settings unchanged. Each year is tested by a classifier trained only on earlier years.",
+   "folds": [
+    {
+     "year": 2019,
+     "n_train": 81,
+     "n_test": 48,
+     "rises": 30,
+     "models": {
+      "already_in_outbreak_now": {
+       "tp": 9,
+       "fp": 3,
+       "tn": 15,
+       "fn": 21,
+       "recall": 0.3,
+       "precision": 0.75
+      },
+      "logistic_regression": {
+       "tp": 13,
+       "fp": 2,
+       "tn": 16,
+       "fn": 17,
+       "recall": 0.433,
+       "precision": 0.867
+      },
+      "gradient_boosted": {
+       "tp": 26,
+       "fp": 8,
+       "tn": 10,
+       "fn": 4,
+       "recall": 0.867,
+       "precision": 0.765
+      }
+     }
+    },
+    {
+     "year": 2022,
+     "n_train": 133,
+     "n_test": 45,
+     "rises": 27,
+     "models": {
+      "already_in_outbreak_now": {
+       "tp": 16,
+       "fp": 1,
+       "tn": 17,
+       "fn": 11,
+       "recall": 0.593,
+       "precision": 0.941
+      },
+      "logistic_regression": {
+       "tp": 4,
+       "fp": 5,
+       "tn": 13,
+       "fn": 23,
+       "recall": 0.148,
+       "precision": 0.444
+      },
+      "gradient_boosted": {
+       "tp": 24,
+       "fp": 5,
+       "tn": 13,
+       "fn": 3,
+       "recall": 0.889,
+       "precision": 0.828
+      }
+     }
+    },
+    {
+     "year": 2023,
+     "n_train": 174,
+     "n_test": 52,
+     "rises": 11,
+     "models": {
+      "already_in_outbreak_now": {
+       "tp": 1,
+       "fp": 3,
+       "tn": 38,
+       "fn": 10,
+       "recall": 0.091,
+       "precision": 0.25
+      },
+      "logistic_regression": {
+       "tp": 0,
+       "fp": 4,
+       "tn": 37,
+       "fn": 11,
+       "recall": 0.0,
+       "precision": 0.0
+      },
+      "gradient_boosted": {
+       "tp": 8,
+       "fp": 18,
+       "tn": 23,
+       "fn": 3,
+       "recall": 0.727,
+       "precision": 0.308
+      }
+     }
+    },
+    {
+     "year": 2024,
+     "n_train": 226,
+     "n_test": 52,
+     "rises": 12,
+     "models": {
+      "already_in_outbreak_now": {
+       "tp": 4,
+       "fp": 2,
+       "tn": 38,
+       "fn": 8,
+       "recall": 0.333,
+       "precision": 0.667
+      },
+      "logistic_regression": {
+       "tp": 2,
+       "fp": 3,
+       "tn": 37,
+       "fn": 10,
+       "recall": 0.167,
+       "precision": 0.4
+      },
+      "gradient_boosted": {
+       "tp": 7,
+       "fp": 5,
+       "tn": 35,
+       "fn": 5,
+       "recall": 0.583,
+       "precision": 0.583
+      }
+     }
+    },
+    {
+     "year": 2025,
+     "n_train": 278,
+     "n_test": 52,
+     "rises": 17,
+     "models": {
+      "already_in_outbreak_now": {
+       "tp": 8,
+       "fp": 2,
+       "tn": 33,
+       "fn": 9,
+       "recall": 0.471,
+       "precision": 0.8
+      },
+      "logistic_regression": {
+       "tp": 2,
+       "fp": 4,
+       "tn": 31,
+       "fn": 15,
+       "recall": 0.118,
+       "precision": 0.333
+      },
+      "gradient_boosted": {
+       "tp": 9,
+       "fp": 2,
+       "tn": 33,
+       "fn": 8,
+       "recall": 0.529,
+       "precision": 0.818
+      }
+     }
+    },
+    {
+     "year": 2026,
+     "n_train": 330,
+     "n_test": 33,
+     "rises": 23,
+     "models": {
+      "already_in_outbreak_now": {
+       "tp": 8,
+       "fp": 2,
+       "tn": 8,
+       "fn": 15,
+       "recall": 0.348,
+       "precision": 0.8
+      },
+      "logistic_regression": {
+       "tp": 15,
+       "fp": 2,
+       "tn": 8,
+       "fn": 8,
+       "recall": 0.652,
+       "precision": 0.882
+      },
+      "gradient_boosted": {
+       "tp": 17,
+       "fp": 4,
+       "tn": 6,
+       "fn": 6,
+       "recall": 0.739,
+       "precision": 0.81
+      }
+     }
+    }
+   ],
+   "pooled": {
+    "already_in_outbreak_now": {
+     "tp": 46,
+     "fp": 13,
+     "tn": 149,
+     "fn": 74,
+     "recall": 0.383,
+     "precision": 0.78
+    },
+    "logistic_regression": {
+     "tp": 36,
+     "fp": 20,
+     "tn": 142,
+     "fn": 84,
+     "recall": 0.3,
+     "precision": 0.643
+    },
+    "gradient_boosted": {
+     "tp": 91,
+     "fp": 42,
+     "tn": 120,
+     "fn": 29,
+     "recall": 0.758,
+     "precision": 0.684
+    }
+   },
+   "n_test": 282,
+   "rises": 120
   }
- }
+ },
+ "prospective": [
+  {
+   "made_on": "2026-10-10",
+   "data_file": "flunet_mys_2026-10-10.csv",
+   "newest_published_week": "2026-W37",
+   "newest_positivity_percent": 20.0,
+   "today_week_estimate": "2026-W41",
+   "alert_level_for_today": "green",
+   "alert_line_percent": 27.7,
+   "claim_alert": "Positivity in 2026-W41 will be at or below the alert line of 27.7%.",
+   "rapid_rise_probability": 0.166,
+   "rapid_rise_call": false,
+   "claim_rise": "Weekly positives will not reach 1.5 times their level four weeks earlier in any of 2026-W38 to 2026-W41.",
+   "status": "awaiting data"
+  }
+ ]
 }
