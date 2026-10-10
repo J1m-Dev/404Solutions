@@ -302,7 +302,7 @@ function renderPlanBox(c) {
   const table = (steps) => `<table><tr><th>#</th><th>Task</th><th>Who</th><th>By when</th></tr>${steps.map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.what)}</td><td>${esc(x.who)}</td><td>${esc(x.when)}</td></tr>`).join("")}</table>`;
   const ai = PLAN.source === "ai" || PLAN.source === "cache", why = !SERVER ? "Drafting with AI and approving need the local server." : c.sim ? "Simulated figures are never sent to the AI service, and a simulated plan cannot be approved." : "";
   // Stale: any upload, undo or restore of data after the approval was made.
-  const stale = ap && (STATE.log || []).some((e) => e.type !== "plan" && new Date(e.changedAt || e.at) > new Date(ap.at)), same = ap && !stale && JSON.stringify(ap.steps) === JSON.stringify(PLAN.steps);
+  const stale = ap && (STATE.log || []).some((e) => e.type !== "plan" && new Date(e.changedAt || e.at) > new Date(ap.at)), same = ap && !stale && !c.sim && JSON.stringify(ap.steps) === JSON.stringify(PLAN.steps); // never "approved" over invented weeks
   $("planBox").innerHTML = `<div class="planbox">
     <b>Step-by-step plan</b> <span class="chip ${same ? "real" : ai ? "ai" : "exp"}">${ai ? `AI draft${PLAN.model ? ` (${esc(PLAN.model)})` : ""}` : "Fixed template"}: ${same ? "approved" : "not approved"}</span>
     ${table(PLAN.steps)}
