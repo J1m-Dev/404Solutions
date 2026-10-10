@@ -1,0 +1,164 @@
+{
+ "stage": "test",
+ "split_index": 171,
+ "train_end": "2025-04-07",
+ "test_start": "2025-04-14",
+ "test_end": "2026-09-07",
+ "thresholds": {
+  "median": 14.267990074441688,
+  "robust_sd": 6.721332703836272,
+  "yellow": 20.98932277827796,
+  "orange": 27.710655482114234
+ },
+ "per_horizon": [
+  {
+   "h": 1,
+   "n": 74,
+   "mae_model": 2.468532894723303,
+   "mae_persist": 1.8851252765651676,
+   "mae_seasonal": 9.10273023268383,
+   "skill_persist": -0.30947949476394787,
+   "skill_seasonal": 0.7288140116621378,
+   "coverage80": 0.6486486486486487,
+   "rel_interval_score": 1.4377912350405802,
+   "passed": false
+  },
+  {
+   "h": 2,
+   "n": 73,
+   "mae_model": 3.6343572456894426,
+   "mae_persist": 3.0937227229422324,
+   "mae_seasonal": 9.21775597525424,
+   "skill_persist": -0.17475209356611288,
+   "skill_seasonal": 0.6057221241866081,
+   "coverage80": 0.6438356164383562,
+   "rel_interval_score": 1.3921526855541548,
+   "passed": false
+  },
+  {
+   "h": 3,
+   "n": 72,
+   "mae_model": 4.57025171653076,
+   "mae_persist": 4.295203958489512,
+   "mae_seasonal": 9.339089536504664,
+   "skill_persist": -0.06403601800971837,
+   "skill_seasonal": 0.5106319841279447,
+   "coverage80": 0.6111111111111112,
+   "rel_interval_score": 1.3478036172451109,
+   "passed": false
+  },
+  {
+   "h": 4,
+   "n": 71,
+   "mae_model": 5.5946362652297195,
+   "mae_persist": 5.327560771362493,
+   "mae_seasonal": 9.444632541836597,
+   "skill_persist": -0.050130914564663565,
+   "skill_seasonal": 0.40763854597335236,
+   "coverage80": 0.5915492957746479,
+   "rel_interval_score": 1.2610003105848122,
+   "passed": false
+  },
+  {
+   "h": 5,
+   "n": 70,
+   "mae_model": 6.468383487816631,
+   "mae_persist": 6.5920127590514825,
+   "mae_seasonal": 9.567649263036424,
+   "skill_persist": 0.018754404118089152,
+   "skill_seasonal": 0.3239317924407483,
+   "coverage80": 0.5428571428571428,
+   "rel_interval_score": 1.212116212545827,
+   "passed": false
+  },
+  {
+   "h": 6,
+   "n": 69,
+   "mae_model": 7.420950744142176,
+   "mae_persist": 7.451304332410163,
+   "mae_seasonal": 9.699695818928847,
+   "skill_persist": 0.004073593952666932,
+   "skill_seasonal": 0.2349295397840957,
+   "coverage80": 0.5362318840579711,
+   "rel_interval_score": 1.1858188205720908,
+   "passed": false
+  },
+  {
+   "h": 7,
+   "n": 68,
+   "mae_model": 8.138279337570486,
+   "mae_persist": 8.323107895745633,
+   "mae_seasonal": 9.811522578505205,
+   "skill_persist": 0.02220667573823254,
+   "skill_seasonal": 0.1705385914924571,
+   "coverage80": 0.5,
+   "rel_interval_score": 1.135414518998093,
+   "passed": false
+  },
+  {
+   "h": 8,
+   "n": 67,
+   "mae_model": 8.848883664856894,
+   "mae_persist": 9.210563289436331,
+   "mae_seasonal": 9.867743152630316,
+   "skill_persist": 0.039267915893292926,
+   "skill_seasonal": 0.10325152084059241,
+   "coverage80": 0.4626865671641791,
+   "rel_interval_score": 1.126516950090274,
+   "passed": false
+  }
+ ],
+ "alerts": [
+  {
+   "lag": 4,
+   "weeks_scored": 74,
+   "surges": [
+    {
+     "cross_week": "2025-W41",
+     "caught": true,
+     "lead_weeks": -4
+    }
+   ],
+   "false_alarm_episodes": 0,
+   "high_alert_weeks": 5
+  },
+  {
+   "lag": 0,
+   "weeks_scored": 74,
+   "surges": [
+    {
+     "cross_week": "2025-W41",
+     "caught": true,
+     "lead_weeks": 0
+    }
+   ],
+   "false_alarm_episodes": 0,
+   "high_alert_weeks": 5
+  }
+ ],
+ "stress": [
+  {
+   "test": "half the samples",
+   "runs": 20,
+   "high_alert_agreement": 0.987,
+   "worst_run": 0.973
+  },
+  {
+   "test": "10% of weeks missing",
+   "runs": 20,
+   "high_alert_agreement": 0.995,
+   "worst_run": 0.973
+  },
+  {
+   "test": "both",
+   "runs": 20,
+   "high_alert_agreement": 0.993,
+   "worst_run": 0.973
+  }
+ ],
+ "descriptive_after_scoring": {
+  "note": "Looked at after the test was scored; not a pre-registered result.",
+  "first_non_green_week_before_2025_surge": "2025-W39",
+  "weeks_before_orange_crossing": 2
+ }
+}

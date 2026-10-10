@@ -1,0 +1,3054 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-07-28T02:16:18Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 276691335,
+  "lat": 2.9956053,
+  "lon": 101.7880498,
+  "tags": {
+    "addr:city": "Kajang",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Pusat Perubatan Kajang Plaza (KPMC)",
+    "name:en": "Kajang Plaza Medical Centre (KPMC)",
+    "name:ms": "Pusat Perubatan Kajang Plaza (KPMC)"
+  }
+},
+{
+  "type": "node",
+  "id": 312108493,
+  "lat": 3.1772107,
+  "lon": 101.6997923,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "202-A",
+    "addr:postcode": "53000",
+    "addr:street": "Jalan Pahang",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Tawakal",
+    "name:ms": "Hospital Tawakal",
+    "operator": "Hospital Tawakal",
+    "operator:type": "private",
+    "phone": "+603-4023 3599"
+  }
+},
+{
+  "type": "node",
+  "id": 1085296414,
+  "lat": 3.2094294,
+  "lon": 101.5621032,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Putra Medical Center",
+    "name:en": "Putra Medical Center",
+    "operator": "Putra Medical Center"
+  }
+},
+{
+  "type": "node",
+  "id": 1631398125,
+  "lat": 3.1084355,
+  "lon": 101.5953209,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KMI Kelana Jaya Medical Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 1730075068,
+  "lat": 3.1846292,
+  "lon": 101.6077901,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "London Children's Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 1813382765,
+  "lat": 3.1732673,
+  "lon": 101.7063959,
+  "tags": {
+    "access": "permissive",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "National Blood Bank Malaysia"
+  }
+},
+{
+  "type": "node",
+  "id": 1821014087,
+  "lat": 3.2012313,
+  "lon": 101.7442669,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pusat Perubatan Nluri"
+  }
+},
+{
+  "type": "node",
+  "id": 2554397596,
+  "lat": 3.1446050,
+  "lon": 101.4804334,
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:postcode": "40170",
+    "addr:street": "Jalan Pulau Lumut U10/Q",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Poliklinik An Nisa"
+  }
+},
+{
+  "type": "node",
+  "id": 2707369853,
+  "lat": 3.1516563,
+  "lon": 101.5330745,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pusat Kesihatan Kampong Melayu Subang"
+  }
+},
+{
+  "type": "node",
+  "id": 3963937754,
+  "lat": 3.0056942,
+  "lon": 101.4829892,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Pakar Sentosa"
+  }
+},
+{
+  "type": "node",
+  "id": 4223727792,
+  "lat": 3.0342092,
+  "lon": 101.4384398,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "SMJ Medical Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 4269801295,
+  "lat": 3.0263859,
+  "lon": 101.4263106,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pantai Hospital Klang"
+  }
+},
+{
+  "type": "node",
+  "id": 4520788690,
+  "lat": 3.0476260,
+  "lon": 101.5873808,
+  "tags": {
+    "addr:city": "Subang Jaya",
+    "addr:housenumber": "No 2",
+    "addr:postcode": "47620",
+    "addr:street": "Jalan USJ 9/5R",
+    "amenity": "hospital",
+    "check_date": "2022-05-27",
+    "contact:facebook": "QHCmedicalcentreSJ",
+    "contact:instagram": "qhcmedical",
+    "email": "info@qhcmedical.com",
+    "fax": "03 8024 4263",
+    "healthcare": "hospital",
+    "internet_access": "wlan",
+    "name": "QHC Medical Center",
+    "opening_hours": "Mo-Su 07:00-22:00",
+    "phone": "03-8024 5760;03-80245 6760",
+    "website": "http://qhcmedical.com",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4713094662,
+  "lat": 3.1125345,
+  "lon": 101.6526796,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "UMMC Main Lobby",
+    "name:en": "UMMC Main Lobby",
+    "name:ms": "Lobi Utama PPUM",
+    "operator": "Universiti Malaya",
+    "operator:short": "UM",
+    "operator:type": "university",
+    "operator:wikidata": "Q1142924"
+  }
+},
+{
+  "type": "node",
+  "id": 4727251001,
+  "lat": 2.8226780,
+  "lon": 101.5313989,
+  "tags": {
+    "addr:city": "Banting",
+    "addr:place": "Bandar Sungai Emas",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Wanita Metro",
+    "phone": "+60 03 31803290"
+  }
+},
+{
+  "type": "node",
+  "id": 4736590223,
+  "lat": 3.1701438,
+  "lon": 101.6950202,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:postcode": "50400",
+    "addr:street": "Jalan Sultan Azlan Shah",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Damai Service Hospital",
+    "name:en": "Damai Service Hospital",
+    "operator": "Selangor Bus, Setara Jaya, RapidKL",
+    "operator:type": "private",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4740267123,
+  "lat": 3.1730350,
+  "lon": 101.6912418,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "244",
+    "addr:postcode": "51200",
+    "addr:street": "Jalan Sultan Azlan Shah",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Kiara Medical Centre",
+    "name:en": "Lourdes Medical Centre",
+    "operator": "Kiara Medical Centre",
+    "operator:type": "private",
+    "phone": "+60340425335",
+    "website": "https://www.lourdes.com.my/"
+  }
+},
+{
+  "type": "node",
+  "id": 5418179021,
+  "lat": 3.1684525,
+  "lon": 101.6487594,
+  "tags": {
+    "addr:housenumber": "18",
+    "addr:postcode": "50480",
+    "addr:street": "Jalan Kiara 3",
+    "amenity": "hospital",
+    "email": "contact@globaldoctorshospital.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "internet_access": "wlan",
+    "name": "Global Doctors Hospital",
+    "name:en": "Global Doctors Hospital",
+    "name:ru": "глобал доктор хоспитал",
+    "phone": "+60323039911",
+    "website": "https://globaldoctorshospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 5565693010,
+  "lat": 3.0679973,
+  "lon": 101.4895388,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Farmasi",
+    "name:en": "Pharmacy",
+    "name:ms": "Farmasi"
+  }
+},
+{
+  "type": "node",
+  "id": 5565694125,
+  "lat": 3.0733684,
+  "lon": 101.4898829,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "kompleks kediaman"
+  }
+},
+{
+  "type": "node",
+  "id": 5674560621,
+  "lat": 3.0829651,
+  "lon": 101.5398981,
+  "tags": {
+    "addr:city": "SEKSYEN 13",
+    "addr:housenumber": "12, 18",
+    "addr:postcode": "40100",
+    "addr:street": "Jalan Bola Tampar 13/14",
+    "amenity": "hospital",
+    "check_date": "2026-07-05",
+    "check_date:opening_hours": "2026-07-05",
+    "healthcare": "hospital",
+    "healthcare:speciality": "gynaecology;paediatrics;surgery;orthopaedics",
+    "name": "Hospital Umra",
+    "opening_hours": "24/7",
+    "phone": "03-5518 4319",
+    "website": "https://umra.com.my/"
+  }
+},
+{
+  "type": "node",
+  "id": 5785440554,
+  "lat": 3.1962948,
+  "lon": 101.7275657,
+  "tags": {
+    "addr:street": "Jalan Seri Rejang",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Ohana Specialist Hospital",
+    "old_name": "Rampai Puteri Medical Center",
+    "source": "https://www.mapillary.com/app/?pKey=499139184518179"
+  }
+},
+{
+  "type": "node",
+  "id": 5891259485,
+  "lat": 2.9915544,
+  "lon": 101.7084232,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pusat Kesihitan Universiti",
+    "name:en": "UPM Health Center",
+    "opening_hours": "Mo-Fr 09:00-17:00; Sa-Su 09:00-12:00"
+  }
+},
+{
+  "type": "node",
+  "id": 5940936663,
+  "lat": 3.1719281,
+  "lon": 101.7013108,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Emergency & Trauma",
+    "name:en": "Emergency & Trauma",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107"
+  }
+},
+{
+  "type": "node",
+  "id": 5940936664,
+  "lat": 3.1720004,
+  "lon": 101.7009086,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:postcode": "50300",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "pathology",
+    "name": "Jabatan Patologi",
+    "name:ms": "Jabatan Patologi",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5993435846,
+  "lat": 3.1729603,
+  "lon": 101.6998563,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:postcode": "50586",
+    "addr:street": "Jalan Pahang",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Kompleks Dewan Bedah (IUN)",
+    "name:ms": "Kompleks Dewan Bedah (IUN)",
+    "operator": "Hospital Kuala Lumpur (HKL)",
+    "operator:type": "government",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5993583341,
+  "lat": 3.1724080,
+  "lon": 101.7000867,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "dermatology",
+    "name": "Dermatologi",
+    "name:ms": "Dermatologi",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5993583360,
+  "lat": 3.1729610,
+  "lon": 101.7005897,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Kompleks MRI Jabatan Radiologi",
+    "name:en": "X-Ray",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:type": "government",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6092249094,
+  "lat": 3.1711121,
+  "lon": 101.7018116,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Jabatan Diatetik & Sajian",
+    "name:ms": "Jabatan Sajian Diatetik"
+  }
+},
+{
+  "type": "node",
+  "id": 6092249096,
+  "lat": 3.1721753,
+  "lon": 101.7028657,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "radiotherapy;oncology;nuclear",
+    "name": "Radioterapi, Onkologi & Perubatan Nuklear",
+    "name:ms": "Radioterapi, Onkologi & Perubatan Nuklear",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6092249098,
+  "lat": 3.1727457,
+  "lon": 101.7033458,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Blok Kejuruteraan",
+    "name:ms": "Blok Kejuruteraan",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107"
+  }
+},
+{
+  "type": "node",
+  "id": 6113367174,
+  "lat": 3.1706100,
+  "lon": 101.6991407,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Komples Rawatan & Rawatan Harian (SCACC)",
+    "name:ms": "Komples Rawatan & Rawatan Harian (SCACC)",
+    "operator": "Hospital Kuala Lumpur (HKL)",
+    "operator:type": "government",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6139028603,
+  "lat": 3.1731618,
+  "lon": 101.7004244,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Klinik Rehabilitasi",
+    "name:ms": "Jabatan Rehabilisasi",
+    "operator": "Hospital Kuala Lumpur (HKL)",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "node",
+  "id": 6156405664,
+  "lat": 3.1714005,
+  "lon": 101.7031537,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "psychiatry",
+    "name": "Jabatan Psiakitri",
+    "name:ms": "Jabatan Psiakitri",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107"
+  }
+},
+{
+  "type": "node",
+  "id": 8308145408,
+  "lat": 2.9744080,
+  "lon": 101.6780977,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Andorra Women and Children Hospital",
+    "name:en": "Andorra Women and Children Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8663770175,
+  "lat": 2.9609029,
+  "lon": 101.7539895,
+  "tags": {
+    "addr:city": "Bandar Baru Bangi",
+    "addr:housenumber": "c10g",
+    "addr:postcode": "43650",
+    "addr:street": "Jalan medan pusat bandar 5",
+    "amenity": "hospital",
+    "description": "Skin, Hair and Aesthetic Clinic",
+    "email": "klinikdrbazilah@gmail.com",
+    "emergency": "no",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;dermatology;Hair",
+    "name": "KLINIK DR BAZILAH",
+    "operator": "KLINIK BAZILAH SDN BHD",
+    "operator:type": "private",
+    "phone": "0389229681",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 9450434088,
+  "lat": 3.1740712,
+  "lon": 101.6927070,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "631",
+    "addr:postcode": "51200",
+    "addr:street": "Jalan Sentul",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Sentul Medical Centre",
+    "name:en": "Sentul Medical Centre",
+    "operator": "Sentul Medical Centre",
+    "operator:type": "private",
+    "phone": "+60340416962"
+  }
+},
+{
+  "type": "node",
+  "id": 9555874026,
+  "lat": 3.2000568,
+  "lon": 101.6710201,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "D-2-13A",
+    "addr:postcode": "51200",
+    "addr:street": "Jalan Kuching",
+    "amenity": "hospital",
+    "email": "shiyitangtcm@gmail.com",
+    "emergency": "no",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Shi Yi Tang International Sdn Bhd",
+    "name:en": "Shi Yi Tang International Sdn Bhd",
+    "name:zh": "哈药世一堂中医馆",
+    "name:zh-Hans": "哈药世一堂中医馆",
+    "name:zh-Hant": "哈藥世一堂中醫館",
+    "operator": "Shi Yi Tang International Sdn Bhd",
+    "operator:type": "private",
+    "phone": "+60177215500",
+    "website": "https://www.facebook.com/%E5%93%88%E8%8D%AF%E4%B8%96%E4%B8%80%E5%A0%82%E4%B8%AD%E5%8C%BB%E8%AF%8A%E6%89%80-108775300530355/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 9702462710,
+  "lat": 3.0990506,
+  "lon": 101.7261250,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "internet_access": "yes",
+    "internet_access:fee": "customers",
+    "name": "Pusat Pakar UKM",
+    "operator": "Universiti Kebangsaan Malaysia (UKM)",
+    "operator:type": "government",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 9917404848,
+  "lat": 2.6891123,
+  "lon": 101.9344026,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "ophthalmology",
+    "name": "Top Vision Eye Specialist Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 10581850699,
+  "lat": 2.7190411,
+  "lon": 101.9513063,
+  "tags": {
+    "addr:city": "Seremban",
+    "addr:housenumber": "60",
+    "addr:postcode": "70100",
+    "addr:street": "Jalan Aminuddin Baki",
+    "amenity": "hospital",
+    "contact:phone": "+6067616969",
+    "description": "Establish since 2017,",
+    "email": "ancientgardensayurvediccentre@gmail.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Ancient Gardens Ayurvedic Centre",
+    "website": "https://ancientgardens.com.my/"
+  }
+},
+{
+  "type": "node",
+  "id": 11759497837,
+  "lat": 3.1599191,
+  "lon": 101.7226834,
+  "tags": {
+    "alt_name": "HSC Healthcare",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Ortopedik ALTY",
+    "name:en": "ALTY Orthopaedic Hospital",
+    "name:ms": "Hospital Ortopedik ALTY"
+  }
+},
+{
+  "type": "node",
+  "id": 12181307138,
+  "lat": 3.1697256,
+  "lon": 101.7044850,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Unit Psikologi Kaunseling",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107"
+  }
+},
+{
+  "type": "node",
+  "id": 12401316752,
+  "lat": 3.1684186,
+  "lon": 101.7010284,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fakulti Farmasi"
+  }
+},
+{
+  "type": "node",
+  "id": 12401316767,
+  "lat": 3.1686315,
+  "lon": 101.7025308,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Unit Orthopedik",
+    "name:ms": "Jabatan Sajian Diatetik"
+  }
+},
+{
+  "type": "node",
+  "id": 12401316776,
+  "lat": 3.1682603,
+  "lon": 101.7026788,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Klinik Perkeso",
+    "name:ms": "Jabatan Sajian Diatetik"
+  }
+},
+{
+  "type": "node",
+  "id": 12401316779,
+  "lat": 3.1712543,
+  "lon": 101.7025111,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Unit Kawalan Infeksi",
+    "name:ms": "Jabatan Sajian Diatetik"
+  }
+},
+{
+  "type": "node",
+  "id": 12920923175,
+  "lat": 3.0749513,
+  "lon": 101.4860038,
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:housenumber": "15",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Kristal K7/K",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Klinik Dr Rosli Seksyen 7 Shah Alam",
+    "opening_hours": "9AM- 11PM",
+    "phone": "00355101707"
+  }
+},
+{
+  "type": "node",
+  "id": 12921002407,
+  "lat": 3.0749709,
+  "lon": 101.4965896,
+  "tags": {
+    "addr:city": "Seksyen 7, Shah Alam",
+    "addr:housenumber": "1-06",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Lazuardi 7/29",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Poliklinik Al Hikmah",
+    "opening_hours": "8AM- 10PM"
+  }
+},
+{
+  "type": "node",
+  "id": 12923636039,
+  "lat": 3.0745485,
+  "lon": 101.4860782,
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:housenumber": "Persiaran Bestari, 20",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Kristal J7/J",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Klinik Ajwa Seksyen 7"
+  }
+},
+{
+  "type": "node",
+  "id": 13088688113,
+  "lat": 3.1097245,
+  "lon": 101.6653397,
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "01-08, Level 1",
+    "addr:postcode": "59200",
+    "addr:street": "Jalan Kerinchi",
+    "amenity": "hospital",
+    "email": "contact_us@centraldermatology.com.my",
+    "healthcare": "hospital",
+    "healthcare:speciality": "dermatology;paediatrics",
+    "mobile": "+60124081977",
+    "name": "Central Dermatology Specialist Clinic",
+    "name:en": "Central Dermatology Specialist Clinic",
+    "opening_hours": "Mo-Fr 09:00-21:00",
+    "operator": "DERM MALAYSIA SDN BHD",
+    "operator:type": "private",
+    "phone": "+60397751977",
+    "start_date": "2021-12-21",
+    "website": "https://centraldermatology.com.my"
+  }
+},
+{
+  "type": "node",
+  "id": 13123198141,
+  "lat": 3.1207308,
+  "lon": 101.5896108,
+  "tags": {
+    "addr:city": "Petaling Jaya",
+    "addr:country": "MY",
+    "addr:housenumber": "A-G-05, Block A",
+    "addr:postcode": "47500",
+    "addr:street": "Jalan PJU1a/3j",
+    "amenity": "hospital",
+    "healthcare": "dentist",
+    "healthcare:speciality": "dentist",
+    "name": "Infinite Dental Clinic Ara Damansara"
+  }
+},
+{
+  "type": "node",
+  "id": 13247609202,
+  "lat": 3.1589756,
+  "lon": 101.6981582,
+  "tags": {
+    "addr:housenumber": "21",
+    "addr:postcode": "50300",
+    "addr:street": "Lorong Medan Tuanku 2",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "BP Healthcare",
+    "opening_hours": "Mo-Fr 07:30-17:00; Sa-Su 07:30-13:00",
+    "phone": "+60392129266",
+    "website": "https://bphealthcare.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 13361282213,
+  "lat": 3.0831267,
+  "lon": 101.5396692,
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:housenumber": "57",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Bola Jaring 13/15, Syeksen 13",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "child_psychiatry",
+    "name": "KIDDO CHILD SPECIALIST CLINIC",
+    "operator": "Dr Tengku Putri",
+    "operator:type": "public"
+  }
+},
+{
+  "type": "node",
+  "id": 13361294583,
+  "lat": 3.0811837,
+  "lon": 101.5397007,
+  "tags": {
+    "addr:city": "shah alam",
+    "addr:housenumber": "G3F",
+    "addr:postcode": "40100",
+    "addr:street": "Jalan Bola Jaring 13/15",
+    "amenity": "hospital",
+    "check_date": "2026-07-06",
+    "check_date:opening_hours": "2026-07-06",
+    "healthcare": "hospital",
+    "healthcare:speciality": "physiotherapy",
+    "name": "Aero Physio Shah Alam",
+    "opening_hours": "Mo-Su 10:00-20:00",
+    "phone": "011-6323 8055"
+  }
+},
+{
+  "type": "node",
+  "id": 13366473476,
+  "lat": 3.0829979,
+  "lon": 101.5396287,
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:housenumber": "53",
+    "addr:street": "Jalan Bola Jaring 13/15",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "dentist",
+    "name": "Dental Valet"
+  }
+},
+{
+  "type": "node",
+  "id": 13366580627,
+  "lat": 3.0816699,
+  "lon": 101.5399581,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 13396984412,
+  "lat": 3.0681973,
+  "lon": 101.4906262,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KLINIK USAHAWAN SELANGOR"
+  }
+},
+{
+  "type": "node",
+  "id": 13396984420,
+  "lat": 3.0686247,
+  "lon": 101.4904761,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "CITY SPEC OPTICAL"
+  }
+},
+{
+  "type": "node",
+  "id": 13396984424,
+  "lat": 3.0684968,
+  "lon": 101.4904862,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "V CARE PHARMACY"
+  }
+},
+{
+  "type": "node",
+  "id": 13396984425,
+  "lat": 3.0685104,
+  "lon": 101.4905075,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KLINIK PERGIGIAN DR SMILE"
+  }
+},
+{
+  "type": "way",
+  "id": 23798504,
+  "center": {
+    "lat": 3.0491344,
+    "lon": 101.5351740
+  },
+  "tags": {
+    "addr:housenumber": "2-14",
+    "addr:postcode": "40300",
+    "addr:street": "Jalan Nelayan B19/B",
+    "amenity": "hospital",
+    "building": "hospital",
+    "email": "cust.care@salam.com.my",
+    "healthcare": "hospital",
+    "internet_access": "wlan",
+    "name": "SALAM Shah Alam Specialist Hospital",
+    "opening_hours": "24/7",
+    "phone": "+6 03-5543 4000",
+    "source": "bing",
+    "website": "https://www.salam.com.my/"
+  }
+},
+{
+  "type": "way",
+  "id": 24581947,
+  "center": {
+    "lat": 3.1462362,
+    "lon": 101.7041253
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "102",
+    "addr:postcode": "55100",
+    "addr:street": "Jalan Pudu",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "loc_name": "培善堂",
+    "loc_name:zh": "培善堂",
+    "loc_name:zh-Hans": "培善堂",
+    "loc_name:zh-Hant": "培善堂",
+    "name": "Hospital Tung Shin",
+    "name:en": "Tung Shin Hospital",
+    "name:ms": "Hospital Tung Shin",
+    "name:zh": "同善医院",
+    "name:zh-Hans": "同善医院",
+    "name:zh-Hant": "同善醫院",
+    "wheelchair": "yes",
+    "wikidata": "Q65119015",
+    "wikimedia_commons": "Category:Tung Shin Hospital",
+    "wikipedia": "en:Tung Shin Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 24581950,
+  "center": {
+    "lat": 3.1455851,
+    "lon": 101.7050670
+  },
+  "tags": {
+    "addr:housenumber": "106",
+    "addr:postcode": "55100",
+    "addr:street": "Jalan Pudu",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Bersalin Cina",
+    "name:en": "Chinese Maternity Hospital",
+    "name:ms": "Hospital Bersalin Cina",
+    "name:zh": "华人接生院",
+    "name:zh-Hans": "华人接生院",
+    "name:zh-Hant": "華人接生院"
+  }
+},
+{
+  "type": "way",
+  "id": 26125041,
+  "center": {
+    "lat": 3.0575050,
+    "lon": 101.5409951
+  },
+  "tags": {
+    "addr:postcode": "40300",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KPJ Selangor Specialist Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 28287738,
+  "center": {
+    "lat": 3.1026581,
+    "lon": 101.7408733
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Pantai Cheras",
+    "name:en": "Pantai Hospital Cheras"
+  }
+},
+{
+  "type": "way",
+  "id": 129508005,
+  "center": {
+    "lat": 3.2013653,
+    "lon": 101.7182174
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Hospital",
+    "name:en": "Columbia Asia Hospital",
+    "operator": "Columbia Asia",
+    "operator:type": "private",
+    "operator:wikidata": "Q5149612",
+    "operator:wikipedia": "en:Columbia Asia",
+    "source": "Bing Sat"
+  }
+},
+{
+  "type": "way",
+  "id": 142494876,
+  "center": {
+    "lat": 3.1061469,
+    "lon": 101.6399760
+  },
+  "tags": {
+    "addr:city": "Petaling Jaya",
+    "addr:housenumber": "2",
+    "addr:street": "Lorong Utara B",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "ophthalmology",
+    "name": "Hospital Mata Nasional Tun Hussein Onn",
+    "name:en": "Tun Hussein Onn National Eye Hospital",
+    "name:ms": "Hospital Mata Nasional Tun Hussein Onn"
+  }
+},
+{
+  "type": "way",
+  "id": 149160360,
+  "center": {
+    "lat": 3.0984244,
+    "lon": 101.7256917
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Canselor Tuanku Muhriz UKM",
+    "note": "Hospital Pengajar Universiti Kementerian Pengajian Tinggi",
+    "operator": "Universiti Kebangsaan Malaysia",
+    "operator:type": "university",
+    "short_name": "HCTM;HUKM",
+    "url": "http://www.ppukm.ukm.my/",
+    "website": "https://hctm.ukm.my/",
+    "wheelchair": "yes",
+    "wikidata": "Q7261705",
+    "wikipedia": "en:Hospital Canselor Tuanku Muhriz UKM"
+  }
+},
+{
+  "type": "way",
+  "id": 154636427,
+  "center": {
+    "lat": 3.0790863,
+    "lon": 101.5938851
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Subang Jaya Medical Centre",
+    "operator": "Ramsay Sime Darby Health Care",
+    "short_name": "SJMC",
+    "source": "https://openstreetcam.org/details/2445466/705"
+  }
+},
+{
+  "type": "way",
+  "id": 161075117,
+  "center": {
+    "lat": 3.1153792,
+    "lon": 101.6403641
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ReGen Rehab Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 163664228,
+  "center": {
+    "lat": 3.1599424,
+    "lon": 101.7515060
+  },
+  "tags": {
+    "addr:city": "Ampang Jaya",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Pakar KPJ Ampang Puteri",
+    "name:en": "KPJ Ampang Puteri Specialist Hospital",
+    "wikidata": "Q30270010"
+  }
+},
+{
+  "type": "way",
+  "id": 167293135,
+  "center": {
+    "lat": 2.9204475,
+    "lon": 101.6315910
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Cyberjaya",
+    "name:en": "Hospital Cyberjaya",
+    "name:ms": "Hospital Cyberjaya",
+    "name:zh": "赛城医院",
+    "name:zh-Hans": "赛城医院",
+    "name:zh-Hant": "賽城醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "source": "Bing"
+  }
+},
+{
+  "type": "way",
+  "id": 169543765,
+  "center": {
+    "lat": 2.9999117,
+    "lon": 101.7859014
+  },
+  "tags": {
+    "addr:city": "Kajang",
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "KPJ Kajang Specialist Hospital",
+    "name:en": "KPJ Kajang Specialist Hospital",
+    "name:zh": "加影KPJ专科医院",
+    "name:zh-Hans": "加影KPJ专科医院",
+    "name:zh-Hant": "加影KPJ專科醫院"
+  }
+},
+{
+  "type": "way",
+  "id": 180134061,
+  "center": {
+    "lat": 3.0960749,
+    "lon": 101.6778549
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "45",
+    "addr:postcode": "58100",
+    "addr:street": "Jalan Desa",
+    "amenity": "hospital",
+    "building": "yes",
+    "emergency": "yes",
+    "healthcare": "hospice",
+    "name": "KMI Taman Desa Medical Centre",
+    "name:en": "KMI Taman Desa Medical Centre",
+    "phone": "+60 3 79826500",
+    "website": "http://www.tdmc.com.my"
+  }
+},
+{
+  "type": "way",
+  "id": 201611968,
+  "center": {
+    "lat": 3.0245567,
+    "lon": 101.6157264
+  },
+  "tags": {
+    "addr:housenumber": "1",
+    "addr:street": "Jalan Puteri 2/1",
+    "amenity": "hospital",
+    "building": "retail",
+    "building:levels": "4",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Kajang Plaza Medical Centre",
+    "name:en": "Kajang Plaza Medical Centre",
+    "name:short": "KPMC"
+  }
+},
+{
+  "type": "way",
+  "id": 202979852,
+  "center": {
+    "lat": 3.0240116,
+    "lon": 101.6225088
+  },
+  "tags": {
+    "amenity": "hospital",
+    "branch": "Puchong",
+    "building": "yes",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Hospital",
+    "operator": "Columbia Asia",
+    "operator:wikidata": "Q5149612",
+    "operator:wikipedia": "en:Columbia Asia",
+    "source": "https://openstreetcam.org/details/2044710/27"
+  }
+},
+{
+  "type": "way",
+  "id": 210983292,
+  "center": {
+    "lat": 3.0663754,
+    "lon": 101.6085333
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "gynaecology",
+    "name": "Sunway Medical Centre",
+    "name:en": "Sunway Medical Centre",
+    "name:zh": "双威医疗中心",
+    "name:zh-Hans": "双威医疗中心",
+    "name:zh-Hant": "雙威醫療中心",
+    "source": "https://openstreetcam.org/details/2384518/578"
+  }
+},
+{
+  "type": "way",
+  "id": 265360765,
+  "center": {
+    "lat": 3.1707735,
+    "lon": 101.6991061
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "building:levels": "9",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Komples Rawatan & Rawatan Harian (SCACC)",
+    "name:en": "Medical Research Insitute",
+    "name:ms": "Komples Rawatan & Rawatan Harian (SCACC)",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:type": "government",
+    "smoking": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 276156964,
+  "center": {
+    "lat": 3.0212805,
+    "lon": 101.4394649
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Tengku Ampuan Rahimah",
+    "name:en": "Tengku Ampuan Rahimah Hospital",
+    "name:ms": "Hospital Tengku Ampuan Rahimah",
+    "name:zh": "巴生中央医院",
+    "name:zh-Hans": "巴生中央医院",
+    "name:zh-Hant": "巴生中央醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "smoking": "no",
+    "wikidata": "Q7699799",
+    "wikimedia_commons": "Category:Tengku Ampuan Rahimah Hospital",
+    "wikipedia": "en:Tengku Ampuan Rahimah Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 290678736,
+  "center": {
+    "lat": 2.8033440,
+    "lon": 101.4924685
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Banting",
+    "name:en": "Banting Hospital",
+    "name:zh": "万津医院",
+    "wikidata": "Q12687818",
+    "wikimedia_commons": "Category:Banting Hospital",
+    "wikipedia": "ms:Hospital Banting"
+  }
+},
+{
+  "type": "way",
+  "id": 310914219,
+  "center": {
+    "lat": 3.1890928,
+    "lon": 101.6384312
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "2",
+    "addr:postcode": "52200",
+    "addr:street": "Jalan Intisari",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Pusat Perubatan ParkCity",
+    "name:en": "ParkCity Medical Centre",
+    "name:ms": "Pusat Perubatan ParkCity",
+    "operator:type": "private"
+  }
+},
+{
+  "type": "way",
+  "id": 314969034,
+  "center": {
+    "lat": 3.1488787,
+    "lon": 101.5784962
+  },
+  "tags": {
+    "addr:city": "Kota Damansara",
+    "addr:housenumber": "11",
+    "addr:postcode": "47810",
+    "addr:street": "Jalan Teknologi",
+    "amenity": "hospital",
+    "check_date": "2025-08-20",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Thomson Hospital Kota Damansara",
+    "name:en": "Thomson Hospital Kota Damansara",
+    "name:zh": "哥打白沙罗康盛医院",
+    "name:zh-Hans": "哥打白沙罗康盛医院",
+    "name:zh-Hant": "哥打白沙羅康盛醫院",
+    "old_name": "Tropicana Medical Centre",
+    "old_name:zh": "丽阳医疗中心",
+    "operator": "TMC Life Sciences Berhad",
+    "phone": "+603 6287 1111",
+    "website": "https://thomsonhospitals.com"
+  }
+},
+{
+  "type": "way",
+  "id": 323215441,
+  "center": {
+    "lat": 3.0396484,
+    "lon": 101.7951178
+  },
+  "tags": {
+    "addr:city": "Bandar Sungai Long",
+    "addr:housenumber": "PT 21147",
+    "addr:postcode": "43000",
+    "addr:street": "Persiaran SL 1",
+    "amenity": "hospital",
+    "building": "yes",
+    "email": "Putrakajanghospital@gmail.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;paediatrics;surgery;cardiology;psychiatry;dermatology;orthopaedics;radiology",
+    "name": "Sungai Long Specialist Hospital",
+    "name:en": "Sungai Long Specialist Hospital",
+    "name:zh": "博爱医院",
+    "name:zh-Hans": "博爱医院",
+    "name:zh-Hant": "博愛醫院",
+    "operator": "Sungai Long Specialist Hospital",
+    "operator:type": "private",
+    "phone": "+60390103788",
+    "website": "https://www.sglonghospital.com/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 324185283,
+  "center": {
+    "lat": 3.1491465,
+    "lon": 101.7213053
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Prince Court Medical Centre",
+    "name:en": "Prince Court Medical Centre",
+    "name:zh": "太子阁医药中心",
+    "name:zh-Hans": "太子阁医药中心",
+    "name:zh-Hant": "太子閣醫藥中心",
+    "phone": "+603 2160 0000",
+    "website": "https://princecourt.com/",
+    "wikidata": "Q104247474"
+  }
+},
+{
+  "type": "way",
+  "id": 366063159,
+  "center": {
+    "lat": 3.0100907,
+    "lon": 101.4316993
+  },
+  "tags": {
+    "addr:district": "Klang",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bukit Tinggi Medical Centre",
+    "note": "Renamed to Bukit Tinggi Medical Centre in December 2021.",
+    "old_name": "Manipal Hospitals Klang",
+    "postal_code": "41200",
+    "wikidata": "Q17053467",
+    "wikipedia": "en:Bukit Tinggi Medical Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 366074474,
+  "center": {
+    "lat": 3.0404579,
+    "lon": 101.4455760
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "cardiology;orthopaedics;cancer",
+    "name": "Pusat Perubatan Pakar Sri Kota",
+    "name:en": "Sri Kota Specialist Medical Centre",
+    "name:zh": "刘永美医疗中心",
+    "short_name": "Sri Kota",
+    "source:name:en": "https://openstreetcam.org/details/2253214/1998",
+    "source:name:zh": "https://openstreetcam.org/details/2253214/2002",
+    "start_date": "1997",
+    "website": "https://www.srikotamedical.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 394930631,
+  "center": {
+    "lat": 3.2930007,
+    "lon": 101.7309798
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Orang Asli Gombak",
+    "name:ms": "Hospital Orang Asli Gombak",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:wikidata": "Q4294352"
+  }
+},
+{
+  "type": "way",
+  "id": 424861960,
+  "center": {
+    "lat": 2.7089451,
+    "lon": 101.9438454
+  },
+  "tags": {
+    "addr:city": "Seremban",
+    "addr:postcode": "70300",
+    "addr:street": "Jalan Rasah",
+    "addr:suburb": "Rasah",
+    "alt_name": "Hospital Seremban",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Tuanku Ja'afar",
+    "name:zh": "端姑查化医院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:wikidata": "Q4294352",
+    "short_name": "HTJS",
+    "wikidata": "Q20463206",
+    "wikipedia": "en:Tuanku Ja'afar Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 424862122,
+  "center": {
+    "lat": 2.9294505,
+    "lon": 101.6744663
+  },
+  "tags": {
+    "addr:city": "Putrajaya",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Putrajaya",
+    "name:en": "Hospital Putrajaya",
+    "name:ms": "Hospital Putrajaya",
+    "name:zh": "布城医院",
+    "name:zh-Hans": "布城医院",
+    "name:zh-Hant": "布城醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "operator:wikipedia": "en:Ministry of Health (Malaysia)",
+    "wheelchair": "yes",
+    "wikidata": "Q20449944",
+    "wikimedia_commons": "Category:Putrajaya Hospital",
+    "wikipedia": "ms:Hospital Putrajaya"
+  }
+},
+{
+  "type": "way",
+  "id": 424862161,
+  "center": {
+    "lat": 2.9271866,
+    "lon": 101.6738787
+  },
+  "tags": {
+    "addr:city": "Putrajaya",
+    "addr:postcode": "62250",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Institut Kanser Negara",
+    "name:en": "National Cancer Institute",
+    "name:ms": "Institut Kanser Negara",
+    "name:zh": "国家癌症研究院",
+    "name:zh-Hans": "国家癌症研究院",
+    "name:zh-Hant": "國家癌症研究院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "short_name": "IKN",
+    "wheelchair": "yes",
+    "wikidata": "Q664846",
+    "wikimedia_commons": "Category:National Cancer Institute",
+    "wikipedia": "ms:Institut Kanser Kebangsaan"
+  }
+},
+{
+  "type": "way",
+  "id": 466428174,
+  "center": {
+    "lat": 3.0713819,
+    "lon": 101.5237207
+  },
+  "tags": {
+    "addr:housenumber": "4",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Ikhtisas",
+    "amenity": "hospital",
+    "barrier": "fence",
+    "check_date": "2026-07-08",
+    "check_date:opening_hours": "2026-07-08",
+    "email": "careline@avisena.com.my",
+    "healthcare": "hospital",
+    "internet_access": "wlan",
+    "name": "Avisena Specialist Hospital",
+    "name:en": "Avisena Specialist Hospital",
+    "old_name:en": "DEMC Specialist Hospital",
+    "opening_hours": "24/7",
+    "phone": "+(603) 5515 1888",
+    "website": "https://shahalam.avisena.com.my/"
+  }
+},
+{
+  "type": "way",
+  "id": 482320812,
+  "center": {
+    "lat": 2.9940874,
+    "lon": 101.7925170
+  },
+  "tags": {
+    "addr:city": "Kajang",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Kajang",
+    "name:en": "Hospital Kajang",
+    "name:ms": "Hospital Kajang",
+    "name:zh": "加影医院",
+    "name:zh-Hans": "加影医院",
+    "name:zh-Hant": "加影醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "wikidata": "Q12687846",
+    "wikipedia": "en:Kajang Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 498082299,
+  "center": {
+    "lat": 3.1196217,
+    "lon": 101.6666064
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:street": "Jalan Bukit Pantai",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospice",
+    "name": "Pantai Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 499135894,
+  "center": {
+    "lat": 2.7376217,
+    "lon": 101.9311355
+  },
+  "tags": {
+    "addr:city": "Seremban",
+    "addr:street": "Jalan Tun Dr Ismail",
+    "alt_name": "NSCMH Medical Centre",
+    "alt_name:en": "NSCMH Medical Centre",
+    "alt_name:zh": "森华医院",
+    "alt_name:zh-Hans": "森华医院",
+    "alt_name:zh-Hant": "森華醫院",
+    "amenity": "hospital",
+    "contact:facebook": "https://www.facebook.com/CMHSpecialistHospital/",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "CMH Specialist Hospital",
+    "name:en": "CMH Specialist Hospital",
+    "name:zh": "森华专科医院",
+    "name:zh-Hans": "森华专科医院",
+    "name:zh-Hant": "森華專科醫院",
+    "website": "https://cmhspecialist.com.my/"
+  }
+},
+{
+  "type": "way",
+  "id": 506468091,
+  "center": {
+    "lat": 3.2087006,
+    "lon": 101.7394019
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:place": "Wangsa Maju",
+    "alt_name": "Hospital Wangsa Maju",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Angkatan Tentera Tuanku Mizan",
+    "name:ms": "Hospital Angkatan Tentera Tuanku Mizan",
+    "short_name": "HATTM",
+    "wikipedia": "ms:Hospital Angkatan Tentera Tuanku Mizan"
+  }
+},
+{
+  "type": "way",
+  "id": 506578728,
+  "center": {
+    "lat": 2.7059902,
+    "lon": 101.9411531
+  },
+  "tags": {
+    "addr:city": "Seremban",
+    "addr:postcode": "70300",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Mawar Renal Medical Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 534842508,
+  "center": {
+    "lat": 3.5653297,
+    "lon": 101.6528409
+  },
+  "tags": {
+    "addr:city": "Kuala Kubu Bharu",
+    "alt_name": "Hospital KKB",
+    "amenity": "hospital",
+    "contact:facebook": "https://www.facebook.com/HospitalKualaKubuBharu",
+    "email": "h_kkb@moh.gov.my",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Kuala Kubu Bharu",
+    "name:en": "Kuala Kubu Bharu Hospital",
+    "name:ms": "Hospital Kuala Kubu Bharu",
+    "name:zh": "新古毛医院",
+    "name:zh-Hans": "新古毛医院",
+    "name:zh-Hant": "新古毛醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "short_name": "HKKB",
+    "website": "https://jknselangor.moh.gov.my/hkkb/",
+    "wheelchair": "yes",
+    "wikidata": "Q12687853",
+    "wikipedia": "ms:Hospital Kuala Kubu Bharu"
+  }
+},
+{
+  "type": "way",
+  "id": 541320179,
+  "center": {
+    "lat": 3.3208009,
+    "lon": 101.5790177
+  },
+  "tags": {
+    "addr:city": "Rawang",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Pakar KPJ Rawang",
+    "name:en": "KPJ Rawang Specialist Hospital",
+    "name:ms": "Hospital Pakar KPJ Rawang"
+  }
+},
+{
+  "type": "way",
+  "id": 541462239,
+  "center": {
+    "lat": 3.8388166,
+    "lon": 101.4050540
+  },
+  "tags": {
+    "addr:city": "Slim River",
+    "addr:postcode": "35800",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Slim River",
+    "name:en": "Hospital Slim River",
+    "name:ms": "Hospital Slim River",
+    "name:zh": "仕林河医院",
+    "name:zh-Hans": "仕林河医院",
+    "name:zh-Hant": "仕林河醫院"
+  }
+},
+{
+  "type": "way",
+  "id": 545528725,
+  "center": {
+    "lat": 3.1281224,
+    "lon": 101.7639491
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Ampang",
+    "name:en": "Ampang Hospital",
+    "name:ms": "Hospital Ampang",
+    "name:zh": "安邦医院",
+    "name:zh-Hans": "安邦医院",
+    "name:zh-Hant": "安邦醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "wikidata": "Q12687824",
+    "wikimedia_commons": "Category:Ampang Hospital",
+    "wikipedia": "ms:Hospital Ampang"
+  }
+},
+{
+  "type": "way",
+  "id": 555039163,
+  "center": {
+    "lat": 3.1773236,
+    "lon": 101.6986585
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "1",
+    "addr:postcode": "53000",
+    "addr:street": "Jalan Pahang Barat",
+    "amenity": "hospital",
+    "barrier": "fence",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "internet_access": "wlan",
+    "name": "KPJ Tawakkal KL Specialist Hospital",
+    "name:en": "KPJ Tawakkal Specialist Hospital",
+    "name:nl": "Gespecialiseerd Ziekenhuis KPJ Tawakkal",
+    "opening_hours": "24/7",
+    "operator": "KPJ",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 583121688,
+  "center": {
+    "lat": 3.1707708,
+    "lon": 101.6973232
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:full": "36 Jalan Chemur Damai Complex, 50400, Kuala Lumpur",
+    "addr:housenumber": "36",
+    "addr:postcode": "50400",
+    "addr:street": "Jalan Chemur",
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "KPJ Sentosa Specialist Hospital",
+    "name:en": "KPJ Sentosa Specialist Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 591140428,
+  "center": {
+    "lat": 3.0624370,
+    "lon": 101.4633344
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "KPJ Klang Specialist Hospital",
+    "name:en": "KPJ Klang Specialist Hospital",
+    "website": "https://www.kpjklang.com/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 610160146,
+  "center": {
+    "lat": 3.1108223,
+    "lon": 101.4529663
+  },
+  "tags": {
+    "alt_name": "Institut Kesihatan Negara",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "National Institute of Health",
+    "name:en": "National Institute of Health",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "short_name": "NIH;IKN"
+  }
+},
+{
+  "type": "way",
+  "id": 628482834,
+  "center": {
+    "lat": 3.0767470,
+    "lon": 101.5530889
+  },
+  "tags": {
+    "addr:housenumber": "1",
+    "addr:postcode": "40100",
+    "addr:street": "Jalan Boling Padang 13/64",
+    "amenity": "hospital",
+    "building": "hospital",
+    "check_date": "2026-07-05",
+    "check_date:opening_hours": "2026-07-05",
+    "healthcare": "hospital",
+    "internet_access": "wlan",
+    "name": "MSU Medical Centre",
+    "opening_hours": "24/7",
+    "operator": "Management and Science University",
+    "phone": "03-5526 2600",
+    "website": "https://www.msumedicalcentre.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 699601710,
+  "center": {
+    "lat": 3.1052238,
+    "lon": 101.7284073
+  },
+  "tags": {
+    "alt_name": "蕉藾复建医院",
+    "alt_name:zh": "蕉藾复建医院",
+    "alt_name:zh-Hans": "蕉藾复建医院",
+    "alt_name:zh-Hant": "蕉藾復建醫院",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Rehabilitasi Cheras",
+    "name:ms": "Hospital Rehabilitasi Cheras",
+    "name:zh": "蕉赖康复医院",
+    "name:zh-Hans": "蕉赖康复医院",
+    "name:zh-Hant": "蕉賴復健醫院",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 739555194,
+  "center": {
+    "lat": 3.0859278,
+    "lon": 101.4465894
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Hospital",
+    "operator": "Columbia Asia",
+    "operator:wikidata": "Q5149612",
+    "operator:wikipedia": "en:Columbia Asia"
+  }
+},
+{
+  "type": "way",
+  "id": 744568137,
+  "center": {
+    "lat": 3.3960911,
+    "lon": 101.2169921
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Tanjong Karang",
+    "name:en": "Tanjong Karang Hospital",
+    "name:zh": "丹绒加弄医院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352"
+  }
+},
+{
+  "type": "way",
+  "id": 761737517,
+  "center": {
+    "lat": 2.8118862,
+    "lon": 101.7735578
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Aurelius Hospital Negeri Sembilan",
+    "operator:type": "private",
+    "website": "https://www.aureliushealth.com/negerisembilan"
+  }
+},
+{
+  "type": "way",
+  "id": 765523835,
+  "center": {
+    "lat": 3.0314380,
+    "lon": 101.7625928
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Hospital",
+    "name:en": "Columbia Asia Hospital",
+    "name:zh": "哥伦比亚亚洲医院",
+    "name:zh-Hans": "哥伦比亚亚洲医院",
+    "name:zh-Hant": "哥倫比亞亞洲醫院",
+    "operator": "Columbia Asia",
+    "operator:type": "private",
+    "operator:wikidata": "Q5149612",
+    "operator:wikipedia": "en:Columbia Asia",
+    "source": "https://www.mapillary.com/app/?pKey=HTkRw2bxZsf9CM1hUDUphQ&focus=photo"
+  }
+},
+{
+  "type": "way",
+  "id": 779802818,
+  "center": {
+    "lat": 2.9854137,
+    "lon": 101.6660984
+  },
+  "tags": {
+    "addr:city": "Seri Kembangan",
+    "addr:housenumber": "33",
+    "addr:postcode": "43300",
+    "addr:street": "Jalan Bpp 8/1, Pusat Bandar Putra Permai,",
+    "amenity": "hospital",
+    "building": "yes",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "Paediatricians",
+    "name": "Kids Clinic",
+    "operator": "Paediatricians",
+    "operator:type": "private"
+  }
+},
+{
+  "type": "way",
+  "id": 823172199,
+  "center": {
+    "lat": 3.2224263,
+    "lon": 101.5915518
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sungai Buloh Leprosarium",
+    "wikidata": "Q85885188",
+    "wikipedia": "zh:雙溪毛糯療養院"
+  }
+},
+{
+  "type": "way",
+  "id": 824749602,
+  "center": {
+    "lat": 3.0709163,
+    "lon": 101.4897215
+  },
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:postcode": "40000",
+    "addr:street": "Persiaran Kayangan, Seksyen 7",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;emergency;paediatrics;maternity;psychiatry;orthopaedics;vaccination",
+    "name": "Hospital Shah Alam",
+    "name:zh": "莎亚南医院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "operator:wikipedia": "en:Ministry of Health (Malaysia)",
+    "wikipedia": "en:Draft:Hospital Shah Alam"
+  }
+},
+{
+  "type": "way",
+  "id": 825168773,
+  "center": {
+    "lat": 2.9599371,
+    "lon": 101.7541950
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "is_in": "Seksyen 9, Bandar Baru Bangi, Selangor, Malaysia",
+    "name": "Hospital Az-Zahrah"
+  }
+},
+{
+  "type": "way",
+  "id": 825168774,
+  "center": {
+    "lat": 2.9602320,
+    "lon": 101.7536537
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "is_in": "Seksyen 9, Bandar Baru Bangi, Selangor, Malaysia",
+    "name": "Hospital An-Nur"
+  }
+},
+{
+  "type": "way",
+  "id": 866037216,
+  "center": {
+    "lat": 2.9970516,
+    "lon": 101.5289024
+  },
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:country": "MY",
+    "addr:housenumber": "3",
+    "addr:postcode": "40460",
+    "addr:street": "Persiaran Anggerik Eria",
+    "addr:suburb": "Bukit Rimau",
+    "amenity": "hospital",
+    "building": "hospital",
+    "emergency": "yes",
+    "fax": "+6 03 5125 9998",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Hospital Bukit Rimau",
+    "name:en": "Columbia Asia Hospital Bukit Rimau",
+    "operator": "Columbia Asia",
+    "operator:type": "private",
+    "operator:wikidata": "Q5149612",
+    "phone": "+6 03 5125 9999",
+    "website": "https://www.columbiaasia.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 866532532,
+  "center": {
+    "lat": 3.1710408,
+    "lon": 101.6183745
+  },
+  "tags": {
+    "addr:housenumber": "1",
+    "addr:street": "Jalan Bukit Lanjan 3",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Pakar KPJ Damansara 2",
+    "name:en": "KPJ Damansara Specialist Hospital 2",
+    "name:ms": "Hospital Pakar KPJ Damansara 2"
+  }
+},
+{
+  "type": "way",
+  "id": 885845338,
+  "center": {
+    "lat": 3.5261586,
+    "lon": 101.9056902
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Bentong",
+    "name:en": "Bentong Hospital",
+    "name:ms": "Hospital Bentong",
+    "name:zh": "文冬医院",
+    "name:zh-Hans": "文冬医院",
+    "name:zh-Hant": "文冬醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "operator:wikipedia": "en:Ministry of Health (Malaysia)",
+    "source": "https://openstreetcam.org/details/2394738/974",
+    "wikidata": "Q12687829",
+    "wikipedia": "ms:Hospital Bentong"
+  }
+},
+{
+  "type": "way",
+  "id": 890795701,
+  "center": {
+    "lat": 2.9250981,
+    "lon": 101.6799092
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Azalea Putrajaya",
+    "name:en": "Hospital Azalea Putrajaya"
+  }
+},
+{
+  "type": "way",
+  "id": 893887822,
+  "center": {
+    "lat": 3.0716869,
+    "lon": 101.5210356
+  },
+  "tags": {
+    "addr:housenumber": "3",
+    "addr:street": "Jalan Perdagangan 14/4",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "AVISENA Women's & Children's Specialist Hospital",
+    "name:en": "AVISENA Women's & Children's Specialist Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 914977615,
+  "center": {
+    "lat": 3.1618607,
+    "lon": 101.7396460
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Gleneagles Kuala Lumpur",
+    "wikidata": "Q28419330",
+    "wikipedia": "en:Gleneagles Hospital Kuala Lumpur"
+  }
+},
+{
+  "type": "way",
+  "id": 919064703,
+  "center": {
+    "lat": 3.1702942,
+    "lon": 101.7092032
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:housenumber": "145",
+    "addr:postcode": "50400",
+    "addr:street": "Jalan Tun Razak",
+    "amenity": "hospital",
+    "email": "heart@ijn.com.my",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Institut Jantung Negara",
+    "name:en": "National Heart Institute",
+    "name:ms": "Institut Jantung Negara",
+    "name:zh": "国家心脏中心",
+    "name:zh-Hans": "国家心脏中心",
+    "name:zh-Hant": "國家心臟中心",
+    "phone": "+60-326178200",
+    "short_name": "IJN",
+    "website": "https://www.ijn.com.my/",
+    "wheelchair": "yes",
+    "wikidata": "Q12688183",
+    "wikipedia": "en:National Heart Institute (Malaysia)"
+  }
+},
+{
+  "type": "way",
+  "id": 960113115,
+  "center": {
+    "lat": 3.1277626,
+    "lon": 101.7522380
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pantai Hospital Ampang",
+    "name:en": "Pantai Hospital Ampang",
+    "name:ms": "Pantai Hospital Ampang",
+    "source": "https://openstreetcam.org/details/2042426/2690"
+  }
+},
+{
+  "type": "way",
+  "id": 995983164,
+  "center": {
+    "lat": 3.1166037,
+    "lon": 101.6507453
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:postcode": "50603",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "specialist",
+    "name": "UM Specialist Centre",
+    "name:en": "UM Specialist Centre",
+    "name:ms": "Pusat Pakar UM",
+    "operator": "Universiti Malaya",
+    "operator:short": "UM",
+    "operator:type": "university",
+    "operator:wikidata": "Q1142924",
+    "short_name": "UMSC",
+    "source": "survey",
+    "website": "https://umsc.my/",
+    "wheelchair": "yes",
+    "wikidata": "Q117229712",
+    "wikimedia_commons": "Category:UM Specialist Centre",
+    "wikipedia": "en:UM Specialist Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 1030583398,
+  "center": {
+    "lat": 3.1501761,
+    "lon": 101.5964178
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sunway Medical Centre Damansara",
+    "name:en": "Sunway Medical Centre Damansara",
+    "name:ms": "Pusat Perubatan Sunway Damansara",
+    "website": "https://www.sunwaymedicaldamansara.com.my/",
+    "wikimedia_commons": "Category:Sunway Medical Centre Damansara"
+  }
+},
+{
+  "type": "way",
+  "id": 1055930853,
+  "center": {
+    "lat": 3.1015967,
+    "lon": 101.7262216
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Pakar Kanak-Kanak Universiti Kebangsaan Malaysia",
+    "name:ms": "Hospital Pakar Kanak-Kanak Universiti Kebangsaan Malaysia",
+    "operator": "Universiti Kebangsaan Malaysia (UKM)",
+    "operator:type": "university"
+  }
+},
+{
+  "type": "way",
+  "id": 1079102020,
+  "center": {
+    "lat": 3.2095731,
+    "lon": 101.4511332
+  },
+  "tags": {
+    "addr:city": "Puncak Alam",
+    "addr:postcode": "42300",
+    "alt_name": "Hospital Pengajar UiTM Puncak Alam",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Al-Sultan Abdullah UiTM",
+    "short_name": "HASA",
+    "website": "https://hospital.uitm.edu.my/index.php/en/"
+  }
+},
+{
+  "type": "way",
+  "id": 1079618137,
+  "center": {
+    "lat": 2.8052743,
+    "lon": 101.7496187
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Selgate Specialist Hospital Sepang",
+    "name:en": "Selgate Specialist Hospital Sepang"
+  }
+},
+{
+  "type": "way",
+  "id": 1079722928,
+  "center": {
+    "lat": 2.9769260,
+    "lon": 101.7206156
+  },
+  "tags": {
+    "alt_name": "Hospital Serdang",
+    "alt_name:zh": "沙登医院",
+    "amenity": "hospital",
+    "contact:facebook": "https://www.facebook.com/serdanghospital/",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Sultan Idris Shah Serdang",
+    "name:en": "Sultan Idris Shah Serdang Hospital",
+    "name:ms": "Hospital Sultan Idris Shah Serdang",
+    "name:zh": "沙登苏丹依德利斯沙医院",
+    "name:zh-Hans": "沙登苏丹依德利斯沙医院",
+    "name:zh-Hant": "沙登蘇丹依德利斯沙醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "website": "https://jknselangor.moh.gov.my/hserdang/index.php",
+    "wheelchair": "yes",
+    "wikidata": "Q5908586",
+    "wikimedia_commons": "Category:Serdang Hospital",
+    "wikipedia": "en:Sultan Idris Shah Serdang Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1079722932,
+  "center": {
+    "lat": 2.9801457,
+    "lon": 101.7180573
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Sultan Abdul Aziz Shah",
+    "name:ms": "Hospital Sultan Abdul Aziz Shah",
+    "old_name": "Hospital Pengajar Universiti Putra Malaysia",
+    "operator": "UPM",
+    "operator:type": "university",
+    "short_name": "HSAAS",
+    "website": "https://hsaas.upm.edu.my/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1082125896,
+  "center": {
+    "lat": 2.6058242,
+    "lon": 101.8516106
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1084691434,
+  "center": {
+    "lat": 3.5226692,
+    "lon": 101.9091367
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "SENA Specialist Hospital Bentong",
+    "name:en": "SENA Specialist Hospital Bentong"
+  }
+},
+{
+  "type": "way",
+  "id": 1111716120,
+  "center": {
+    "lat": 3.0584643,
+    "lon": 101.6875991
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Bukit Jalil",
+    "operator": "Columbia Asia",
+    "operator:type": "private",
+    "operator:wikidata": "Q5149612"
+  }
+},
+{
+  "type": "way",
+  "id": 1125849095,
+  "center": {
+    "lat": 3.0326598,
+    "lon": 101.5372570
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "klinik berjaya medick"
+  }
+},
+{
+  "type": "way",
+  "id": 1165387002,
+  "center": {
+    "lat": 2.9532938,
+    "lon": 101.5773500
+  },
+  "tags": {
+    "addr:postcode": "42610",
+    "addr:street": "Jalan SP 1/3",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "MAHSA Specialist Hospital",
+    "website": "https://www.mahsahospital.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 1181259535,
+  "center": {
+    "lat": 3.0288026,
+    "lon": 101.4407140
+  },
+  "tags": {
+    "addr:city": "Klang",
+    "addr:postcode": "41200",
+    "addr:street": "Jalan Renges",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "gynaecology;paediatrics",
+    "name": "Klinik Utara",
+    "name:zh": "北方医务所",
+    "opening_hours": "Mo-Sa 09:00-17:00"
+  }
+},
+{
+  "type": "way",
+  "id": 1189081219,
+  "center": {
+    "lat": 3.0670312,
+    "lon": 101.4892116
+  },
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:housenumber": "PUSAT KOMERSIAL, PG19",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Plumbum U7/U",
+    "amenity": "hospital",
+    "contact:facebook": "mediviron.com.my",
+    "emergency": "no",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "mobile": "0355245213",
+    "name": "Klinik Mediviron",
+    "name:ms": "Klinik Mediviron",
+    "opening_hours": "8AM- 10PM"
+  }
+},
+{
+  "type": "way",
+  "id": 1189081317,
+  "center": {
+    "lat": 3.0649419,
+    "lon": 101.4889405
+  },
+  "tags": {
+    "addr:city": "Pusat Komersial Seksyen 7, Shah Alam",
+    "addr:housenumber": "YG-11, Block F",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Plumbum Y7/Y",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;fertility",
+    "mobile": "0104573257",
+    "name": "Klinik Najat Seksyen 7 Shah Alam",
+    "opening_hours": "8AM- 9PM"
+  }
+},
+{
+  "type": "way",
+  "id": 1189081379,
+  "center": {
+    "lat": 3.0694367,
+    "lon": 101.4894841
+  },
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:housenumber": "No.9",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Plumbum P7/P",
+    "amenity": "hospital",
+    "building:levels": "Groundfloor",
+    "description": "Rawatan meggunakan video berkamera HD dan alatan terkini untuk membuang earwax tersumbat",
+    "healthcare": "hospital",
+    "name": "Klinik Tuah Shah Alam",
+    "phone": "0143242974",
+    "smoking": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 1189081475,
+  "center": {
+    "lat": 3.0679540,
+    "lon": 101.4898299
+  },
+  "tags": {
+    "addr:city": "Shah Alam",
+    "addr:housenumber": "5",
+    "addr:postcode": "40000",
+    "addr:street": "Jalan Plumbum R7/R",
+    "amenity": "hospital",
+    "building:levels": "3",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "mobile": "01162898082",
+    "name": "Klinik Utama 24 Jam Seksyen 7 Shah Alam"
+  }
+},
+{
+  "type": "way",
+  "id": 1230135078,
+  "center": {
+    "lat": 3.1282475,
+    "lon": 101.7219685
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sunway Medical Centre Velocity",
+    "name:en": "Sunway Medical Centre Velocity",
+    "short_name": "SMCV",
+    "website": "https://sunwaymedical.com/velocity/"
+  }
+},
+{
+  "type": "way",
+  "id": 1240957522,
+  "center": {
+    "lat": 3.1634906,
+    "lon": 101.7034098
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "hospital",
+    "building:levels": "4",
+    "healthcare": "hospital",
+    "internet_access": "wlan",
+    "layer": "1",
+    "name": "Hospital Pakar Al-Islam",
+    "name:en": "Al-Islam Specialist Hospital",
+    "name:tr": "El-İslam İhtisas Hastanesi",
+    "opening_hours": "24/7",
+    "phone": "+60 3-2693 1007"
+  }
+},
+{
+  "type": "way",
+  "id": 1251234894,
+  "center": {
+    "lat": 3.1145643,
+    "lon": 101.5649987
+  },
+  "tags": {
+    "addr:housenumber": "Lot 2",
+    "addr:street": "Jalan Lapangan Terbang Subang",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Ara Damansara Medical Centre",
+    "name:en": "Ara Damansara Medical Centre",
+    "postal_code": "40150",
+    "short_name": "ADMC",
+    "website": "https://aradamansaramedicalcentre.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 1305046384,
+  "center": {
+    "lat": 3.8090508,
+    "lon": 101.8515732
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Raub",
+    "name:en": "Raub Hospital",
+    "name:ms": "Hospital Raub",
+    "name:zh": "劳勿医院",
+    "name:zh-Hans": "劳勿医院",
+    "name:zh-Hant": "勞勿醫院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352",
+    "website": "https://www.facebook.com/people/Laman-Rasmi-Hospital-Raub/61566050018082/",
+    "wikidata": "Q20449950",
+    "wikipedia": "ms:Hospital Raub"
+  }
+},
+{
+  "type": "way",
+  "id": 1365552411,
+  "center": {
+    "lat": 3.1713906,
+    "lon": 101.7101209
+  },
+  "tags": {
+    "amenity": "hospital",
+    "email": "info@pusrawi.com.my",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Pusrawi",
+    "operator:type": "private",
+    "phone": "+60326875000",
+    "website": "https://pusrawi.com.my/"
+  }
+},
+{
+  "type": "way",
+  "id": 1389745761,
+  "center": {
+    "lat": 2.9929893,
+    "lon": 101.7984162
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "mother_child",
+    "name": "Hospital Tengku Permaisuri Norashikin (Pusat Rawatan Wanita dan Kanak-Kanak)",
+    "name:ms": "Hospital Tengku Permaisuri Norashikin (Pusat Rawatan Wanita dan Kanak-Kanak)",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:short": "KKM",
+    "operator:type": "government",
+    "operator:wikidata": "Q4294352"
+  }
+},
+{
+  "type": "way",
+  "id": 1395320615,
+  "center": {
+    "lat": 2.7183221,
+    "lon": 101.9216722
+  },
+  "tags": {
+    "addr:city": "Seremban",
+    "addr:housenumber": "Lot 6219 & 6220",
+    "addr:postcode": "70200",
+    "addr:street": "Jalan Toman 1",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KPJ Seremban Specialist Hospital",
+    "operator": "KPJ Healthcare Berhad",
+    "source": "Official Webpage;DigitalGlobe_Premium_Imagery;local_knowledge",
+    "website": "https://www.kpjseremban.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 1395464162,
+  "center": {
+    "lat": 2.7171797,
+    "lon": 101.9448987
+  },
+  "tags": {
+    "amenity": "hospital",
+    "name": "Pusat Pakar Pergigian Seremban"
+  }
+},
+{
+  "type": "way",
+  "id": 1451037142,
+  "center": {
+    "lat": 3.3174494,
+    "lon": 101.5343616
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Selgate Specialist Hospital Rawang"
+  }
+},
+{
+  "type": "relation",
+  "id": 11273781,
+  "center": {
+    "lat": 3.2209952,
+    "lon": 101.5854584
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Sungai Buloh",
+    "name:en": "Sungai Buloh Hospital",
+    "name:zh": "双溪毛糯医院",
+    "type": "multipolygon",
+    "url": "http://hsgbuloh.moh.gov.my/",
+    "wikidata": "Q24952433",
+    "wikipedia": "en:Sungai Buloh Hospital"
+  }
+},
+{
+  "type": "relation",
+  "id": 12493915,
+  "center": {
+    "lat": 3.1708340,
+    "lon": 101.7023382
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "internet_access": "yes",
+    "internet_access:fee": "customers",
+    "name": "Hospital Kuala Lumpur",
+    "name:en": "Kuala Lumpur Hospital",
+    "name:ms": "Hospital Kuala Lumpur",
+    "name:ta": "கோலாலம்பூர் மருத்துவமனை",
+    "name:zh": "吉隆坡医院",
+    "name:zh-Hans": "吉隆坡医院",
+    "name:zh-Hant": "吉隆坡醫院",
+    "operator": "Hospital Kuala Lumpur",
+    "operator:short": "HKL",
+    "operator:type": "private",
+    "operator:wikidata": "Q7350107",
+    "short_name": "HKL",
+    "type": "multipolygon",
+    "url": "http://www.hkl.gov.my/",
+    "website": "https://hkl.moh.gov.my/",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 12579418,
+  "center": {
+    "lat": 2.7109618,
+    "lon": 101.9176897
+  },
+  "tags": {
+    "addr:city": "Seremban",
+    "addr:place": "Seremban 2",
+    "addr:postcode": "70300",
+    "addr:street": "Jalan Haruan 2",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Hospital",
+    "operator": "Columbia Asia",
+    "operator:wikidata": "Q5149612",
+    "operator:wikipedia": "en:Columbia Asia",
+    "phone": "+60 6 6033988",
+    "type": "multipolygon",
+    "website": "https://www.columbiaasia.com/seremban/"
+  }
+},
+{
+  "type": "relation",
+  "id": 13327861,
+  "center": {
+    "lat": 3.1125008,
+    "lon": 101.6545759
+  },
+  "tags": {
+    "addr:city": "Kuala Lumpur",
+    "addr:street": "Jalan Universiti",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Pusat Perubatan Universiti Malaya",
+    "name:en": "University of Malaya Medical Centre",
+    "name:ms": "Pusat Perubatan Universiti Malaya",
+    "name:zh": "马来亚大学医药中心",
+    "name:zh-Hans": "马来亚大学医药中心",
+    "name:zh-Hant": "馬來亞大學醫藥中心",
+    "operator": "Universiti Malaya",
+    "operator:short": "UM",
+    "operator:type": "university",
+    "operator:wikidata": "Q1142924",
+    "short_name": "PPUM",
+    "type": "multipolygon",
+    "url": "http://www.ummc.edu.my",
+    "wheelchair": "yes",
+    "wikidata": "Q7894810",
+    "wikipedia": "en:University Malaya Medical Centre"
+  }
+},
+{
+  "type": "relation",
+  "id": 15708839,
+  "center": {
+    "lat": 3.3441381,
+    "lon": 101.2571355
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "KPJ Specialist Hospital Kuala Selangor",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 17060995,
+  "center": {
+    "lat": 3.0934464,
+    "lon": 101.6452971
+  },
+  "tags": {
+    "addr:city": "Petaling Jaya",
+    "amenity": "hospital",
+    "atm": "yes",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Assunta",
+    "type": "multipolygon",
+    "wikidata": "Q4810389",
+    "wikimedia_commons": "Category:Assunta Hospital",
+    "wikipedia": "en:Assunta Hospital"
+  }
+},
+{
+  "type": "relation",
+  "id": 17132995,
+  "center": {
+    "lat": 3.1373411,
+    "lon": 101.6278854
+  },
+  "tags": {
+    "addr:city": "Petaling Jaya",
+    "addr:housenumber": "119",
+    "addr:street": "Jalan SS 20/10",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital Pakar KPJ Damansara",
+    "name:en": "KPJ Damansara Specialist Hospital",
+    "name:ms": "Hospital Pakar KPJ Damansara",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 17235612,
+  "center": {
+    "lat": 3.0915071,
+    "lon": 101.6379659
+  },
+  "tags": {
+    "alt_name": "Beacon International Specialist Centre",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Beacon Hospital",
+    "type": "multipolygon",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 17333463,
+  "center": {
+    "lat": 3.2431336,
+    "lon": 101.6474818
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hospital Selayang",
+    "name:en": "Selayang Hospital",
+    "name:zh": "士拉央医院",
+    "operator": "Kementerian Kesihatan Malaysia",
+    "operator:wikidata": "Q4294352",
+    "source": "http://hselayang.moh.gov.my/index.php?option=com_content&view=frontpage&Itemid=1&lang=en",
+    "toilets:wheelchair": "yes",
+    "type": "multipolygon",
+    "wheelchair": "yes",
+    "wikidata": "Q12687869",
+    "wikimedia_commons": "Category:Selayang Hospital",
+    "wikipedia": "ms:Hospital Selayang"
+  }
+},
+{
+  "type": "relation",
+  "id": 17487078,
+  "center": {
+    "lat": 3.2448713,
+    "lon": 101.6505941
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hospital UiTM Selayang",
+    "name:en": "Hospital UiTM Selayang",
+    "name:ms": "Hospital UiTM Selayang",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 17606480,
+  "center": {
+    "lat": 3.1129904,
+    "lon": 101.6334169
+  },
+  "tags": {
+    "addr:city": "Petaling Jaya",
+    "addr:housenumber": "110",
+    "addr:postcode": "46300",
+    "addr:street": "Jalan Professor Khoo Kay Kim",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "oncology",
+    "name": "Hospital Picaso",
+    "name:en": "Picaso Hospital",
+    "type": "multipolygon",
+    "website": "https://www.hospitalpicaso.com/"
+  }
+},
+{
+  "type": "relation",
+  "id": 17805089,
+  "center": {
+    "lat": 3.1181718,
+    "lon": 101.6376384
+  },
+  "tags": {
+    "addr:city": "Petaling Jaya",
+    "addr:housenumber": "Lot 69",
+    "addr:postcode": "46200",
+    "addr:street": "Jalan 13/6",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Columbia Asia Hospital",
+    "operator": "Columbia Asia",
+    "operator:wikidata": "Q5149612",
+    "operator:wikipedia": "en:Columbia Asia",
+    "type": "multipolygon",
+    "website": "https://www.columbiaasia.com/malaysia/hospitals/petaling-jaya/"
+  }
+},
+{
+  "type": "relation",
+  "id": 20584136,
+  "center": {
+    "lat": 3.3571508,
+    "lon": 101.8152901
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Klinik Desa Bukit Tinggi, Bentong",
+    "name:ms": "Klinik Desa Bukit Tinggi, Bentong",
+    "type": "multipolygon"
+  }
+}
+
+  ]
+}

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FluSentinel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">FluSentinel <span>influenza early warning for Selangor planners</span></div>
+  <nav><a href="#now">Now</a><a href="#forecast">Forecast</a><a href="#selangor">Selangor</a><a href="#proof">Proof</a></nav>
+  <button id="uploadBtn" class="primary">Upload newest data</button>
+</header>
+<div id="stamp" class="stamp"></div>
+<div id="replayBar" class="replay" hidden></div>
+
+<main>
+<section id="now" class="grid2">
+  <div class="card" id="alertCard"></div>
+  <div class="card">
+    <h3>Summary <span class="chip ai" id="sumChip">Template</span></h3>
+    <p id="sumEn" class="summary"></p>
+    <p id="sumBm" class="summary bm"></p>
+    <h3>Proposed action <span class="chip exp">Proposal</span></h3>
+    <div id="action"></div>
+  </div>
+</section>
+
+<section id="forecast" class="card">
+  <h2>Sentinel influenza positivity <span class="chip real">Real data</span> <span class="chip est">Estimated</span></h2>
+  <p class="note">Share of sentinel lab samples that tested positive for influenza, Malaysia. This is not a count of cases.</p>
+  <div class="chartbox"><canvas id="chart"></canvas></div>
+  <div id="signals" class="signals"></div>
+</section>
+
+<section id="selangor" class="card">
+  <h2>Selangor <span class="chip exp" id="mapChip">Exploratory</span></h2>
+  <p class="note" id="mapNote"></p>
+  <div class="grid2">
+    <div id="map"></div>
+    <div>
+      <h3>Capacity planner <span class="chip sim" id="bedChip">Simulated</span></h3>
+      <label>Baseline weekly respiratory admissions, Selangor (assumption): <b id="admV"></b>
+        <input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
+      <label>Share of listed beds available for flu: <b id="shareV"></b>
+        <input type="range" id="share" min="20" max="100" step="5" value="100"></label>
+      <p class="note" id="planNote"></p>
+      <div id="plan"></div>
+    </div>
+  </div>
+</section>
+
+<section id="proof" class="card">
+  <h2>Does it work? Every result, pass or fail</h2>
+  <div id="proofBody"></div>
+</section>
+</main>
+
+<footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
+
+<dialog id="dlg">
+  <form method="dialog" id="dlgForm">
+    <h2>Upload newest data</h2>
+    <p class="note">Uploads are saved, shared with everyone using this site, and marked "Uploaded, not verified".</p>
+    <label>Data type
+      <select id="utype">
+        <option value="lab">Weekly lab counts (updates the forecast and alert)</option>
+        <option value="ili">Weekly ILI clinic rate (supporting signal)</option>
+        <option value="clusters">Cluster counts by district (map)</option>
+        <option value="beds">Hospital beds available (planner)</option>
+      </select></label>
+    <p>Template: <a id="tpl" download></a></p>
+    <label>CSV or Excel file <input type="file" id="ufile" accept=".csv,.xlsx,.xls"></label>
+    <p class="or">or type one row</p>
+    <div id="manual"></div>
+    <button type="button" id="addRow">Add typed row</button>
+    <div id="preview"></div>
+    <div id="uerr" class="err"></div>
+    <menu>
+      <button value="cancel">Cancel</button>
+      <button type="button" id="confirm" class="primary" disabled>Confirm and use</button>
+    </menu>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="assets/model.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

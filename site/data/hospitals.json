@@ -1,0 +1,68 @@
+[
+ {
+  "name": "Hospital Cyberjaya",
+  "lat": 2.9204475,
+  "lon": 101.631591,
+  "beds_simulated": 30
+ },
+ {
+  "name": "Hospital Tengku Ampuan Rahimah",
+  "lat": 3.0212805,
+  "lon": 101.4394649,
+  "beds_simulated": 60
+ },
+ {
+  "name": "Hospital Banting",
+  "lat": 2.803344,
+  "lon": 101.4924685,
+  "beds_simulated": 20
+ },
+ {
+  "name": "Hospital Kajang",
+  "lat": 2.9940874,
+  "lon": 101.792517,
+  "beds_simulated": 35
+ },
+ {
+  "name": "Hospital Kuala Kubu Bharu",
+  "lat": 3.5653297,
+  "lon": 101.6528409,
+  "beds_simulated": 15
+ },
+ {
+  "name": "Hospital Ampang",
+  "lat": 3.1281224,
+  "lon": 101.7639491,
+  "beds_simulated": 45
+ },
+ {
+  "name": "Hospital Tanjong Karang",
+  "lat": 3.3960911,
+  "lon": 101.2169921,
+  "beds_simulated": 15
+ },
+ {
+  "name": "Hospital Shah Alam",
+  "lat": 3.0709163,
+  "lon": 101.4897215,
+  "beds_simulated": 40
+ },
+ {
+  "name": "Hospital Sultan Idris Shah Serdang",
+  "lat": 2.976926,
+  "lon": 101.7206156,
+  "beds_simulated": 50
+ },
+ {
+  "name": "Hospital Sungai Buloh",
+  "lat": 3.2209952,
+  "lon": 101.5854584,
+  "beds_simulated": 60
+ },
+ {
+  "name": "Hospital Selayang",
+  "lat": 3.2431336,
+  "lon": 101.6474818,
+  "beds_simulated": 50
+ }
+]
