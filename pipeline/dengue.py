@@ -21,7 +21,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "data/raw/opendengue/National_extract_V1_3.csv"
+SRC = ROOT / "data/raw/opendengue/mys_weekly_national.csv"  # Malaysia weekly rows from the OpenDengue V1.3 temporal extract
 H = (1, 2, 3, 4)
 
 
@@ -32,6 +32,11 @@ def load(path=SRC, extra=()):
             d = dt.date.fromisoformat(r["calendar_start_date"])
             rows.append({"start": d, "cases": float(r["dengue_total"])})
     rows += list(extra)
+    return prep(rows)
+
+
+def prep(rows):
+    """Sort weekly rows and mark unbroken segments, ISO week and year."""
     rows.sort(key=lambda r: r["start"])
     seg = 0
     for i, r in enumerate(rows):
@@ -66,10 +71,10 @@ def confusion(pred, act):
             "precision": round(tp / (tp + fp), 3) if tp + fp else None}
 
 
-def main(extra=(), tag="national"):
-    rows = load(extra=extra)
+def main(rows=None, tag="national", source="OpenDengue V1.3 temporal extract, Malaysia national weekly (MOH / WHO reports)", site_file="dengue.json", test_from=None):
+    rows = rows or load()
     N = len(rows)
-    split = int(N * 0.70)
+    split = int(N * 0.70) if test_from is None else next(i for i, r in enumerate(rows) if r["start"] >= test_from)
     c = np.array([r["cases"] for r in rows])
     y = np.log1p(c)
     train_years = sorted({r["year"] for r in rows[:split]})
@@ -77,7 +82,7 @@ def main(extra=(), tag="national"):
     for w in range(1, 53):
         v = [c[i] for i in range(split) if rows[i]["week"] == w]
         wk_mean[w], wk_sd[w] = float(np.mean(v)), float(np.std(v))
-    out = {"source": "OpenDengue V1.3 national extract (MOH / WHO reports)", "weeks": N,
+    out = {"source": source, "weeks": N,
            "segments": [[str(rows[i]["start"]) for i in (min(j for j in range(N) if rows[j]["seg"] == s), max(j for j in range(N) if rows[j]["seg"] == s))] for s in sorted({r["seg"] for r in rows})],
            "train_end": str(rows[split - 1]["start"]), "test_start": str(rows[split]["start"]), "test_end": str(rows[-1]["start"]),
            "train_years": train_years, "forecast": [], "outbreak": []}
@@ -119,10 +124,23 @@ def main(extra=(), tag="national"):
             res["note"] = "Training weeks contain only one class, so no classifier could be trained."
         out["outbreak"].append(res)
 
+    # Extrapolation: ridge refitted on every week, projected 1 to 4 weeks past the end of the data.
+    out["extrapolation"] = []
+    for h in H:
+        idx = [i for i in range(N) if usable(rows, i, h)]
+        m = make_pipeline(StandardScaler(), Ridge(alpha=10.0)).fit(np.array([feats(rows, y, i, h) for i in idx]), np.array([y[i + h] - y[i] for i in idx]))
+        out["extrapolation"].append({"weeks_ahead": h, "start": str(rows[-1]["start"] + dt.timedelta(weeks=h)),
+                                     "cases": round(float(np.expm1(y[-1] + m.predict([feats(rows, y, N - 1, h)])[0])))})
+    out["split_index"] = split
+    out["series"] = [[str(r["start"]), r["cases"]] for r in rows]
+    if site_file:
+        (ROOT / "site" / "data" / site_file).write_text(json.dumps(out))
+    out = {k: v for k, v in out.items() if k != "series"}
+
     (ROOT / "outputs").mkdir(exist_ok=True)
     (ROOT / "outputs" / f"dengue_{tag}.json").write_text(json.dumps(out, indent=1))
-    print(json.dumps(out, indent=1))
+    return out
 
 
 if __name__ == "__main__":
-    main()
+    print(json.dumps(main(), indent=1))
