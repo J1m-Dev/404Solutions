@@ -68,14 +68,15 @@
   </section>
 
   <section class="view" id="v-map">
-    <div class="vhead"><h1>Where to be ready</h1><p>Selangor's districts, hospitals and clinics. Shading shows where people live, not where flu is: no district flu data is published.</p></div>
+    <div class="vhead"><h1>Where to be ready</h1><p>Selangor's districts, public and private hospitals, and clinics. Shading shows where people live, not where flu is: no district flu data is published.</p></div>
     <div class="two">
       <article class="card"><canvas id="mapc" class="plot tall"></canvas><div class="legend" id="mapLegend"></div></article>
       <article class="card">
         <h2 id="dName">Move patients before wards fill</h2>
         <p class="quiet" id="dInfo">Hover a district to see who lives there and its nearest hospitals.</p>
         <label class="sl">Usual weekly respiratory admissions <b id="admV"></b><input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
-        <label class="sl">Share of beds free for flu <b id="shareV"></b><input type="range" id="share" min="20" max="100" step="5" value="100"></label>
+        <label class="sl">Occupancy assumed where none is reported <b id="occV"></b><input type="range" id="occ" min="40" max="95" step="5" value="70"></label>
+        <label class="sl">Share of free beds usable for flu <b id="shareV"></b><input type="range" id="share" min="5" max="100" step="5" value="25"></label>
         <div id="plan"></div>
         <p class="quiet" id="planNote"></p>
       </article>

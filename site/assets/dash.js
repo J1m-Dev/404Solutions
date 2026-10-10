@@ -27,7 +27,7 @@
   const BM = { green: "Tiada trend wabak", yellow: "Kemungkinan trend wabak: pantau", orange: "Trend wabak dikesan", red: "Trend wabak dikesan: lonjakan sedang berlaku" };
   const REPLAY_WEEKS = 6;
 
-  let D, GEO, HOSP, FAC, DEN, hover = null, districts = [];
+  let D, GEO, HOSP, HMETA, FAC, DEN, hover = null, districts = [];
   const S = { mode: "live", added: [], disease: "flu", view: "now", bm: false };
 
   // ---------- the reading ----------
@@ -36,15 +36,15 @@
     const series = base.concat(S.added), lag = Math.max(0, D.pub_lag - S.added.length);
     return { replay, base, series, lag, th: D.thresholds, a: M.assess(series, D.models[key], D, D.thresholds, lag), rise: M.riseSignal(series, D.rise[key]) };
   }
-  function roll(el, to) { const from = +el.textContent || 0, t0 = performance.now(); if (STILL) { el.textContent = to; return; }
+  function roll(el, to) { const from = +el.textContent || 0, t0 = performance.now(); if (STILL) { el.textContent = to; return; } clearTimeout(el._t); el._t = setTimeout(() => (el.textContent = to), 900);   // a hidden tab pauses the animation; the number must still land
     (function f(t) { const k = clamp((t - t0) / 700, 0, 1), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e); if (k < 1) requestAnimationFrame(f); })(t0); }
   function ring(p, col) { const C = 2 * Math.PI * 80; $("arc").style.strokeDasharray = `${(C * clamp(p, 0, 100)) / 100} ${C}`; $("arc").style.setProperty("--c", col); roll($("pct"), Math.round(p)); }
 
   // ---------- Now ----------
   function renderNow() {
+    if (S.disease === "dengue") return renderDengueNow();
     const c = ctx(), a = c.a, last = a.last, lastIso = c.series[c.series.length - 1].start;
     $("fresh").innerHTML = c.replay ? `<b>Replay</b> · real data to ${dmy(lastIso)}` : `Public data to <b>${dmy(c.base[c.base.length - 1].start)}</b>, about ${D.pub_lag} weeks behind` + (S.added.length ? ` · <b>${S.added.length} week${S.added.length > 1 ? "s" : ""} added by you</b>` : "");
-    if (S.disease === "dengue") return renderDengueNow();
     const L = LEVELS[a.level], acts = a.dataWarning ? [["Verify the newest week's numbers before acting", "Whoever entered them"]].concat(ACTIONS[a.level]) : ACTIONS[a.level];
     $("lvl").textContent = "Level: " + L.name; $("lvl").style.setProperty("--c", css(L.col));
     const early = !a.dataWarning && a.level === "green" && c.rise.yes;   // the alert rule is still calm, but the trained model has fired
@@ -72,20 +72,25 @@
       : `<span>See it catch last year's surge, one real week at a time.</span><span class="sp"></span><button class="btn" id="rpS">Replay October 2025</button>`;
     if ($("rpN")) $("rpN").onclick = nextWeek; if ($("rpX")) $("rpX").onclick = () => setMode("live"); if ($("rpS")) $("rpS").onclick = () => setMode("replay");
   }
+  // Dengue scores: only test weeks whose real value is known, and whichever model the data file names as best.
+  const denF = () => DEN.forecast_measured || DEN.forecast, denGain = (f) => (f.best === "last_value" ? 0 : Math.round((1 - f.mae[f.best] / f.mae.last_value) * 100)), nice = (k) => k.replace(/_/g, " ");
+  const weeksBehind = (iso) => Math.max(0, Math.round((date(D.generated) - date(iso)) / 6048e5));
   function renderDengueNow() {
-    const F = DEN.forecast, f4 = F[F.length - 1], better = Math.round((1 - f4.mae.ridge / f4.mae.last_value) * 100);
-    $("lvl").textContent = "History only"; $("lvl").style.setProperty("--c", "#fff");
-    $("head").textContent = "Dengue: tested on the past.";
-    $("sub").textContent = `No live dengue feed is connected yet. The model was tested on national weekly counts from ${date(DEN.test_start).getUTCFullYear()} to ${date(DEN.test_end).getUTCFullYear()}.`;
+    const F = denF(), f4 = F[F.length - 1], lastW = DEN.series[DEN.series.length - 1], ex = DEN.extrapolation, far = ex[ex.length - 1], ch = (far.cases / lastW[1] - 1) * 100, comp = DEN.composition;
+    const rising = DEN.outbreak.find((o) => o.definition === "rising"), G = rising && rising.models.gradient_boosted;
+    $("fresh").innerHTML = `Dengue data to <b>${dmy(lastW[0])}</b>, about ${weeksBehind(lastW[0])} weeks behind`;
+    $("lvl").textContent = "No alert level yet"; $("lvl").style.setProperty("--c", "#fff");
+    $("head").textContent = `Dengue: ${lastW[1].toLocaleString()} cases a week, ${ch > 5 ? "expected to rise" : ch < -5 ? "expected to ease" : "holding steady"}.`;
+    $("sub").textContent = `National weekly count, projected to ${far.cases.toLocaleString()} by the week of ${dm(far.start)}.` + (comp ? ` Since ${date(DEN.rebuilt_from).getUTCFullYear()} the series is rebuilt from WHO situation reports; ${comp.estimated} of those ${comp.reported + comp.derived + comp.estimated} weeks are estimates.` : "");
     $("cardChance").querySelector("h2").textContent = "Smaller error than the simple guess";
-    ring(better, css("--green"));
-    $("chanceLine").textContent = `four weeks ahead, against "same as last week"`;
-    $("chanceProof").textContent = `Average miss ${Math.round(f4.mae.ridge)} cases a week against ${Math.round(f4.mae.last_value)}, on ${f4.n_test} unseen weeks.`;
-    $("why").innerHTML = F.map((f) => `<li><b>${f.weeks_ahead} week${f.weeks_ahead > 1 ? "s" : ""} ahead:</b> missed by ${Math.round(f.mae.ridge)} cases, the simple guess by ${Math.round(f.mae.last_value)}.</li>`).join("");
+    ring(denGain(f4), css("--green"));
+    $("chanceLine").textContent = `${f4.weeks_ahead} weeks ahead, against "same as last week"`;
+    $("chanceProof").textContent = `${nice(f4.best)}: average miss ${Math.round(f4.mae[f4.best])} cases a week against ${Math.round(f4.mae.last_value)}, on ${f4.n_test} unseen weeks whose real value is known.`;
+    $("why").innerHTML = F.map((f) => `<li><b>${f.weeks_ahead} week${f.weeks_ahead > 1 ? "s" : ""} ahead:</b> ${f.best === "last_value" ? "no model beat the simple guess" : `missed by ${Math.round(f.mae[f.best])} cases, the simple guess by ${Math.round(f.mae.last_value)}`}.</li>`).join("");
     $("lang").hidden = true; $("summary").hidden = true;
     $("cardDo").querySelector("h2").textContent = "What is missing";
-    $("first").textContent = "A live weekly dengue feed."; $("who").textContent = "The public file ends in " + dmy(DEN.test_end) + ".";
-    $("then").innerHTML = "<li>With a feed, dengue gets the same verdict, reasons and actions as influenza.</li>";
+    $("first").textContent = "A dengue alert level."; $("who").textContent = G ? `The rise classifier caught only ${G.tp} of ${G.tp + G.fn} rises on unseen weeks (${G.fp} false alarms), too few to act on.` : "No dengue rise classifier has been tested.";
+    $("then").innerHTML = `<li>Dengue is shown as a count and a short projection, not a verdict.</li>` + (DEN.missing_weeks ? `<li>Gap in the record: ${DEN.missing_weeks}.</li>` : "");
     $("replay").hidden = true;
   }
 
@@ -123,10 +128,11 @@
     for (let v = 0; v <= ymax; v += 500) { g.strokeStyle = css("--line"); g.lineWidth = 1; g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(w - Rt, Y(v)); g.stroke(); text(g, String(v), L - 8, Y(v) + 4, { a: "right" }); }
     for (let i = 0; i < n; i += 26) text(g, dmy(ser[i][0]).slice(-9), X(i), h - 8, { a: "center" });
     g.strokeStyle = ink; g.lineWidth = 2.4; g.beginPath(); ser.forEach((s, i) => (i ? g.lineTo(X(i), Y(s[1])) : g.moveTo(X(i), Y(s[1])))); g.stroke();
+    const st = (DEN.status || []).slice(-156), anyEst = st.includes("estimated"); g.fillStyle = css("--mark"); st.forEach((v, i) => { if (v === "estimated") { g.beginPath(); g.arc(X(i), Y(ser[i][1]), 2.2, 0, 7); g.fill(); } });
     g.setLineDash([2, 6]); g.strokeStyle = css("--sky-2"); g.lineWidth = 2.5; g.beginPath(); g.moveTo(X(n - 1), Y(ser[n - 1][1])); ex.forEach((e, i) => g.lineTo(X(n + i), Y(e.cases))); g.stroke(); g.setLineDash([]);
-    legend("fcLegend", [[ink, "Reported dengue cases a week"], [css("--sky-2"), "Model, four weeks beyond the data"]]);
-    $("fcLead").textContent = `Weekly dengue cases, Malaysia, to ${dmy(DEN.test_end)}. The public file ends there, so this is history, not a live reading.`;
-    $("fcNote").textContent = "The dotted stretch runs past the end of the data and cannot be checked.";
+    legend("fcLegend", [[ink, "Reported dengue cases a week"], [css("--mark"), "Estimated week", 1], [css("--sky-2"), "Model, four weeks beyond the data"]].filter((x) => anyEst || x[1] !== "Estimated week"));
+    $("fcLead").textContent = `Weekly dengue cases, Malaysia, to ${dmy(ser[n - 1][0])}, about ${weeksBehind(ser[n - 1][0])} weeks behind today.`;
+    $("fcNote").textContent = "The dotted stretch runs past the end of the data and cannot be checked yet." + (anyEst ? " Marked weeks are estimates: WHO published one total for several weeks and it was spread across them." : "");
   }
 
   // ---------- Map and the bed planner ----------
@@ -149,20 +155,20 @@
     for (const f of FAC) { const q = P(f.lon, f.lat); g.beginPath(); g.arc(q[0], q[1], f.kind === "clinic" ? 2.4 : 4, 0, 7); g.fillStyle = f.kind === "clinic" ? "rgba(18,32,58,.5)" : f.kind === "private" ? css("--sky-3") : "#fff"; g.fill(); if (f.kind !== "clinic") { g.strokeStyle = css("--ink"); g.lineWidth = 1.2; g.stroke(); } }
     for (const hs of HOSP) { const q = P(hs.lon, hs.lat); g.beginPath(); g.arc(q[0], q[1], 6, 0, 7); g.fillStyle = css("--sun"); g.fill(); g.strokeStyle = css("--ink"); g.lineWidth = 1.6; g.stroke(); }
     for (const d of districts) { const q = P(d.c[1], d.c[0]); text(g, d.name, q[0], q[1] + 4, { a: "center", c: css("--ink"), w: 700, s: w < 420 ? 10 : 12 }); }
-    legend("mapLegend", [["rgba(52,87,154,.75)", "More people live here"], [css("--sun"), "Hospital in the bed planner", 1], [css("--sky-3"), "Private hospital", 1], ["rgba(18,32,58,.5)", "Clinic", 1]]);
+    legend("mapLegend", [["rgba(52,87,154,.75)", "More people live here"], [css("--sun"), "Hospital in the bed planner", 1], ["#fff", "Other public hospital", 1], [css("--sky-3"), "Private hospital", 1], ["rgba(18,32,58,.5)", "Clinic", 1]]);
   }
   function hit(e) {
     if (!proj) return null; const r = $("mapc").getBoundingClientRect(), lon = (e.clientX - r.left - proj.ox) / (proj.kx * proj.sc) + proj.b[0], lat = proj.b[3] - (e.clientY - r.top - proj.oy) / proj.sc;
     return districts.find((d) => d.rings.some((ring) => { let inn = false; for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [xi, yi] = ring[i], [xj, yj] = ring[j]; if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inn = !inn; } return inn; })) || null;
   }
   function renderPlan() {
-    const c = ctx(), a = c.a, adm = +$("adm").value, share = +$("share").value / 100; $("admV").textContent = adm; $("shareV").textContent = Math.round(share * 100) + "%";
-    const est = c.lag === 0 ? a.pLast : a.fc[c.lag].model, mult = clamp(est / c.th.median, 0.3, 4), cap = HOSP.map((h) => ({ ...h, left: Math.floor(h.beds_simulated * share) }));
+    const c = ctx(), a = c.a, adm = +$("adm").value, share = +$("share").value / 100, occA = +$("occ").value / 100; $("admV").textContent = adm; $("shareV").textContent = Math.round(share * 100) + "%"; $("occV").textContent = Math.round(occA * 100) + "%";
+    const est = c.lag === 0 ? a.pLast : a.fc[c.lag].model, mult = clamp(est / c.th.median, 0.3, 4), cap = HOSP.map((h) => ({ ...h, left: Math.floor(Math.round(h.beds * (1 - (h.occ != null ? Math.min(100, h.occ) / 100 : occA))) * share) }));
     let unmet = 0; const rows = districts.map((d) => ({ ...d, need: Math.round(adm * mult * d.share) })).sort((x, y) => y.need - x.need).map((d) => { let need = d.need; const got = [];
       for (const x of cap.map((h) => ({ h, d: km(d.c, [h.lat, h.lon]) })).sort((p, q) => p.d - q.d)) { if (!need) break; const take = Math.min(need, x.h.left); if (take > 0) { x.h.left -= take; need -= take; got.push(`${x.h.name.replace("Hospital ", "")} ${take}`); } }
       unmet += need; return `<tr><td>${d.name}</td><td class="n">${d.need}</td><td>${got.join(", ") || "none"}</td><td class="n ${need ? "no" : ""}">${need || ""}</td></tr>`; });
     $("plan").innerHTML = `<table><tr><th>District</th><th class="n">Need</th><th>Send to</th><th class="n">No bed</th></tr>${rows.join("")}</table>`;
-    $("planNote").textContent = `${unmet} admissions have no bed in this scenario. Need = ${adm} usual admissions × ${f1(mult)} (today's estimated positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), shared out by population. Bed numbers are simulated placeholders until a hospital uploads its own.`;
+    $("planNote").textContent = `${unmet} admissions have no bed in this scenario. Need = ${adm} usual admissions × ${f1(mult)} (today's estimated positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), shared out by population. Room at a hospital = total beds × (1 − occupancy) × the share usable for flu. Bed totals: Ministry of Health bed file (updated ${HMETA.bed_file_updated}) for ${HMETA.counts.ministry + HMETA.counts.lookup} hospitals, estimated for ${HMETA.counts.estimated}. Occupancy is reported for ${HMETA.occupancy_reported.length} and assumed for the rest. An illustration, not a recommended allocation.`;
     if (hover) { $("dName").textContent = hover.name; const near = HOSP.map((h) => ({ h, d: km(hover.c, [h.lat, h.lon]) })).sort((p, q) => p.d - q.d).slice(0, 3);
       $("dInfo").textContent = `${hover.pop >= 1000 ? f1(hover.pop / 1000) + " million" : Math.round(hover.pop) + " thousand"} people (${Math.round(hover.share * 100)}% of Selangor).` + (hover.cases ? ` ${hover.cases} flu cases reported to week 42 of 2025.` : "") + ` Nearest: ${near.map((x) => `${x.h.name.replace("Hospital ", "")} ${Math.round(x.d)} km`).join(", ")}.`; }
     else { $("dName").textContent = "Move patients before wards fill"; $("dInfo").textContent = "Hover a district to see who lives there and its nearest hospitals."; }
@@ -177,8 +183,8 @@
       <p class="quiet">${T.test_outbreak_weeks} of ${T.n_test} unseen weeks were followed by such a rise, so this kind of rise is common. Treat it as modest evidence.</p>
       <h2>Forecast of the flu level</h2><table><tr><th>Weeks ahead</th><th class="n">Model miss</th><th class="n">"Same as last week" miss</th><th>Result</th></tr>${v.per_horizon.map((x) => `<tr><td>${x.h}</td><td class="n">${f1(x.mae_model)}</td><td class="n">${f1(x.mae_persist)}</td><td class="${x.passed ? "ok" : "no"}">${x.passed ? "Pass" : "Fail"}</td></tr>`).join("")}</table>
       <p class="quiet">Misses are in percentage points of positivity. The level forecast failed its own test, so the dashboard shows "same as last week" as the main forecast.</p>`;
-    $("proofB").innerHTML = `<h2>Dengue: weekly cases, tested on ${date(DEN.test_start).getUTCFullYear()} to ${date(DEN.test_end).getUTCFullYear()}</h2><table><tr><th>Weeks ahead</th><th class="n">Model miss</th><th class="n">"Same as last week" miss</th><th class="n">Better by</th></tr>${DEN.forecast.map((f) => `<tr><td>${f.weeks_ahead}</td><td class="n">${Math.round(f.mae.ridge)}</td><td class="n">${Math.round(f.mae.last_value)}</td><td class="n ok">${Math.round((1 - f.mae.ridge / f.mae.last_value) * 100)}%</td></tr>`).join("")}</table>
-      <p class="quiet">Misses are cases a week; test weeks averaged about ${Math.round(DEN.forecast[0].mean_actual)} cases.</p>
+    $("proofB").innerHTML = `<h2>Dengue: weekly cases, tested on ${date(DEN.test_start).getUTCFullYear()} to ${date(DEN.test_end).getUTCFullYear()}</h2><table><tr><th>Weeks ahead</th><th>Best method</th><th class="n">Its miss</th><th class="n">"Same as last week" miss</th><th class="n">Better by</th></tr>${denF().map((f) => `<tr><td>${f.weeks_ahead}</td><td>${nice(f.best)}</td><td class="n">${Math.round(f.mae[f.best])}</td><td class="n">${Math.round(f.mae.last_value)}</td><td class="n ${denGain(f) ? "ok" : "no"}">${denGain(f)}%</td></tr>`).join("")}</table>
+      <p class="quiet">Misses are cases a week; test weeks averaged about ${Math.round(denF()[0].mean_actual)} cases.${DEN.forecast_measured ? " Only weeks whose real value is known are scored; estimated weeks are left out because they would flatter any model." : ""}${DEN.earlier_result ? " " + DEN.earlier_result + " The run to 2026 was done afterwards and is extra evidence, not a result fixed in advance." : ""}</p>
       <h2>What this cannot tell you</h2><ul class="why"><li>Flu activity district by district. No public data exists for it.</li><li>Real hospital capacity, unless a hospital uploads it.</li><li>Case counts for flu. Positivity is a share of tested samples.</li><li>Whether added figures are correct. They are yours to check.</li></ul>`;
   }
 
@@ -211,12 +217,12 @@
   function show(v) { if (!VIEWS[v]) v = "now"; S.view = v; document.querySelectorAll(".view").forEach((s) => s.classList.toggle("on", s.id === "v-" + v)); document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("on", b.dataset.view === v)); history.replaceState(null, "", "#" + v); render(); scrollTo(0, 0); }
   const seg = () => document.querySelectorAll("#disease button").forEach((b) => b.classList.toggle("on", b.dataset.d === S.disease));
 
-  Promise.all(["data/site.json", "data/districts.geojson", "data/hospitals.json", "data/facilities.json", "data/dengue.json"].map((u) => fetch(u).then((r) => r.json()))).then((r) => {
-    [D, GEO, HOSP, FAC, DEN] = r; S.added = stored(); setupMap();
+  Promise.all(["data/site.json", "data/districts.geojson", "data/hospitals.json", "data/facilities.json", "data/dengue.json"].map((u) => fetch(u, { cache: "no-cache" }).then((r) => r.json()))).then((r) => {
+    [D, GEO, , , DEN] = r; HOSP = r[2].rows; HMETA = r[2].meta; FAC = r[3].rows.filter((f) => f.state === "Selangor"); S.added = stored(); setupMap();
     $("tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) show(b.dataset.view); });
     $("disease").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.disease = b.dataset.d; if (S.disease === "dengue" && S.mode === "replay") { S.mode = "live"; S.added = stored(); } seg(); render(); });
     $("lang").onclick = () => { S.bm = !S.bm; renderNow(); };
-    $("adm").oninput = $("share").oninput = renderPlan;
+    $("adm").oninput = $("share").oninput = $("occ").oninput = renderPlan;
     $("mapc").addEventListener("pointermove", (e) => { const d = hit(e); if (d !== hover) { hover = d; renderMap(); renderPlan(); } });
     $("mapc").addEventListener("pointerleave", () => { if (hover) { hover = null; renderMap(); renderPlan(); } });
     $("rpStart").onclick = () => setMode(S.mode === "replay" ? "live" : "replay"); $("rpNext").onclick = nextWeek;
