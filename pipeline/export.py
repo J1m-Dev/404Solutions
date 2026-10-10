@@ -106,6 +106,17 @@ def main():
     cross = next(i for i in range(split, N) if p[i] > th["orange"])
     first_yellow = next(t for t in range(cross - 8, cross + 1) if lv0[t] != "green")
     val["stress"] = stress(series, split, th)
+
+    def week_level(lag):
+        """Each unseen week: was the alert high (Orange or Red), and was positivity really above the alert line?"""
+        tp = fp = tn = fn = 0
+        for dd in range(split, N):
+            pred = levels(series, dd - lag, dd - lag, th, lag)[dd - lag] in ("orange", "red")
+            act = p[dd] > th["orange"]
+            tp += pred and act; fp += pred and not act; fn += (not pred) and act; tn += (not pred) and (not act)
+        return {"lag": lag, "tp": int(tp), "fp": int(fp), "tn": int(tn), "fn": int(fn),
+                "recall": round(tp / (tp + fn), 3), "precision": round(tp / (tp + fp), 3)}
+    val["week_level"] = [week_level(0), week_level(c.PUB_LAG)]
     val["descriptive_after_scoring"] = {
         "note": "Looked at after the test was scored; not a pre-registered result.",
         "first_non_green_week_before_2025_surge": f"{series[first_yellow]['year']}-W{series[first_yellow]['week']:02d}",

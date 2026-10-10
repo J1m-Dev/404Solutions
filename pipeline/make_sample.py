@@ -32,3 +32,21 @@ w("sample_SIMULATED_500_weeks_lab_counts.csv", ["year", "week", "samples_tested"
 w("sample_SIMULATED_500_weeks_ili_rate.csv", ["year", "week", "ili_rate_percent"], ili)
 p = [100 * r[3] / r[2] for r in lab]
 print(len(lab), "weeks", lab[0][:2], "to", lab[-1][:2], "| positivity min/median/max", round(min(p), 1), round(float(np.median(p)), 1), round(max(p), 1))
+
+# SIMULATED cluster list for the map hotspots: invented clusters placed near real clinic locations.
+import json
+
+clinics = [f for f in json.loads((c.ROOT / "site/data/facilities.json").read_text(encoding="utf-8")) if f["kind"] == "clinic"]
+weight = {"Petaling": 8, "Hulu Langat": 6, "Gombak": 5, "Klang": 4, "Sepang": 2, "Kuala Langat": 1, "Kuala Selangor": 1, "Hulu Selangor": 1, "Sabak Bernam": 0.5}
+pw = np.array([weight.get(f["district"], 1) for f in clinics]); pw = pw / pw.sum()
+settings = ["Secondary school", "Primary school", "Kindergarten", "School hostel", "Private home"]
+clusters = []
+for i in range(28):
+    f = clinics[int(rng.choice(len(clinics), p=pw))]
+    cases = int(min(160, max(4, rng.lognormal(2.9, 0.8))))
+    clusters.append([f"Simulated cluster {i + 1:02d}", f["district"], cases, settings[int(rng.integers(len(settings)))],
+                     round(f["lat"] + float(rng.normal(0, 0.012)), 5), round(f["lon"] + float(rng.normal(0, 0.012)), 5)])
+head = ["name", "district", "cases", "setting", "lat", "lon"]
+w("demo_SIMULATED_cluster_list.csv", head, clusters)
+w("template_cluster_list.csv", head, [["Example school", "Petaling", 25, "Secondary school", 3.0738, 101.5183]])
+print(len(clusters), "simulated clusters; largest", max(r[2] for r in clusters))

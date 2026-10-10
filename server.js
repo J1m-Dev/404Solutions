@@ -17,7 +17,7 @@ try {
   }
 } catch {}
 
-const empty = () => ({ lab: [], ili: [], clusters: [], beds: [], stamp: null });
+const empty = () => ({ lab: [], ili: [], clusters: [], beds: [], clusterlist: [], stamp: null });
 const readStore = () => { try { return JSON.parse(fs.readFileSync(STORE, "utf8")); } catch { return {}; } };
 const writeStore = (s) => fs.writeFileSync(STORE, JSON.stringify(s, null, 1));
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json",
@@ -69,8 +69,8 @@ http.createServer(async (req, res) => {
       if (req.method === "POST") {
         const b = await body(req);
         const cur = store[mode] || empty();
-        if (!["lab", "ili", "clusters", "beds"].includes(b.type) || !Array.isArray(b.rows) || b.rows.length > 500) return send(res, 400, { error: "bad upload" });
-        cur[b.type] = b.type === "beds" ? b.rows : cur[b.type].concat(b.rows);
+        if (!["lab", "ili", "clusters", "beds", "clusterlist"].includes(b.type) || !Array.isArray(b.rows) || b.rows.length > 500) return send(res, 400, { error: "bad upload" });
+        cur[b.type] = b.type === "beds" || b.type === "clusterlist" ? b.rows : (cur[b.type] || []).concat(b.rows);
         cur.stamp = new Date().toISOString();
         store[mode] = cur; writeStore(store);
         return send(res, 200, cur);

@@ -1,0 +1,29 @@
+name,district,cases,setting,lat,lon
+Simulated cluster 01,Gombak,10,Private home,3.30272,101.60902
+Simulated cluster 02,Petaling,16,Private home,3.20736,101.5502
+Simulated cluster 03,Petaling,8,School hostel,3.01513,101.71248
+Simulated cluster 04,Gombak,21,Private home,3.1884,101.75391
+Simulated cluster 05,Petaling,17,Secondary school,3.06994,101.61152
+Simulated cluster 06,Petaling,8,Primary school,3.11868,101.57438
+Simulated cluster 07,Petaling,18,Primary school,3.11052,101.56674
+Simulated cluster 08,Hulu Langat,45,Secondary school,3.14046,101.75102
+Simulated cluster 09,Hulu Selangor,4,Primary school,3.35912,101.62705
+Simulated cluster 10,Petaling,44,Secondary school,2.98456,101.60534
+Simulated cluster 11,Hulu Selangor,31,Secondary school,3.30304,101.58747
+Simulated cluster 12,Petaling,12,Kindergarten,3.11515,101.55807
+Simulated cluster 13,Petaling,8,Private home,3.11948,101.54936
+Simulated cluster 14,Hulu Langat,92,Secondary school,3.01571,101.74326
+Simulated cluster 15,Gombak,41,Kindergarten,3.17462,101.75575
+Simulated cluster 16,Kuala Langat,6,School hostel,2.98549,101.61648
+Simulated cluster 17,Hulu Langat,10,Kindergarten,2.94691,101.75778
+Simulated cluster 18,Gombak,9,Private home,3.27497,101.54401
+Simulated cluster 19,Hulu Langat,42,Primary school,2.91218,101.87885
+Simulated cluster 20,Hulu Langat,22,Secondary school,2.88983,101.78437
+Simulated cluster 21,Gombak,46,School hostel,3.15663,101.71495
+Simulated cluster 22,Klang,11,School hostel,3.13997,101.44127
+Simulated cluster 23,Gombak,5,Private home,3.2348,101.66743
+Simulated cluster 24,Hulu Langat,7,School hostel,3.05706,101.75828
+Simulated cluster 25,Gombak,15,Kindergarten,3.32771,101.4817
+Simulated cluster 26,Hulu Langat,14,Secondary school,3.13781,101.76096
+Simulated cluster 27,Gombak,17,Primary school,3.30496,101.47542
+Simulated cluster 28,Gombak,30,Private home,3.16061,101.76477
