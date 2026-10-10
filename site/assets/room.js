@@ -12,6 +12,7 @@
   const STILL = matchMedia("(prefers-reduced-motion:reduce)").matches;
   const REPLAY_FILE = "templates/demo_real_replay_2025_W38_W41.csv", BARS = 44;
   let replayRows = null, fresh = 0, lastCount = -1, busy = false, lastLen = 0;
+  let wantFresh = REPLAY && new URLSearchParams(location.search).get("fresh") === "1";   // arriving from "Replay October 2025": start at the first week
   root.dataset.replay = REPLAY ? "1" : "";
   // the Monday an ISO week starts on (4 January is always in week 1)
   const monday = (y, w) => { const d = new Date(Date.UTC(y, 0, 4)); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) + (w - 1) * 7); return d.toISOString().slice(0, 10); };
@@ -58,6 +59,8 @@
 
   // ---------- the first screen: the app's own early-warning step (Clear, Watch, Warning, Outbreak), never a percentage ----------
   function update() {
+    if (wantFresh) { wantFresh = false; history.replaceState(null, "", location.pathname + "?replay=1" + location.hash);
+      if (STATE.lab.length || SIM.on) { SIM.on = false; if ($("simOn")) $("simOn").checked = false; resetState(); return; } }   // resetState redraws, which brings us back here
     const c = context(), a = c.a, st = stepOf(c), H = headOf(c), iso = starts(c.series), lastIso = iso[iso.length - 1], pure = pureReplay();
     const ES = typeof evStats === "function" ? evStats() : null, band = ES && st.band && !H.byRule ? ES.bands[st.band] : null;
     root.dataset.state = a.dataWarning ? "unconfirmed" : st.key; root.dataset.ready = "1";
@@ -74,7 +77,7 @@
     if ($("pct").textContent !== word) { const b = $("pct"); b.textContent = word; b.classList.remove("roll"); void b.offsetWidth; b.classList.add("roll"); }
     const when = lastIso ? `<b>${dmy(lastIso)}</b>` : `<b>${wk(a.last)}</b>`;
     $("basis").innerHTML = (band ? `In six past years a rapid rise followed ${band.rises} of ${band.weeks} ${STEP[st.band].name} weeks. ` : H.byRule && !a.dataWarning ? "Set by the alert rule on the data. " : "") +
-      (c.sim ? `A what-if drill, not a reading: it runs to ${when}.` : c.own ? `Your uploaded series to ${when}.` : REPLAY && pure ? `Replay on real national data to ${when}.` : REPLAY ? `Replay with uploaded weeks, not verified, to ${when}.` : `National data to ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
+      (c.sim ? `A what-if drill, not a reading: it runs to the week of ${when}.` : c.own ? `Your uploaded series to the week of ${when}.` : REPLAY && pure ? `Replay on real national data to the week of ${when}.` : REPLAY ? `Replay with uploaded weeks, not verified, to the week of ${when}.` : `National data to the week of ${when}` + (c.lag > 0 ? `, about ${c.lag} week${c.lag > 1 ? "s" : ""} behind.` : ", current to this week."));
     $("first").textContent = actionsOf(c)[0][0] + ".";
     // replay controls
     const n = STATE.lab.length, nr = REPLAY && !c.own ? nextRow(c) : null, done = REPLAY && nr === null;
@@ -121,7 +124,7 @@
     $("bars").innerHTML = vals.map((v, i) => `<i class="${v >= c.th.orange ? "o" : v >= c.th.yellow ? "y" : ""}${i === vals.length - 1 ? " now" : ""}${i >= vals.length - fresh ? " new" : ""}${first && d[i] === first ? " sig" : ""}" style="height:${h(v)}%" title="Week of ${d[i] ? dmy(d[i]) : wk(ser[i])}: ${f1(v)}%"></i>`).join("") +
       `<u style="bottom:${h(c.th.orange)}%;--k:${css("--orange")}"><b>Alert line ${f1(c.th.orange)}%</b></u><u style="bottom:${h(c.th.yellow)}%;--k:${css("--yellow")}"><b>Watch line ${f1(c.th.yellow)}%</b></u>`;
     $("bars").setAttribute("aria-label", `Weekly flu positivity, last ${vals.length} weeks; newest ${f1(vals[vals.length - 1])}%`);
-    $("stripNote").innerHTML = (first ? `<b>${firstName} first shown on data to ${dm(first)}.</b>` + (ms.outbreak && ms.outbreak > first ? ` Outbreak on data to ${dm(ms.outbreak)}, <b>${days(first, ms.outbreak)} days later</b>.` : ms.outbreak ? "" : " The alert rule has not called Outbreak yet.") : "Each bar is one real week: the share of flu tests that came back positive.") +
+    $("stripNote").innerHTML = (first ? `<b>${firstName} first shown on data to the week of ${dm(first)}.</b>` + (ms.outbreak && ms.outbreak > first ? ` Outbreak on data to the week of ${dm(ms.outbreak)}, <b>${days(first, ms.outbreak)} days later</b>.` : ms.outbreak ? "" : " The alert rule has not called Outbreak yet.") : "Each bar is one real week: the share of flu tests that came back positive.") +
       `<span class="small"><br>This is what a planner sees with each week's own lab counts in hand. Public data alone arrives about ${D.pub_lag} weeks later.</span>`;
   }
 
@@ -131,7 +134,7 @@
     return replayRows;
   }
   $("rpGo").onclick = async () => {
-    if (!REPLAY) { location.href = "dashboard.html?replay=1#/now"; return; }
+    if (!REPLAY) { location.href = "dashboard.html?replay=1&fresh=1#/now"; return; }
     if (busy) return; busy = true; $("rpGo").disabled = true;   // one week per press, however fast the presses come
     let note = "";
     try {
@@ -191,5 +194,6 @@
   window.render = function () { const r = theirs.apply(this, arguments); try { update(); } catch (e) { console.error("room", e); } return r; };
   if (REPLAY) replayFile().then(() => { if (typeof D !== "undefined" && D && STATE) update(); }).catch((e) => console.error("room", e));
   route();
+  setTimeout(() => { if (!root.dataset.ready) { root.dataset.ready = "1"; $("pct").textContent = "No data"; $("head").textContent = "The data did not load. Check the connection and reload the page."; $("rpGo").hidden = true; } }, 9000);
   if (typeof D !== "undefined" && D && typeof STATE !== "undefined" && STATE) { try { update(); } catch (e) { console.error("room", e); } }
 })();

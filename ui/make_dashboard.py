@@ -19,6 +19,7 @@ def block(tag, ident):
     return src[m.start():end]
 
 hero, now, forecast, trust, atlas, track, stakes = (block("section", i) for i in ["hero", "now", "forecast", "trust", "atlas", "track", "stakes"])
+hero = hero.replace("FluSentinel", "DOM")   # the product's name since 10 Oct; the sentence is otherwise the team's own
 more = "\n".join(block("details", i) for i in ["proof", "dengue", "trendFold", "sim", "history", "guide"])
 dlg = block("dialog", "dlg")
 footer = re.search(r"<footer>.*?</footer>", src, re.S).group(0)
@@ -44,7 +45,7 @@ html = f'''<!doctype html>
 <title>DOM · Control room</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%2334579a' stroke='white' stroke-width='2'/%3E%3Ccircle cx='20' cy='17' r='4' fill='%23ff6a3d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="vendor/leaflet.min.css">
 <link rel="stylesheet" href="assets/room.css?v={V}">
 <script>try {{ var d = document.documentElement, q = new URLSearchParams(location.search);

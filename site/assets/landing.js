@@ -235,7 +235,7 @@
   document.querySelectorAll(".spread").forEach((el) => { el.innerHTML = [...el.textContent].map((ch, i) => `<span style="--i:${i};--j:${i % 2}">${ch}</span>`).join(""); });
   const names = (list) => list.concat(list).map((n) => `<div>${n}</div>`).join("");
   $("namesL").innerHTML = names(STATES); $("namesR").innerHTML = names(STATES.slice(8).concat(STATES.slice(0, 8)));
-  Promise.all([fetch("data/dots.json").then((r) => r.json()), fetch("data/site.json").then((r) => r.json()), document.fonts ? document.fonts.ready : 0]).then(([d, D]) => {
+  Promise.all([fetch("data/dots.json").then((r) => r.json()), fetch("data/site.json").then((r) => r.json()), document.fonts ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]) : 0]).then(([d, D]) => {
     land = d.land.map(vec); mys = d.malaysia.map(vec); flat = d.malaysia; navLogo(); readData(D);
     scat = new Float32Array(land.length * 3);
     for (let i = 0; i < land.length; i++) { const a = Math.random() * 6.283, q = 0.5 + Math.random() * 1.6; scat[i * 3] = Math.cos(a) * q; scat[i * 3 + 1] = Math.sin(a) * q; scat[i * 3 + 2] = Math.random() * 0.55; }
