@@ -27,7 +27,7 @@ const SCHEMA = {
   clusters: { cols: ["year", "week", "district", "clusters"], tpl: "template_clusters.csv" },
   beds: { cols: ["hospital", "beds_available"], tpl: "template_beds.csv" },
 };
-let D, GEO, HOSP, STATE, chart, map, geoLayer, hospLayer, pending = [];
+let D, GEO, HOSP, FAC, DENGUE, STATE, chart, map, geoLayer, hospLayer, facDone = false, pending = [];
 
 async function api(method, path, body) {
   try {
@@ -58,7 +58,8 @@ function context() {
   const lag = Math.max(0, D.pub_lag - STATE.lab.length);
   const a = M.assess(series, D.models[REPLAY ? "replay" : "current"], D, D.thresholds, lag);
   const today = nextWeek(base[base.length - 1], D.pub_lag);
-  return { base, series, lag, a, today, th: D.thresholds, uploaded: STATE.lab.length > 0 };
+  const rise = M.riseSignal(series, D.rise[REPLAY ? "replay" : "current"]);
+  return { base, series, lag, a, today, rise, th: D.thresholds, uploaded: STATE.lab.length > 0 };
 }
 
 function figures(c) {
@@ -100,6 +101,7 @@ async function renderSummary(c) {
 }
 
 function renderAlert(c) {
+  const RT = D.rise.test.models.gradient_boosted;
   const a = c.a, th = c.th;
   const L = a.dataWarning ? { head: "Data warning: check the newest week before acting", sub: `Rule result on this data: ${LEVELS[a.level].head}` } : LEVELS[a.level];
   const why = [];
@@ -113,6 +115,8 @@ function renderAlert(c) {
     <div class="cats"><span class="cat">Level: <b>${a.level.toUpperCase()}</b></span><span class="cat">Type: <b>${a.wave}</b></span>
       <span class="cat">Phase: <b>${a.phase}</b></span>${a.dataWarning ? '<span class="cat warn">Data warning</span>' : ""}
       ${c.uploaded ? '<span class="chip unv">Uses uploaded, unverified data</span>' : '<span class="chip real">Public data only</span>'}</div>
+    <div class="rise ${c.rise.yes ? "on" : ""}"><b>Rapid-rise signal: ${c.rise.yes ? "YES" : "no"}</b> <span class="chip est">Machine-learning estimate</span><br>
+      <span class="note">A gradient-boosted classifier puts the chance that positives rise by half or more within four weeks at ${Math.round(c.rise.prob * 100)}%. On unseen weeks it caught ${RT.tp} of ${RT.tp + RT.fn} such rises with ${RT.fp} false alarms (recall ${Math.round(RT.recall * 100)}%, precision ${Math.round(RT.precision * 100)}%). It is a second opinion and does not change the alert level.</span></div>
     <h3>Why this level</h3><ul class="why">${why.map((w) => `<li>${w}</li>`).join("")}</ul>
     <p class="note">The level is set by a fixed rule tested on past data. Thresholds are project thresholds, not the Ministry of Health's.</p>`;
   $("action").innerHTML = `<table><tr><th>Action</th><th>Who acts</th></tr>${ACTIONS[a.level].map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table>
@@ -184,7 +188,16 @@ function renderMap(c) {
         (d.cases ? `<br>${d.cases} influenza cases reported to week 42/2025 <i>Real data, state assembly answer</i>` : "") +
         (useCl ? `<br>${cl[d.name] || 0} clusters <i>Uploaded, not verified</i>` : "") +
         `<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near.map((x) => `${x.h.name}: ${Math.round(x.km)} km`).join("<br>")}`); } }).addTo(map);
-  hospLayer = L.layerGroup(HOSP.map((h) => L.circleMarker([h.lat, h.lon], { radius: 6, color: "#0b6e6e", fillOpacity: 0.9 }).bindPopup(`<b>${h.name}</b><br>Location: OpenStreetMap <i>Real data</i>`))).addTo(map);
+  if (!facDone) { facDone = true;
+    const KIND = { government: ["Government and teaching hospitals", "#0b6e6e", 7], private: ["Private hospitals", "#b5179e", 6], clinic: ["Government health clinics (Klinik Kesihatan)", "#e07a00", 4] };
+    const overlays = {};
+    for (const k in KIND) { const [label, col, rad] = KIND[k];
+      const g = L.layerGroup(FAC.filter((f) => f.kind === k).map((f) => L.circleMarker([f.lat, f.lon], { radius: rad, color: col, weight: 2, fillColor: col, fillOpacity: f.approximate ? 0.15 : 0.9, dashArray: f.approximate ? "3" : null })
+        .bindPopup(`<b>${f.name}</b><br>${label}<br>${f.address || ""}<br><i>${f.approximate ? "Approximate position: placed at its town, not the building" : "Position from OpenStreetMap"}</i>`))).addTo(map);
+      overlays[`<span style="color:${col}">&#9679;</span> ${label} (${FAC.filter((f) => f.kind === k).length})`] = g; }
+    L.control.layers(null, overlays, { collapsed: false }).addTo(map);
+    const ap = FAC.filter((f) => f.approximate).length;
+    $("facNote").innerHTML = `${FAC.length} facilities from the team's list are plotted in three colours; use the box on the map to switch each group on or off. ${ap} could not be matched by name and are placed at their town (hollow, dashed markers). The capacity planner uses government hospitals only.`; }
 }
 function renderPlan(c) {
   const adm = +$("adm").value, share = +$("share").value / 100, a = c.a;
@@ -224,12 +237,43 @@ function renderProof() {
   <table><tr><th>Weeks ahead</th><th class="num">Model error</th><th class="num">Last-value error</th><th class="num">Same-week-average error</th><th class="num">80% range covered</th><th>Result</th></tr>
   ${v.per_horizon.map((h) => `<tr><td>${h.h}</td><td class="num">${f1(h.mae_model)}</td><td class="num">${f1(h.mae_persist)}</td><td class="num">${f1(h.mae_seasonal)}</td><td class="num">${Math.round(h.coverage80 * 100)}%</td><td class="${h.passed ? "pass" : "fail"}">${h.passed ? "PASS" : "FAIL"}</td></tr>`).join("")}</table>
   <p class="note">Errors are mean absolute error in percentage points of positivity. The model beat the same-week average at every horizon, lost to "last value carried forward" at 1 to 4 weeks and only matched it beyond that, and its ranges were too narrow. So the site shows the baseline as the main forecast and uses the model only inside the alert rule, which was tested separately above.</p>
+  <h3>Rapid-rise classifier (gradient-boosted) <span class="chip real">Measured</span></h3>
+  <p class="note">Predicts whether weekly positives will be at least 50% higher than four weeks earlier at any point in the next four weeks. Same unseen weeks as above; ${D.rise.test.test_outbreak_weeks} of ${D.rise.test.n_test} were followed by such a rise.</p>
+  <table><tr><th>Method</th><th class="num">TP</th><th class="num">FP</th><th class="num">TN</th><th class="num">FN</th><th class="num">Recall</th><th class="num">Precision</th></tr>
+  ${[["already_in_outbreak_now", "Simple rule: already rising now"], ["logistic_regression", "Logistic regression"], ["gradient_boosted", "Gradient-boosted (used on this site)"]].map(([k, n]) => { const m = D.rise.test.models[k]; return `<tr><td>${n}</td><td class="num">${m.tp}</td><td class="num">${m.fp}</td><td class="num">${m.tn}</td><td class="num">${m.fn}</td><td class="num">${Math.round(m.recall * 100)}%</td><td class="num">${Math.round(m.precision * 100)}%</td></tr>`; }).join("")}</table>
+  <p class="note">These weeks had already been scored for other models, and this kind of rise is common (over half of test weeks), so treat this as modest evidence. Forecasts of the count itself did not beat "same as last week" with either model, with or without the 2017 to 2019 data.</p>
   <h3>Stress test: does the alert survive bad data? <span class="chip real">Measured</span></h3>
   <table><tr><th>Damage applied to the data</th><th class="num">High-alert decisions unchanged</th><th class="num">Worst of ${v.stress[0].runs} runs</th></tr>
   ${v.stress.map((s) => `<tr><td>${s.test}</td><td class="num">${f1(s.high_alert_agreement * 100)}%</td><td class="num">${f1(s.worst_run * 100)}%</td></tr>`).join("")}</table>
   <p class="note">Looked at after scoring, not a frozen result: with current data the level first left Green in ${v.descriptive_after_scoring.first_non_green_week_before_2025_surge}, ${v.descriptive_after_scoring.weeks_before_orange_crossing} weeks before the alert line was crossed.</p>
   <h3>What this cannot tell you</h3>
   <ul class="why"><li>District-level influenza activity. No public data exists for it.</li><li>Real hospital capacity, unless a planner uploads it.</li><li>Case counts. Positivity is a share of tested samples.</li><li>Whether uploaded figures are correct. They are marked unverified.</li></ul>`;
+}
+
+function renderDengue() {
+  const d = DENGUE; if (!d) { $("dengue").hidden = true; return; }
+  const n = d.series.length, k = d.split_index, ex = d.extrapolation;
+  const labels = d.series.map((r) => r[0]).concat(ex.map((e) => e.start));
+  const vals = d.series.map((r) => r[1]);
+  $("dengueNote").textContent = `Weekly reported dengue cases, Malaysia, ${d.series[0][0]} to ${d.series[n - 1][0]} (${n} weeks). Source: ${d.source}. This series ends in 2022, so it demonstrates the method on past data and says nothing about dengue today. Some years count confirmed cases and others all reported cases.`;
+  new Chart($("dengueChart"), { type: "line", data: { labels, datasets: [
+    { label: "Training weeks (earliest 70%)", data: vals.map((v, i) => (i < k ? v : null)), borderColor: "#16202a", pointRadius: 0, borderWidth: 1.5 },
+    { label: "Test weeks (latest 30%)", data: vals.map((v, i) => (i >= k - 1 ? v : null)), borderColor: "#2a5aa8", pointRadius: 0, borderWidth: 1.5 },
+    { label: "Extrapolation, 1 to 4 weeks past the data", data: Array(n - 1).fill(null).concat([vals[n - 1]], ex.map((e) => e.cases)), borderColor: "#c0282d", borderDash: [5, 3], pointRadius: 2, borderWidth: 2 } ] },
+    options: { maintainAspectRatio: false, animation: false, scales: { y: { beginAtZero: true, title: { display: true, text: "Reported cases per week" } }, x: { ticks: { maxTicksLimit: 13 } } } } });
+  const pct = (a, b) => Math.round((1 - a / b) * 100);
+  const cm = (m) => (m ? `<td class="num">${m.tp}</td><td class="num">${m.fp}</td><td class="num">${m.tn}</td><td class="num">${m.fn}</td><td class="num">${m.recall == null ? "n/a" : Math.round(m.recall * 100) + "%"}</td><td class="num">${m.precision == null ? "n/a" : Math.round(m.precision * 100) + "%"}</td>` : "");
+  const NAMES = { already_in_outbreak_now: "Simple rule: already in outbreak now", logistic_regression: "Logistic regression", gradient_boosted: "Gradient-boosted classifier" };
+  $("dengueBody").innerHTML = `
+  <h3>Forecast accuracy on the unseen 30% <span class="chip real">Measured</span></h3>
+  <p class="note">Train to ${d.train_end}, test ${d.test_start} to ${d.test_end}, split by date. Settings were fixed before scoring. Errors are average misses in cases per week; test weeks averaged about ${Math.round(d.forecast[0].mean_actual)} cases.</p>
+  <table><tr><th>Weeks ahead</th><th class="num">Same as last week</th><th class="num">Same-week average</th><th class="num">Ridge regression</th><th class="num">Gradient-boosted</th><th>Best</th><th class="num">Best vs last week</th></tr>
+  ${d.forecast.map((f) => `<tr><td>${f.weeks_ahead}</td><td class="num">${f.mae.last_value}</td><td class="num">${f.mae.same_week_average}</td><td class="num">${f.mae.ridge}</td><td class="num">${f.mae.gradient_boosted}</td><td>${f.best.replace(/_/g, " ")}</td><td class="num ${f.best === "last_value" ? "fail" : "pass"}">${f.best === "last_value" ? "no gain" : pct(f.mae[f.best], f.mae.last_value) + "% lower error"}</td></tr>`).join("")}</table>
+  <h3>Extrapolation past the end of the data <span class="chip est">Estimated</span></h3>
+  <p class="note">${ex.map((e) => `Week of ${e.start}: ${e.cases} cases`).join(" · ")}. These weeks are in early 2023 and cannot be checked against this dataset.</p>
+  <h3>Outbreak within the next four weeks: yes or no <span class="chip real">Measured</span></h3>
+  ${d.outbreak.map((o) => `<p class="note"><b>${o.definition === "usual" ? "Definition A: cases above the usual level for that week (training-year average plus two standard deviations)" : "Definition B: cases at least 50% higher than four weeks earlier"}.</b> ${o.train_outbreak_weeks} of ${o.n_train} training weeks and ${o.test_outbreak_weeks} of ${o.n_test} test weeks were followed by an outbreak. ${o.note || ""}</p>
+  <table><tr><th>Method</th><th class="num">TP</th><th class="num">FP</th><th class="num">TN</th><th class="num">FN</th><th class="num">Recall</th><th class="num">Precision</th></tr>${Object.keys(o.models).map((m) => `<tr><td>${NAMES[m]}</td>${cm(o.models[m])}</tr>`).join("")}</table>`).join("")}`;
 }
 
 function render() { const c = context(); renderStamp(c); renderAlert(c); renderChart(c); renderMap(c); renderPlan(c); renderSummary(c); }
@@ -262,25 +306,58 @@ function validate(t, raw) {
   return { errs, out };
 }
 function setupUpload() {
-  $("uploadBtn").onclick = () => { $("ufile").value = ""; manualInputs(); $("dlg").showModal(); };
+  $("uploadBtn").onclick = () => { $("ufile").value = ""; $("dropName").textContent = ""; $("dropInfo").textContent = ""; manualInputs(); $("dlg").showModal(); };
   $("utype").onchange = manualInputs;
-  $("ufile").onchange = async (e) => { const file = e.target.files[0]; if (!file) return;
+  // One file at a time goes through the confirm table; extra dropped files wait in a queue.
+  let queue = [];
+  const showQueue = () => ($("dropInfo").textContent = queue.length ? `${queue.length} more file(s) waiting: ${queue.map((f) => f.name).join(", ")}` : "");
+  async function handleFile(file) {
+    $("dropName").textContent = file.name;
     try { const wb = XLSX.read(await file.arrayBuffer(), { type: "array" }); const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: "" });
-      const cols = SCHEMA[$("utype").value].cols, have = Object.keys(rows[0] || {}).map((k) => k.trim().toLowerCase());
-      const miss = cols.filter((k) => !have.includes(k));
-      if (!rows.length || miss.length) { pending = []; drawPreview(); $("uerr").textContent = `This file does not match the template. Missing column(s): ${miss.join(", ") || "no rows found"}.`; return; }
+      const have = Object.keys(rows[0] || {}).map((k) => k.trim().toLowerCase());
+      // The data type is recognised from the column names, so a dropped file needs no manual choice.
+      const found = Object.keys(SCHEMA).find((t) => SCHEMA[t].cols.every((k) => have.includes(k)));
+      if (found && found !== $("utype").value) { $("utype").value = found; manualInputs(); }
+      const cols = SCHEMA[$("utype").value].cols, miss = cols.filter((k) => !have.includes(k));
+      if (!rows.length || miss.length) { pending = []; drawPreview(); $("uerr").textContent = `"${file.name}" does not match any template. Missing column(s) for the selected type: ${miss.join(", ") || "no rows found"}.`; return; }
       pending = rows.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k.trim().toLowerCase(), v]))); drawPreview();
-    } catch { $("uerr").textContent = "Could not read this file. Use the CSV template or an Excel file."; } };
+    } catch { $("uerr").textContent = `Could not read "${file.name}". Use a CSV template or an Excel file.`; } }
+  const nextFile = () => { const f = queue.shift(); showQueue(); if (f) handleFile(f); return !!f; };
+  const takeFiles = (files) => { queue = files.filter((f) => /\.(csv|xlsx|xls)$/i.test(f.name));
+    if (!queue.length) { $("uerr").textContent = "No CSV or Excel files found in what was dropped."; return; }
+    if (!$("dlg").open) { manualInputs(); $("dlg").showModal(); }
+    nextFile(); };
+  // Reads dropped items, walking into folders.
+  async function droppedFiles(dt) {
+    const out = [], walk = async (entry) => {
+      if (entry.isFile) out.push(await new Promise((res) => entry.file(res)));
+      else if (entry.isDirectory) { const rd = entry.createReader(); let batch;
+        do { batch = await new Promise((res) => rd.readEntries(res)); for (const e of batch) await walk(e); } while (batch.length); } };
+    const entries = [...dt.items].map((i) => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+    if (entries.length) { for (const e of entries) await walk(e); return out; }
+    return [...dt.files];
+  }
+  const dz = $("drop");
+  ["dragenter", "dragover"].forEach((ev) => document.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add("over"); document.body.classList.add("dragging"); }));
+  ["dragleave", "drop"].forEach((ev) => document.addEventListener(ev, (e) => { e.preventDefault(); if (ev === "drop" || !e.relatedTarget) { dz.classList.remove("over"); document.body.classList.remove("dragging"); } }));
+  document.addEventListener("drop", async (e) => takeFiles(await droppedFiles(e.dataTransfer)));
+  dz.onclick = () => $("ufile").click();
+  $("ufile").onchange = (e) => { takeFiles([...e.target.files]); e.target.value = ""; };
+  setupUpload.nextFile = nextFile;
   $("addRow").onclick = () => { const r = {}; $("manual").querySelectorAll("input").forEach((i) => (r[i.dataset.k] = i.value)); pending.push(r); drawPreview(); };
   $("preview").oninput = (e) => { const i = e.target.dataset.i; if (i != null) pending[i][e.target.dataset.k] = e.target.value; };
   $("confirm").onclick = async () => { const t = $("utype").value, { errs, out } = validate(t, pending);
     if (errs.length) { $("uerr").textContent = errs.join("\n"); return; }
-    await saveUpload(t, out); $("dlg").close(); render(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+    await saveUpload(t, out); render();
+    if (setupUpload.nextFile()) return;
+    $("dlg").close(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
 
 (async function () {
   [D, GEO, HOSP] = await Promise.all(["data/site.json", "data/districts.geojson", "data/hospitals.json"].map((u) => fetch(u).then((r) => r.json())));
-  await loadState(); setupUpload(); renderProof();
+  FAC = await fetch("data/facilities.json").then((r) => r.json()).catch(() => HOSP.map((h) => ({ ...h, kind: "government" })));
+  DENGUE = await fetch("data/dengue.json").then((r) => r.json()).catch(() => null);
+  await loadState(); setupUpload(); renderProof(); renderDengue();
   $("adm").oninput = $("share").oninput = () => renderPlan(context());
   render();
 })();

@@ -1,0 +1,174 @@
+{
+ "source": "WHO FluNet, Malaysia: influenza-positive lab samples per week",
+ "weeks": 400,
+ "segments": [
+  [
+   "2017-01-02",
+   "2018-07-09"
+  ],
+  [
+   "2018-07-23",
+   "2019-12-23"
+  ],
+  [
+   "2022-01-03",
+   "2026-09-07"
+  ]
+ ],
+ "train_end": "2024-05-20",
+ "test_start": "2024-05-27",
+ "test_end": "2026-09-07",
+ "train_years": [
+  2017,
+  2018,
+  2019,
+  2022,
+  2023,
+  2024
+ ],
+ "forecast": [
+  {
+   "weeks_ahead": 1,
+   "n_train": 256,
+   "n_test": 120,
+   "mean_actual": 123.1,
+   "mae": {
+    "last_value": 18.0,
+    "same_week_average": 72.8,
+    "ridge": 23.2,
+    "gradient_boosted": 18.2
+   },
+   "best": "last_value"
+  },
+  {
+   "weeks_ahead": 2,
+   "n_train": 253,
+   "n_test": 120,
+   "mean_actual": 123.1,
+   "mae": {
+    "last_value": 25.7,
+    "same_week_average": 72.8,
+    "ridge": 33.6,
+    "gradient_boosted": 27.5
+   },
+   "best": "last_value"
+  },
+  {
+   "weeks_ahead": 3,
+   "n_train": 250,
+   "n_test": 120,
+   "mean_actual": 123.1,
+   "mae": {
+    "last_value": 33.3,
+    "same_week_average": 72.8,
+    "ridge": 40.3,
+    "gradient_boosted": 37.6
+   },
+   "best": "last_value"
+  },
+  {
+   "weeks_ahead": 4,
+   "n_train": 247,
+   "n_test": 120,
+   "mean_actual": 123.1,
+   "mae": {
+    "last_value": 40.2,
+    "same_week_average": 72.8,
+    "ridge": 47.2,
+    "gradient_boosted": 45.3
+   },
+   "best": "last_value"
+  }
+ ],
+ "outbreak": [
+  {
+   "definition": "usual",
+   "n_train": 247,
+   "train_outbreak_weeks": 15,
+   "n_test": 116,
+   "test_outbreak_weeks": 29,
+   "models": {
+    "already_in_outbreak_now": {
+     "tp": 20,
+     "fp": 3,
+     "tn": 84,
+     "fn": 9,
+     "recall": 0.69,
+     "precision": 0.87
+    },
+    "logistic_regression": {
+     "tp": 7,
+     "fp": 23,
+     "tn": 64,
+     "fn": 22,
+     "recall": 0.241,
+     "precision": 0.233
+    },
+    "gradient_boosted": {
+     "tp": 0,
+     "fp": 2,
+     "tn": 85,
+     "fn": 29,
+     "recall": 0.0,
+     "precision": 0.0
+    }
+   }
+  },
+  {
+   "definition": "rising",
+   "n_train": 247,
+   "train_outbreak_weeks": 134,
+   "n_test": 116,
+   "test_outbreak_weeks": 40,
+   "models": {
+    "already_in_outbreak_now": {
+     "tp": 16,
+     "fp": 5,
+     "tn": 71,
+     "fn": 24,
+     "recall": 0.4,
+     "precision": 0.762
+    },
+    "logistic_regression": {
+     "tp": 14,
+     "fp": 6,
+     "tn": 70,
+     "fn": 26,
+     "recall": 0.35,
+     "precision": 0.7
+    },
+    "gradient_boosted": {
+     "tp": 28,
+     "fp": 10,
+     "tn": 66,
+     "fn": 12,
+     "recall": 0.7,
+     "precision": 0.737
+    }
+   }
+  }
+ ],
+ "extrapolation": [
+  {
+   "weeks_ahead": 1,
+   "start": "2026-09-14",
+   "cases": 172
+  },
+  {
+   "weeks_ahead": 2,
+   "start": "2026-09-21",
+   "cases": 165
+  },
+  {
+   "weeks_ahead": 3,
+   "start": "2026-09-28",
+   "cases": 157
+  },
+  {
+   "weeks_ahead": 4,
+   "start": "2026-10-05",
+   "cases": 156
+  }
+ ],
+ "split_index": 280
+}

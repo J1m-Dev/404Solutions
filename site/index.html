@@ -10,7 +10,7 @@
 <body>
 <header class="top">
   <div class="brand">FluSentinel <span>influenza early warning for Selangor planners</span></div>
-  <nav><a href="#now">Now</a><a href="#forecast">Forecast</a><a href="#selangor">Selangor</a><a href="#proof">Proof</a></nav>
+  <nav><a href="#now">Now</a><a href="#forecast">Forecast</a><a href="#selangor">Selangor</a><a href="#dengue">Dengue</a><a href="#proof">Proof</a></nav>
   <button id="uploadBtn" class="primary">Upload newest data</button>
 </header>
 <div id="stamp" class="stamp"></div>
@@ -52,6 +52,25 @@
   </div>
 </section>
 
+<section id="guide" class="card">
+  <h2>Facilities on the map</h2>
+  <p class="note" id="facNote"></p>
+  <h3>How to verify registered private GP clinics (klinik swasta)</h3>
+  <p class="note">Under Malaysian law (Act 586), private clinics and doctors must be registered with CKAPS, the Private Medical Practice Control Section of the Ministry of Health. Private GP clinics are not plotted here; to check one:</p>
+  <ul class="why">
+    <li><b>CKAPS directory (Ministry of Health):</b> hq.moh.gov.my/medicalprac, under the register of Klinik Perubatan Swasta (Am).</li>
+    <li><b>Malaysian Medical Council:</b> mmc.gov.my, to check that a practitioner is licensed.</li>
+    <li><b>data.gov.my:</b> the Ministry of Health facilities dataset, filtered by Selangor postcodes.</li>
+  </ul>
+</section>
+
+<section id="dengue" class="card">
+  <h2>Dengue (second disease) <span class="chip real">Real data</span> <span class="chip est">Estimated</span></h2>
+  <p class="note" id="dengueNote"></p>
+  <div class="chartbox"><canvas id="dengueChart"></canvas></div>
+  <div id="dengueBody"></div>
+</section>
+
 <section id="proof" class="card">
   <h2>Does it work? Every result, pass or fail</h2>
   <div id="proofBody"></div>
@@ -72,7 +91,13 @@
         <option value="beds">Hospital beds available (planner)</option>
       </select></label>
     <p>Template: <a id="tpl" download></a></p>
-    <label>CSV or Excel file <input type="file" id="ufile" accept=".csv,.xlsx,.xls"></label>
+    <div id="drop" class="drop" role="button" tabindex="0">
+      <b>Drag and drop files or a folder here</b>
+      <span>CSV or Excel. The data type is recognised from the columns. Or click to browse.</span>
+      <span id="dropName" class="dropname"></span>
+      <span id="dropInfo" class="note"></span>
+    </div>
+    <input type="file" id="ufile" accept=".csv,.xlsx,.xls" multiple hidden>
     <p class="or">or type one row</p>
     <div id="manual"></div>
     <button type="button" id="addRow">Add typed row</button>

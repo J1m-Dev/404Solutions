@@ -32,3 +32,11 @@ Uploads are kept in `data/store.json` by `server.js`. This stands in for the dat
 
 ## Labels
 Real data / Estimated / Exploratory / Simulated / Uploaded, not verified. Bed numbers in `pipeline/export.py` are simulated placeholders.
+
+## Added since the first version
+- **Drag and drop upload**: drop files or a folder anywhere on the page; the data type is recognised from the columns. `site/templates/sample_SIMULATED_500_weeks_*.csv` are invented test files (`pipeline/make_sample.py`).
+- **Dengue (second disease)**: `pipeline/dengue.py`, on OpenDengue national weekly counts 2011-2022. Needs scikit-learn.
+- **Influenza case counts and rapid-rise classifier**: `pipeline/flu_cases.py`; the classifier is exported by `pipeline/export.py` and run in the browser.
+- **Facilities map**: `pipeline/facilities.py` looks up the team's hospital and clinic list in OpenStreetMap.
+- Rebuild order: `evaluate.py test`, `gbm.py test`, `dengue.py`, `flu_cases.py`, `export.py`, `parity.py`.
+- Not in the repo (too large): the 500 MB OpenDengue temporal extract. The Malaysia rows used are in `data/raw/opendengue/mys_weekly_national.csv`.

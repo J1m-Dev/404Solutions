@@ -160,5 +160,105 @@
   "note": "Looked at after the test was scored; not a pre-registered result.",
   "first_non_green_week_before_2025_surge": "2025-W39",
   "weeks_before_orange_crossing": 2
+ },
+ "gbm": {
+  "note": "Second scoring of the same test weeks (first was the ridge model). Frozen at tag freeze-v2.",
+  "config": {
+   "n_estimators": 150,
+   "max_depth": 1,
+   "learning_rate": 0.03,
+   "subsample": 0.8,
+   "min_samples_leaf": 8
+  },
+  "per_horizon": [
+   {
+    "h": 1,
+    "n": 74,
+    "mae_model": 1.8382494484668925,
+    "mae_persist": 1.8851252765651676,
+    "mae_seasonal": 9.10273023268383,
+    "skill_persist": 0.024866160716748853,
+    "coverage80": 0.7162162162162162,
+    "rel_interval_score": 1.0076393847512572,
+    "passed": false
+   },
+   {
+    "h": 2,
+    "n": 73,
+    "mae_model": 3.089770575865573,
+    "mae_persist": 3.0937227229422324,
+    "mae_seasonal": 9.21775597525424,
+    "skill_persist": 0.0012774729446020094,
+    "coverage80": 0.6986301369863014,
+    "rel_interval_score": 0.9741277992865851,
+    "passed": false
+   },
+   {
+    "h": 3,
+    "n": 72,
+    "mae_model": 4.281815496183191,
+    "mae_persist": 4.295203958489512,
+    "mae_seasonal": 9.339089536504664,
+    "skill_persist": 0.0031170725385131215,
+    "coverage80": 0.6805555555555556,
+    "rel_interval_score": 0.9888486798609457,
+    "passed": false
+   },
+   {
+    "h": 4,
+    "n": 71,
+    "mae_model": 5.267601843480596,
+    "mae_persist": 5.327560771362493,
+    "mae_seasonal": 9.444632541836597,
+    "skill_persist": 0.011254480325066929,
+    "coverage80": 0.676056338028169,
+    "rel_interval_score": 1.0060211738250011,
+    "passed": false
+   },
+   {
+    "h": 5,
+    "n": 70,
+    "mae_model": 6.540599447698769,
+    "mae_persist": 6.5920127590514825,
+    "mae_seasonal": 9.567649263036424,
+    "skill_persist": 0.007799334320480189,
+    "coverage80": 0.5571428571428572,
+    "rel_interval_score": 1.088121213614136,
+    "passed": false
+   },
+   {
+    "h": 6,
+    "n": 69,
+    "mae_model": 7.8736278225609455,
+    "mae_persist": 7.451304332410163,
+    "mae_seasonal": 9.699695818928847,
+    "skill_persist": -0.0566777937540206,
+    "coverage80": 0.5362318840579711,
+    "rel_interval_score": 1.1223431826985797,
+    "passed": false
+   },
+   {
+    "h": 7,
+    "n": 68,
+    "mae_model": 8.575338037882986,
+    "mae_persist": 8.323107895745633,
+    "mae_seasonal": 9.811522578505205,
+    "skill_persist": -0.030304802640643613,
+    "coverage80": 0.5,
+    "rel_interval_score": 1.1230323701187692,
+    "passed": false
+   },
+   {
+    "h": 8,
+    "n": 67,
+    "mae_model": 9.151427860712895,
+    "mae_persist": 9.210563289436331,
+    "mae_seasonal": 9.867743152630316,
+    "skill_persist": 0.006420392202424741,
+    "coverage80": 0.5522388059701493,
+    "rel_interval_score": 1.0958255278289972,
+    "passed": false
+   }
+  ]
  }
 }

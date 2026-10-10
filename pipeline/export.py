@@ -66,6 +66,34 @@ def stress(series, split, th):
     return res
 
 
+def rise_model(upto=None):
+    """Gradient-boosted 'rapid rise within 4 weeks' classifier, exported as decision stumps for the site.
+
+    Trained on weekly positives for 2017-2019 and 2022 onward (optionally only up to a date)."""
+    import csv as _csv
+    import datetime as dt
+    import dengue as d
+    from sklearn.ensemble import GradientBoostingClassifier
+    rows = []
+    for r in _csv.DictReader(open(c.RAW, encoding="utf-8-sig")):
+        y0 = int(r["ISO_YEAR"])
+        if r["ORIGIN_SOURCE"] in c.SOURCES and (2017 <= y0 <= 2019 or y0 >= 2022) and r["INF_ALL"] != "":
+            st = dt.date.fromisoformat(r["ISO_WEEKSTARTDATE"][:10])
+            if upto is None or st <= upto:
+                rows.append({"start": st, "cases": float(r["INF_ALL"])})
+    rows = d.prep(rows)
+    cs = np.array([r["cases"] for r in rows]); y = np.log1p(cs)
+    rule = lambda j: rows[j - 4]["seg"] == rows[j]["seg"] and cs[j] >= 1.5 * cs[j - 4]
+    idx = [i for i in range(len(rows)) if d.usable(rows, i, 4)]
+    X = np.array([d.feats(rows, y, i, 2) for i in idx]); Y = [any(rule(i + k) for k in d.H) for i in idx]
+    gb = GradientBoostingClassifier(n_estimators=150, max_depth=1, learning_rate=0.03, subsample=0.8, random_state=0).fit(X, Y)
+    stumps = [[int(t.tree_.feature[0]), float(t.tree_.threshold[0]), float(t.tree_.value[1][0][0]), float(t.tree_.value[2][0][0])] for t in gb.estimators_[:, 0]]
+    init = float(gb.decision_function(X[:1])[0] - 0.03 * sum((l if X[0][f] <= th else r) for f, th, l, r in stumps))
+    chk = init + 0.03 * sum((l if X[-1][f] <= th else r) for f, th, l, r in stumps)
+    assert abs(chk - gb.decision_function(X[-1:])[0]) < 1e-6, "stump export does not match the model"
+    return {"init": init, "lr": 0.03, "stumps": [[f, round(th, 6), round(l, 6), round(r, 6)] for f, th, l, r in stumps], "n_train": len(idx)}
+
+
 def main():
     series = c.load_series()
     N = len(series)
@@ -88,7 +116,9 @@ def main():
             "pub_lag": c.PUB_LAG, "n_lags": c.N_LAGS, "n_harm": c.N_HARM, "thresholds": th,
             "series": series, "replay_cut_index": cut,
             "models": {"current": model_set(series, N - 1), "replay": model_set(series, cut)},
-            "validation": val}
+            "validation": val,
+            "rise": {"current": rise_model(), "replay": rise_model(__import__("datetime").date.fromisoformat(series[cut]["start"])),
+                     "test": json.loads((c.ROOT / "outputs" / "flu_cases.json").read_text())["same_test"]["outbreak"][1]}}
     c.dump(site, SITE / "data" / "site.json")
 
     # map: Selangor districts with latest population (thousands)

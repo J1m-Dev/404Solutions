@@ -80,7 +80,20 @@
     return { fc, level, pLast, ahead, hs, wave, waveShare, phase, dataWarning, medN, last, p2, lag };
   }
 
-  const api = { elogit, inv, pct, weekAfter, forecast, aheadHorizons, alertLevel, assess };
+  // Gradient-boosted "rapid rise within 4 weeks" classifier, exported from Python as decision stumps.
+  function riseSignal(series, cls) {
+    const y = series.map((s) => Math.log1p(s.pos)), i = y.length - 1;
+    let m = 0; for (let k = i - 7; k <= i; k++) m += y[k] / 8;
+    const w = weekAfter(series[i].week, 2);
+    const x = [y[i], y[i] - y[i - 1], y[i - 1] - y[i - 2], y[i] - y[i - 3], y[i] - m];
+    for (const k of [1, 2]) { const a = (2 * Math.PI * k * w) / 52; x.push(Math.sin(a), Math.cos(a)); }
+    let z = cls.init;
+    for (const [f, th, l, r] of cls.stumps) z += cls.lr * (x[f] <= th ? l : r);
+    const p = 1 / (1 + Math.exp(-z));
+    return { prob: p, yes: p >= 0.5 };
+  }
+
+  const api = { elogit, inv, pct, weekAfter, forecast, aheadHorizons, alertLevel, assess, riseSignal };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.FluModel = api;
 })(typeof window !== "undefined" ? window : globalThis);

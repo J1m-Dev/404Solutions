@@ -1,0 +1,163 @@
+{
+ "source": "OpenDengue V1.3 temporal extract, Malaysia national weekly (MOH / WHO reports)",
+ "weeks": 624,
+ "segments": [
+  [
+   "2011-01-02",
+   "2014-12-21"
+  ],
+  [
+   "2015-01-04",
+   "2020-12-20"
+  ],
+  [
+   "2021-01-03",
+   "2022-12-25"
+  ]
+ ],
+ "train_end": "2019-05-12",
+ "test_start": "2019-05-19",
+ "test_end": "2022-12-25",
+ "train_years": [
+  2010,
+  2011,
+  2012,
+  2013,
+  2014,
+  2015,
+  2016,
+  2017,
+  2018,
+  2019
+ ],
+ "forecast": [
+  {
+   "weeks_ahead": 1,
+   "n_train": 420,
+   "n_test": 180,
+   "mean_actual": 1438.4,
+   "mae": {
+    "last_value": 130.0,
+    "same_week_average": 673.3,
+    "ridge": 124.0,
+    "gradient_boosted": 130.5
+   },
+   "best": "ridge"
+  },
+  {
+   "weeks_ahead": 2,
+   "n_train": 418,
+   "n_test": 179,
+   "mean_actual": 1443.4,
+   "mae": {
+    "last_value": 166.1,
+    "same_week_average": 671.1,
+    "ridge": 150.5,
+    "gradient_boosted": 152.7
+   },
+   "best": "ridge"
+  },
+  {
+   "weeks_ahead": 3,
+   "n_train": 416,
+   "n_test": 178,
+   "mean_actual": 1448.5,
+   "mae": {
+    "last_value": 218.9,
+    "same_week_average": 669.2,
+    "ridge": 178.0,
+    "gradient_boosted": 188.9
+   },
+   "best": "ridge"
+  },
+  {
+   "weeks_ahead": 4,
+   "n_train": 414,
+   "n_test": 177,
+   "mean_actual": 1453.9,
+   "mae": {
+    "last_value": 271.5,
+    "same_week_average": 667.4,
+    "ridge": 207.5,
+    "gradient_boosted": 219.9
+   },
+   "best": "ridge"
+  }
+ ],
+ "outbreak": [
+  {
+   "definition": "usual",
+   "n_train": 414,
+   "train_outbreak_weeks": 0,
+   "n_test": 173,
+   "test_outbreak_weeks": 8,
+   "models": {
+    "already_in_outbreak_now": {
+     "tp": 2,
+     "fp": 1,
+     "tn": 164,
+     "fn": 6,
+     "recall": 0.25,
+     "precision": 0.667
+    }
+   },
+   "note": "Training weeks contain only one class, so no classifier could be trained."
+  },
+  {
+   "definition": "rising",
+   "n_train": 414,
+   "train_outbreak_weeks": 53,
+   "n_test": 173,
+   "test_outbreak_weeks": 13,
+   "models": {
+    "already_in_outbreak_now": {
+     "tp": 1,
+     "fp": 3,
+     "tn": 157,
+     "fn": 12,
+     "recall": 0.077,
+     "precision": 0.25
+    },
+    "logistic_regression": {
+     "tp": 8,
+     "fp": 69,
+     "tn": 91,
+     "fn": 5,
+     "recall": 0.615,
+     "precision": 0.104
+    },
+    "gradient_boosted": {
+     "tp": 4,
+     "fp": 0,
+     "tn": 160,
+     "fn": 9,
+     "recall": 0.308,
+     "precision": 1.0
+    }
+   }
+  }
+ ],
+ "extrapolation": [
+  {
+   "weeks_ahead": 1,
+   "start": "2023-01-01",
+   "cases": 2057
+  },
+  {
+   "weeks_ahead": 2,
+   "start": "2023-01-08",
+   "cases": 2070
+  },
+  {
+   "weeks_ahead": 3,
+   "start": "2023-01-15",
+   "cases": 2068
+  },
+  {
+   "weeks_ahead": 4,
+   "start": "2023-01-22",
+   "cases": 2059
+  }
+ ],
+ "split_index": 436
+}

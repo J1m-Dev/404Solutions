@@ -4,3 +4,5 @@ node_modules/
 __pycache__/
 .vercel/
 data/store.json
+data/raw/opendengue/Temporal_extract_V1_3.csv
+data/raw/opendengue/*.zip

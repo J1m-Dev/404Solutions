@@ -1,0 +1,1010 @@
+[
+ {
+  "name": "Hospital Shah Alam",
+  "kind": "government",
+  "district": "Petaling",
+  "address": "Persiaran Kayangan, Seksyen 7, 40000 Shah Alam",
+  "lat": 3.07093,
+  "lon": 101.48985,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Tengku Ampuan Rahimah",
+  "kind": "government",
+  "district": "Klang",
+  "address": "Jalan Langat, 41200 Klang",
+  "lat": 3.02685,
+  "lon": 101.44234,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Sungai Buloh",
+  "kind": "government",
+  "district": "Petaling / Gombak",
+  "address": "Jalan Hospital, 47000 Sungai Buloh",
+  "lat": 3.21,
+  "lon": 101.55,
+  "approximate": true
+ },
+ {
+  "name": "Hospital Sultan Idris Shah Serdang",
+  "kind": "government",
+  "district": "Sepang / Hulu Langat",
+  "address": "Jalan Puchong, 43000 Kajang",
+  "lat": 2.97685,
+  "lon": 101.72077,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Selayang",
+  "kind": "government",
+  "district": "Gombak",
+  "address": "Lebuhraya Selayang-Kepong, 68100 Batu Caves",
+  "lat": 3.24342,
+  "lon": 101.64697,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Ampang",
+  "kind": "government",
+  "district": "Hulu Langat",
+  "address": "Jalan Mewah Utara, Pandan Mewah, 68000 Ampang",
+  "lat": 3.12811,
+  "lon": 101.76395,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Kajang",
+  "kind": "government",
+  "district": "Hulu Langat",
+  "address": "Jalan Semenyih, Bandar Kajang, 43000 Kajang",
+  "lat": 2.99422,
+  "lon": 101.79289,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Cyberjaya",
+  "kind": "government",
+  "district": "Sepang",
+  "address": "Persiaran Multimedia, Cyber 11, 63000 Cyberjaya",
+  "lat": 2.92013,
+  "lon": 101.63109,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Banting",
+  "kind": "government",
+  "district": "Kuala Langat",
+  "address": "Jalan Sultan Alam Shah, 42700 Banting",
+  "lat": 2.80337,
+  "lon": 101.49247,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Kuala Kubu Bharu",
+  "kind": "government",
+  "district": "Hulu Selangor",
+  "address": "Jalan Hospital, 44000 Kuala Kubu Bharu",
+  "lat": 3.56514,
+  "lon": 101.6527,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Tanjong Karang",
+  "kind": "government",
+  "district": "Kuala Selangor",
+  "address": "Jalan Lencungan, Kampung Tanjong Karang, 45500 Tanjong Karang",
+  "lat": 3.39595,
+  "lon": 101.21702,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Tengku Ampuan Jemaah",
+  "kind": "government",
+  "district": "Sabak Bernam",
+  "address": "Jalan Hospital, 45200 Sabak Bernam",
+  "lat": 3.76328,
+  "lon": 100.98448,
+  "approximate": true
+ },
+ {
+  "name": "Hospital Sultan Abdul Aziz Shah UPM (teaching)",
+  "kind": "government",
+  "district": "Sepang",
+  "address": "Persiaran MARDI-UPM, 43400 Serdang",
+  "lat": 2.98009,
+  "lon": 101.71796,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Al-Sultan Abdullah UiTM (teaching)",
+  "kind": "government",
+  "district": "Kuala Selangor",
+  "address": "Jalan Puncak Alam 6/1, Bandar Puncak Alam, 42300 Bandar Puncak Alam",
+  "lat": 3.20964,
+  "lon": 101.45095,
+  "approximate": false
+ },
+ {
+  "name": "Subang Jaya Medical Centre",
+  "kind": "private",
+  "district": "Subang Jaya",
+  "address": "1, Jalan SS 12/1A, SS 12, 47500 Subang Jaya",
+  "lat": 3.07908,
+  "lon": 101.59367,
+  "approximate": false
+ },
+ {
+  "name": "Sunway Medical Centre",
+  "kind": "private",
+  "district": "Bandar Sunway",
+  "address": "5, Jalan Lagoon Selatan, Bandar Sunway, 47500 Subang Jaya",
+  "lat": 3.06611,
+  "lon": 101.60855,
+  "approximate": false
+ },
+ {
+  "name": "Thomson Hospital Kota Damansara",
+  "kind": "private",
+  "district": "Kota Damansara",
+  "address": "11, Jalan Teknologi, PJU 5, Kota Damansara, 47810 Petaling Jaya",
+  "lat": 3.14881,
+  "lon": 101.57859,
+  "approximate": false
+ },
+ {
+  "name": "Ara Damansara Medical Centre",
+  "kind": "private",
+  "district": "Ara Damansara",
+  "address": "Lot 2, Jalan Lapangan Terbang Subang, Seksyen U2, 40150 Shah Alam",
+  "lat": 3.11466,
+  "lon": 101.56499,
+  "approximate": false
+ },
+ {
+  "name": "Assunta Hospital",
+  "kind": "private",
+  "district": "Petaling Jaya",
+  "address": "Jalan Templer, 46928 Petaling Jaya",
+  "lat": 3.09888,
+  "lon": 101.64542,
+  "approximate": true
+ },
+ {
+  "name": "Beacon Hospital",
+  "kind": "private",
+  "district": "Petaling Jaya",
+  "address": "1, Jalan 215, Seksyen 51A, 46050 Petaling Jaya",
+  "lat": 3.09146,
+  "lon": 101.63795,
+  "approximate": false
+ },
+ {
+  "name": "KPJ Damansara Specialist Hospital",
+  "kind": "private",
+  "district": "Damansara Utama",
+  "address": "119, Jalan SS 20/10, Damansara Utama, 47400 Petaling Jaya",
+  "lat": 3.13739,
+  "lon": 101.62754,
+  "approximate": false
+ },
+ {
+  "name": "KPJ Damansara Specialist Hospital 2",
+  "kind": "private",
+  "district": "Bukit Lanjan",
+  "address": "Jalan Bukit Lanjan, 60000 Petaling Jaya",
+  "lat": 3.09888,
+  "lon": 101.64542,
+  "approximate": true
+ },
+ {
+  "name": "Kelana Jaya Medical Centre",
+  "kind": "private",
+  "district": "Kelana Jaya",
+  "address": "No. 4, Jalan SS 7/13, Kelana Jaya, 47301 Petaling Jaya",
+  "lat": 3.10868,
+  "lon": 101.64214,
+  "approximate": true
+ },
+ {
+  "name": "Columbia Asia Hospital Petaling Jaya",
+  "kind": "private",
+  "district": "Petaling Jaya",
+  "address": "Lot 69, Jalan Universiti, Seksyen 13, 46200 Petaling Jaya",
+  "lat": 3.11805,
+  "lon": 101.63787,
+  "approximate": false
+ },
+ {
+  "name": "Columbia Asia Hospital Puchong",
+  "kind": "private",
+  "district": "Puchong",
+  "address": "No. 1, Lebuh Puteri, Bandar Puteri Puchong, 47100 Puchong",
+  "lat": 3.02408,
+  "lon": 101.62251,
+  "approximate": false
+ },
+ {
+  "name": "KPJ Selangor Specialist Hospital",
+  "kind": "private",
+  "district": "Shah Alam",
+  "address": "Lot 1, Jalan Singa 20/1, Seksyen 20, 40300 Shah Alam",
+  "lat": 3.05749,
+  "lon": 101.54099,
+  "approximate": false
+ },
+ {
+  "name": "Avisena Specialist Hospital",
+  "kind": "private",
+  "district": "Shah Alam",
+  "address": "No. 4, Jalan Ikhtisas, Seksyen 14, 40000 Shah Alam",
+  "lat": 3.07141,
+  "lon": 101.52369,
+  "approximate": false
+ },
+ {
+  "name": "Avisena Women's & Children's Specialist Hospital",
+  "kind": "private",
+  "district": "Shah Alam",
+  "address": "No. 8, Jalan Ikhtisas, Seksyen 14, 40000 Shah Alam",
+  "lat": 3.07166,
+  "lon": 101.52103,
+  "approximate": false
+ },
+ {
+  "name": "SALAM Shah Alam Specialist Hospital",
+  "kind": "private",
+  "district": "Shah Alam",
+  "address": "2-14, Jalan Nelayan 19/B, Seksyen 19, 40300 Shah Alam",
+  "lat": 3.04913,
+  "lon": 101.53517,
+  "approximate": false
+ },
+ {
+  "name": "Columbia Asia Hospital Bukit Rimau",
+  "kind": "private",
+  "district": "Shah Alam",
+  "address": "No. 3, Persiaran Anggerik Eria, Bukit Rimau, 40460 Shah Alam",
+  "lat": 2.9972,
+  "lon": 101.52877,
+  "approximate": false
+ },
+ {
+  "name": "KPJ Klang Specialist Hospital",
+  "kind": "private",
+  "district": "Klang",
+  "address": "No. 102, Persiaran Rajawali/KU 1, Bandar Baru Klang, 41150 Klang",
+  "lat": 3.06251,
+  "lon": 101.46328,
+  "approximate": false
+ },
+ {
+  "name": "Pantai Hospital Klang",
+  "kind": "private",
+  "district": "Port Klang",
+  "address": "Lot 4434, Persiaran Raja Muda Musa, 42000 Pelabuhan Klang",
+  "lat": 3.02639,
+  "lon": 101.42631,
+  "approximate": false
+ },
+ {
+  "name": "Bukit Tinggi Medical Centre",
+  "kind": "private",
+  "district": "Klang",
+  "address": "1, Persiaran Batu Nilam 1/KS6, Bandar Bukit Tinggi 1, 41200 Klang",
+  "lat": 3.01012,
+  "lon": 101.4317,
+  "approximate": false
+ },
+ {
+  "name": "Sri Kota Specialist Medical Centre",
+  "kind": "private",
+  "district": "Klang",
+  "address": "Jalan Mohet, 41000 Klang",
+  "lat": 3.04044,
+  "lon": 101.44555,
+  "approximate": false
+ },
+ {
+  "name": "Columbia Asia Hospital Klang",
+  "kind": "private",
+  "district": "Klang",
+  "address": "Lot 8582, Batu 1 1/4, Jalan Meru, 41050 Klang",
+  "lat": 3.08591,
+  "lon": 101.44659,
+  "approximate": false
+ },
+ {
+  "name": "KPJ Kajang Specialist Hospital",
+  "kind": "private",
+  "district": "Kajang",
+  "address": "Jalan Cheras, 43000 Kajang",
+  "lat": 2.9999,
+  "lon": 101.78589,
+  "approximate": false
+ },
+ {
+  "name": "Columbia Asia Hospital Cheras",
+  "kind": "private",
+  "district": "Balakong",
+  "address": "Menara Columbia Asia, Jalan Cheras Selatan, 43200 Balakong",
+  "lat": 3.03179,
+  "lon": 101.76288,
+  "approximate": false
+ },
+ {
+  "name": "Sungai Long Specialist Hospital",
+  "kind": "private",
+  "district": "Bandar Sungai Long",
+  "address": "Jalan SL 1/1, Bandar Sungai Long, 43000 Kajang",
+  "lat": 3.03965,
+  "lon": 101.79512,
+  "approximate": false
+ },
+ {
+  "name": "Hospital Islam Az-Zahrah",
+  "kind": "private",
+  "district": "Bandar Baru Bangi",
+  "address": "No. 14 & 16, Medan Pusat Bandar 1, Seksyen 9, 43650 Bangi",
+  "lat": 2.92408,
+  "lon": 101.78122,
+  "approximate": true
+ },
+ {
+  "name": "Hospital Pakar An-Nur",
+  "kind": "private",
+  "district": "Bandar Baru Bangi",
+  "address": "Jalan Gerbang Wawasan 1, Bangi Gateway, Seksyen 15, 43650 Bangi",
+  "lat": 2.93302,
+  "lon": 101.76451,
+  "approximate": false
+ },
+ {
+  "name": "KPJ Ampang Puteri Specialist Hospital",
+  "kind": "private",
+  "district": "Ampang",
+  "address": "1, Jalan Mamanda 9, Taman Dato Ahmad Razali, 68000 Ampang",
+  "lat": 3.16004,
+  "lon": 101.75154,
+  "approximate": false
+ },
+ {
+  "name": "Pantai Hospital Ampang",
+  "kind": "private",
+  "district": "Pandan Indah",
+  "address": "Jalan Perubatan 1, Pandan Indah, 55100 Ampang",
+  "lat": 3.12776,
+  "lon": 101.75224,
+  "approximate": false
+ },
+ {
+  "name": "KPJ Rawang Specialist Hospital",
+  "kind": "private",
+  "district": "Rawang",
+  "address": "Jalan Rawang, Bandar Baru Rawang, 48000 Rawang",
+  "lat": 3.3207,
+  "lon": 101.57894,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Kelana Jaya",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Lot 38294, Jalan SS 6/3A, 47301 Kelana Jaya",
+  "lat": 3.09899,
+  "lon": 101.60066,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Taman Medan",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Jalan PJS 2C/5, Taman Dato Haron, 46000 Petaling Jaya",
+  "lat": 3.07904,
+  "lon": 101.63453,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Puchong (Batu 14)",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Batu 14, Jalan Puchong, 47100 Puchong",
+  "lat": 2.99377,
+  "lon": 101.61913,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Batu 13 Puchong",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Batu 13, Jalan Klang Lama, 47100 Puchong",
+  "lat": 3.02096,
+  "lon": 101.59245,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Kota Damansara",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Tingkat 3, Jalan Pekaka 8/3, Seksyen 8, 47810 Kota Damansara",
+  "lat": 3.17652,
+  "lon": 101.57553,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Seksyen 7 Shah Alam",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "No. 2, Persiaran Kayangan, Seksyen 7, 40000 Shah Alam",
+  "lat": 3.07239,
+  "lon": 101.491,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Seksyen 19 Shah Alam",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Jalan Gelora 19/46, Seksyen 19, 40300 Shah Alam",
+  "lat": 3.11972,
+  "lon": 101.56011,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Kampung Melayu Subang",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Jalan Merbau, Kg Melayu Subang, 40150 Shah Alam",
+  "lat": 3.11972,
+  "lon": 101.56011,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Paya Jaras",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Batu 15, Kampung Paya Jaras, 47000 Sungai Buloh",
+  "lat": 3.20041,
+  "lon": 101.55134,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Seri Kembangan",
+  "kind": "clinic",
+  "district": "Petaling",
+  "address": "Jalan Besar Seri Kembangan, 43300 Seri Kembangan",
+  "lat": 3.0274,
+  "lon": 101.71167,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bandar Botanik",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "Blok A, Jalan Langat, Bandar Botanik, 41200 Klang",
+  "lat": 2.98984,
+  "lon": 101.44751,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bukit Kuda",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "Jalan Batu Tiga Lama, 41300 Klang",
+  "lat": 3.05067,
+  "lon": 101.45827,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Meru",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "PT 55/61, Jalan Kenangan, 41050 Meru",
+  "lat": 3.13688,
+  "lon": 101.44119,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Pelabuhan Klang",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "Persiaran Raja Muda Musa, 42000 Pelabuhan Klang",
+  "lat": 3.00084,
+  "lon": 101.394,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Pulau Indah",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "Jalan Rahmat, 42920 Pulau Indah",
+  "lat": 2.96078,
+  "lon": 101.34677,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Rantau Panjang",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "Jalan Rantau Panjang, 42100 Klang",
+  "lat": 3.06889,
+  "lon": 101.4115,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sungai Bertik",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "Jalan Tepi Sungai, 41100 Klang",
+  "lat": 3.03688,
+  "lon": 101.5349,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Bukit Naga",
+  "kind": "clinic",
+  "district": "Klang",
+  "address": "Seksyen 32, Bukit Naga, 40460 Shah Alam",
+  "lat": 3.0032,
+  "lon": 101.50532,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Kajang",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Jalan Semenyih, 43000 Kajang",
+  "lat": 2.97872,
+  "lon": 101.82548,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bandar Baru Bangi",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Persiaran 3, Seksyen 3, 43650 Bandar Baru Bangi",
+  "lat": 2.93548,
+  "lon": 101.77385,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bandar Seri Putra",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Jalan Seri Putra, Bandar Seri Putra, 43000 Kajang",
+  "lat": 2.88799,
+  "lon": 101.79264,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Batu 9 Cheras",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Batu 9, Cheras, 43200 Cheras",
+  "lat": 3.06965,
+  "lon": 101.77417,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Batu 14 Hulu Langat",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Jalan Hulu Langat, Kampung Batu 14, 43100 Hulu Langat",
+  "lat": 3.11095,
+  "lon": 101.81508,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bandar Tun Hussein Onn",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Jalan Suadamai, Bandar Tun Hussein Onn, 43200 Cheras",
+  "lat": 3.05499,
+  "lon": 101.75694,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Balakong",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Kampung Baru Balakong, 43300 Balakong",
+  "lat": 3.02737,
+  "lon": 101.74676,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Semenyih",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Kampung Baru Cina, 43500 Semenyih",
+  "lat": 2.95181,
+  "lon": 101.84022,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Beranang",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Jalan Seremban, 43700 Beranang",
+  "lat": 2.90437,
+  "lon": 101.8648,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Sungai Chua",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Kawasan Perindustrian Sungai Chua, 43000 Kajang",
+  "lat": 2.98606,
+  "lon": 101.77162,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Ampang",
+  "kind": "clinic",
+  "district": "Hulu Langat",
+  "address": "Jalan Mewah 3, Pekan Ampang, 68000 Ampang",
+  "lat": 3.1453,
+  "lon": 101.76137,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Selayang Baru",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "Jalan Sungai Tua, Mukim Batu, 68100 Batu Caves",
+  "lat": 3.2452,
+  "lon": 101.67359,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Rawang",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "Jalan Maxwell, 48000 Rawang",
+  "lat": 3.3147,
+  "lon": 101.59623,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Taman Ehsan",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "Jalan E4/16, Taman Ehsan, 52100 Kepong",
+  "lat": 3.22409,
+  "lon": 101.62295,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Gombak Setia",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "PT 4453, Lorong Penghulu, Gombak Setia, 53100 Gombak",
+  "lat": 3.21807,
+  "lon": 101.71462,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Batu 8 Gombak",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "Batu 8, Jalan Gombak Utara, 53100 Gombak",
+  "lat": 3.24591,
+  "lon": 101.72253,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Kuang",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "Batu 20, Kuang, 48050 Rawang",
+  "lat": 3.26015,
+  "lon": 101.5522,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Batu Arang",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "JKR G/1325, 48100 Batu Arang",
+  "lat": 3.31946,
+  "lon": 101.47252,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Hulu Kelang",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "Jalan Datok Abu Samah, Kampung Pasir, 68000 Ampang",
+  "lat": 3.1751,
+  "lon": 101.74899,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan AU2 (Taman Keramat)",
+  "kind": "clinic",
+  "district": "Gombak",
+  "address": "Jalan AU2, Taman Sri Keramat, 54200 Gombak",
+  "lat": 3.1751,
+  "lon": 101.74899,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Cyberjaya",
+  "kind": "clinic",
+  "district": "Sepang",
+  "address": "Kompleks Kesihatan Cyberjaya, Persiaran Multimedia, 63000 Cyberjaya",
+  "lat": 2.91827,
+  "lon": 101.62171,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Dengkil",
+  "kind": "clinic",
+  "district": "Sepang",
+  "address": "Jalan Besar Dengkil, 43800 Dengkil",
+  "lat": 2.85985,
+  "lon": 101.68179,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Salak",
+  "kind": "clinic",
+  "district": "Sepang",
+  "address": "Jalan Salak, 43900 Sepang",
+  "lat": 2.78946,
+  "lon": 101.74921,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sepang",
+  "kind": "clinic",
+  "district": "Sepang",
+  "address": "Jalan Kelap, Pekan Sepang, 43900 Sepang",
+  "lat": 2.68936,
+  "lon": 101.75001,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sungai Pelek",
+  "kind": "clinic",
+  "district": "Sepang",
+  "address": "Jalan Sungai Pelek, 43950 Sungai Pelek",
+  "lat": 2.64515,
+  "lon": 101.71819,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Telok Datok",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Jalan Pegawai, 42700 Banting",
+  "lat": 2.81948,
+  "lon": 101.51716,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bukit Changgang",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Jalan Labohan Dagang, 42700 Banting",
+  "lat": 2.82701,
+  "lon": 101.62066,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Telok Panglima Garang",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Pekan Telok Panglima Garang, 42500 Telok Panglima Garang",
+  "lat": 2.90506,
+  "lon": 101.4676,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Jenjarom",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Jalan Kampung, 42600 Jenjarom",
+  "lat": 2.8782,
+  "lon": 101.50034,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sijangkang",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Jalan Sekolah, Batu 1, Kg Sijangkang, 42500 Telok Panglima Garang",
+  "lat": 2.9415,
+  "lon": 101.45628,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sungai Lang",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Kampung Sungai Lang Tengah, 42700 Banting",
+  "lat": 2.82166,
+  "lon": 101.52759,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Tanjung Sepat",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Jalan Besar, 42800 Tanjung Sepat",
+  "lat": 2.66586,
+  "lon": 101.55117,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Kampung Bandar",
+  "kind": "clinic",
+  "district": "Kuala Langat",
+  "address": "Jalan Kurau Chodoi, Bandar, 42700 Banting",
+  "lat": 2.99517,
+  "lon": 101.62031,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Kuala Selangor",
+  "kind": "clinic",
+  "district": "Kuala Selangor",
+  "address": "Jalan Klinik, 45000 Kuala Selangor",
+  "lat": 3.33671,
+  "lon": 101.24972,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Tanjung Karang",
+  "kind": "clinic",
+  "district": "Kuala Selangor",
+  "address": "Jalan Sungai Kajang, 45500 Tanjong Karang",
+  "lat": 3.42163,
+  "lon": 101.17363,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bestari Jaya",
+  "kind": "clinic",
+  "district": "Kuala Selangor",
+  "address": "Lot 1867, Jalan Kampong, 45600 Bestari Jaya",
+  "lat": 3.37801,
+  "lon": 101.41022,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Jeram",
+  "kind": "clinic",
+  "district": "Kuala Selangor",
+  "address": "Jalan Klang, 45800 Jeram",
+  "lat": 3.23327,
+  "lon": 101.31447,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Ijok",
+  "kind": "clinic",
+  "district": "Kuala Selangor",
+  "address": "JKR 1087, Jalan Simpang 3, 45600 Ijok",
+  "lat": 3.31754,
+  "lon": 101.41419,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bukit Cherakah",
+  "kind": "clinic",
+  "district": "Kuala Selangor",
+  "address": "Jalan Masjid, Kampung Bukit Cherakah, 45800 Jeram",
+  "lat": 3.22635,
+  "lon": 101.31509,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Kuala Kubu Bharu",
+  "kind": "clinic",
+  "district": "Hulu Selangor",
+  "address": "Jalan Hospital, 44000 Kuala Kubu Bharu",
+  "lat": 3.56783,
+  "lon": 101.66106,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Bukit Sentosa",
+  "kind": "clinic",
+  "district": "Hulu Selangor",
+  "address": "Jalan Bukit Sentosa, 48300 Rawang",
+  "lat": 3.3189,
+  "lon": 101.57502,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Serendah",
+  "kind": "clinic",
+  "district": "Hulu Selangor",
+  "address": "Jalan Besar, 48200 Serendah",
+  "lat": 3.36147,
+  "lon": 101.60326,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Ulu Yam Bharu",
+  "kind": "clinic",
+  "district": "Hulu Selangor",
+  "address": "Jalan Besar, 44300 Batang Kali",
+  "lat": 3.43573,
+  "lon": 101.65716,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Rasa",
+  "kind": "clinic",
+  "district": "Hulu Selangor",
+  "address": "Jalan Besar Rasa, 44200 Rasa",
+  "lat": 3.49806,
+  "lon": 101.63615,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Kalumpang",
+  "kind": "clinic",
+  "district": "Hulu Selangor",
+  "address": "44100 Kerling",
+  "lat": 3.63678,
+  "lon": 101.57286,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Hulu Bernam",
+  "kind": "clinic",
+  "district": "Hulu Selangor",
+  "address": "Jalan Besar, 35900 Hulu Bernam",
+  "lat": 3.6385,
+  "lon": 101.56905,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sabak Bernam",
+  "kind": "clinic",
+  "district": "Sabak Bernam",
+  "address": "Jalan Raja Chulan, 45200 Sabak Bernam",
+  "lat": 3.50998,
+  "lon": 101.1028,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sungai Besar",
+  "kind": "clinic",
+  "district": "Sabak Bernam",
+  "address": "Jalan Sungai Limau, 45300 Sungai Besar",
+  "lat": 3.6757,
+  "lon": 100.98838,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sekinchan",
+  "kind": "clinic",
+  "district": "Sabak Bernam",
+  "address": "Jalan Pekan, 45100 Sekinchan",
+  "lat": 3.50998,
+  "lon": 101.1028,
+  "approximate": false
+ },
+ {
+  "name": "Klinik Kesihatan Sungai Air Tawar",
+  "kind": "clinic",
+  "district": "Sabak Bernam",
+  "address": "Jalan Sekolah, 45100 Sungai Air Tawar",
+  "lat": 3.84426,
+  "lon": 100.89595,
+  "approximate": true
+ },
+ {
+  "name": "Klinik Kesihatan Bagan Terap",
+  "kind": "clinic",
+  "district": "Sabak Bernam",
+  "address": "Jalan Parit 4, 45300 Sungai Besar",
+  "lat": 3.67771,
+  "lon": 100.98803,
+  "approximate": true
+ }
+]
