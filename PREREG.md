@@ -28,3 +28,6 @@ A surge is the first week above the Orange line after four weeks at or below it.
 - School-term and search-interest features were not built (time).
 - The 2023-to-2024 source-label change was not formally tested; specimen volumes are similar across it.
 - Few surges exist, so alert results are counts, not rates.
+
+## Addendum, 10 Oct 2026: gradient-boosted model (frozen at tag `freeze-v2`)
+Added after the ridge model failed. Gradient-boosted trees predict the change in logit positivity from the newest week; features are recent level and changes, an 8-week deviation, A(H3) and B shares, and yearly harmonics. Setting chosen from five on training-week origins only: 150 trees, depth 1, learning rate 0.03. Interval width comes from past last-value errors. Same per-horizon pass rule. **This is a second scoring of the same test weeks**, so a pass here is weaker evidence than a first-time pass.
