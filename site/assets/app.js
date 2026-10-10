@@ -609,9 +609,9 @@ function renderTrust() {
     <div class="kpi"><b>${O.watch.tp} of ${O.onsets}</b><span>quiet weeks that were followed by a rapid rise were already in Watch or Warning; ${O.warning.tp} were in Warning.</span></div>
     <div class="kpi"><b>${pc(T.watch.tp + T.watch.fp, N)}% of weeks</b><span>are Watch or higher, so it is a risk band, not an alarm. Warning alone is on in ${pc(T.warning.tp + T.warning.fp, N)}% of weeks.</span></div>
   </div>
-  <h3>Six years of weekly positives, and what the classifier said each week <span class="chip real">Real data</span></h3>
+  <h3>Weekly positives since 2022, what the classifier said each week, and the four weeks ahead <span class="chip real">Real data</span></h3>
   <div class="chartbox evchart"><canvas id="evChart"></canvas></div>
-  <p class="note">Line: weekly influenza positives, Malaysia; red where a rapid rise was under way. Strip along the bottom: the band that week (grey Clear, yellow Watch, orange Warning). A coloured strip ahead of a red stretch is a warning that came first; colour with no red after it is a false warning, and those are left in. 2020 and 2021 have no usable weekly counts.</p>
+  <p class="note">Line: weekly influenza positives, Malaysia; red where a rapid rise was under way. Strip along the bottom: the band that week (grey Clear, yellow Watch, orange Warning). A coloured strip ahead of a red stretch is a warning that came first; colour with no red after it is a false warning, and those are left in. 2018 and 2019 are in the test and in the numbers above but are not drawn; 2020 and 2021 have no usable weekly counts. <span id="evAhead"></span></p>
   <div class="grid2">
     <div>
       <h3>How often each band was followed by a rapid rise</h3>
@@ -660,14 +660,34 @@ function renderTrust() {
   </ul>
   <p class="note"><b>Second disease: the forecast worked, the classifier did not.</b> ${DENGUE && (DENGUE.forecast_measured || DENGUE.forecast) ? `On weekly dengue counts the best model beat "same as last week" by ${(DENGUE.forecast_measured || DENGUE.forecast).map((f) => Math.round((1 - f.mae[f.best] / f.mae.last_value) * 100) + "%").join(", ")} at one to four weeks ahead (${[...new Set((DENGUE.forecast_measured || DENGUE.forecast).map((f) => f.n_test))].sort().join(" to ")} measured weeks; the best of two models is taken at each horizon). ` : ""}${(() => { const o = DENGUE && (DENGUE.outbreak || []).find((x) => x.definition === "rising"), g = o && o.models.gradient_boosted; return g ? `The same kind of rapid-rise classifier flagged only ${g.tp} of ${g.tp + g.fn} dengue rise weeks, so dengue supports the forecasting method, not the classifier. ` : ""; })()}For influenza it is the other way round: forecasting the exact level did not beat that simple guess, so it is not shown as a forecast; the alert rule still reads that projection in three places, and it never decided a high alert in testing. Both are under <a href="#proof">Every result, pass or fail</a> and <a href="#dengue">Second disease: dengue</a>.</p>`;
   // leave a visible break wherever the weeks are not consecutive (2020 and 2021 are missing)
-  const W = []; EVID.weeks.forEach((w, i) => { if (i && new Date(w.start) - new Date(EVID.weeks[i - 1].start) > 30 * 864e5) for (let k = 0; k < 6; k++) W.push(null); W.push(w); });
-  const COL = { clear: "#c3ccd5", watch: "#e2b100", warning: "#d9660b" }, bandOf = (w) => (w.score >= S.t.warning ? "warning" : w.score >= S.t.watch ? "watch" : "clear");
+  const W = []; EVID.weeks.filter((w) => w.year >= 2022).forEach((w, i, ws) => { const EVID = { weeks: ws }; if (i && new Date(w.start) - new Date(EVID.weeks[i - 1].start) > 30 * 864e5) for (let k = 0; k < 6; k++) W.push(null); W.push(w); });
+  // After the tested weeks: the newest public weeks (their four weeks ahead are not over, so no outcome yet), then the four weeks ahead.
+  const lastEv = EVID.weeks[EVID.weeks.length - 1].start, cut = D.rise.current.tiers || S.t;
+  D.series.forEach((x, i) => { if (x.start > lastEv) W.push({ start: x.start, positives: x.pos, score: M.riseSignal(D.series.slice(0, i + 1), D.rise.current).prob, pending: true }); });
+  const newest = D.series[D.series.length - 1], nowScore = M.riseSignal(D.series, D.rise.current).prob, nowBand = nowScore >= cut.warning ? "warning" : nowScore >= cut.watch ? "watch" : "clear", iNow = W.length - 1;
+  const fcA = M.forecast(D.series, D.models.current, D), cnt = (p) => Math.round((p / 100) * newest.n);
+  for (let k = 1; k <= 4; k++) W.push({ start: new Date(+new Date(newest.start) + k * 7 * 864e5).toISOString().slice(0, 10), future: true, model: cnt(fcA[k].model), lo: cnt(fcA[k].lo), hi: cnt(fcA[k].hi) });
+  $("evAhead").innerHTML = `<b>Right edge, shaded: the four weeks after the newest data (after ${wk(newest)}).</b> The shade is the classifier's band for those weeks (${STEP[nowBand].name}). The purple line is the model's projection: it projects positivity (${f1(fcA[1].model)}% next week, ${f1(fcA[4].model)}% in four weeks), turned into counts by assuming the same ${Math.round(newest.n)} samples a week as the newest week; the purple area is the usual range of change. The dotted blue line carries the newest count forward. <b>In testing the projection was no more accurate than that dotted line</b>, so read it as a direction, not a number to plan on.`;
+  const ahead = (key) => W.map((w, i) => (i === iNow ? newest.pos : w && w.future ? w[key] : null));
+  const COL = { clear: "#c3ccd5", watch: "#e2b100", warning: "#d9660b" }, bandOf = (w) => (w.future ? nowBand : w.score >= S.t.warning ? "warning" : w.score >= S.t.watch ? "watch" : "clear");
   if (evChart) evChart.destroy();
   evChart = new Chart($("evChart"), { type: "line", data: { labels: W.map((w) => (w ? w.start : "")), datasets: [
-    { label: "Weekly positives", data: W.map((w) => (w ? w.positives : null)), borderColor: "#16202a", borderWidth: 1.5, pointRadius: 0, spanGaps: false, segment: { borderColor: (x) => (W[x.p1DataIndex] && W[x.p1DataIndex].rise_now ? "#c0282d" : "#16202a"), borderWidth: (x) => (W[x.p1DataIndex] && W[x.p1DataIndex].rise_now ? 2.5 : 1.5) } },
-    { label: "Classifier band that week", data: W.map((w) => (w ? 0 : null)), showLine: false, pointStyle: "rect", pointRadius: 3.5, pointHoverRadius: 5, pointBackgroundColor: W.map((w) => (w ? COL[bandOf(w)] : "transparent")), pointBorderColor: W.map((w) => (w ? COL[bandOf(w)] : "transparent")), clip: false } ] },
-    options: { maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (t) => { const w = W[t.dataIndex]; return w ? (t.datasetIndex ? `Band: ${STEP[bandOf(w)].name}${w.rise_follows ? "; a rapid rise followed within four weeks" : "; no rapid rise followed"}` : `${w.positives} positives${w.rise_now ? " (rapid rise under way)" : ""}`) : ""; } } } },
-      scales: { y: { beginAtZero: true, title: { display: true, text: "Weekly influenza positives" } }, x: { ticks: { maxTicksLimit: 12, callback: function (v) { const l = this.getLabelForValue(v); return l ? l.slice(0, 7) : ""; } } } } } });
+    { label: "Weekly positives", data: W.map((w) => (w && !w.future ? w.positives : null)), borderColor: "#16202a", borderWidth: 1.5, pointRadius: 0, spanGaps: false, segment: { borderColor: (x) => (W[x.p1DataIndex] && W[x.p1DataIndex].rise_now ? "#c0282d" : "#16202a"), borderWidth: (x) => (W[x.p1DataIndex] && W[x.p1DataIndex].rise_now ? 2.5 : 1.5) } },
+    { label: "Classifier band that week", data: W.map((w) => (w ? 0 : null)), showLine: false, pointStyle: "rect", pointRadius: W.map((w) => (w && w.future ? 5 : 3.5)), pointHoverRadius: 6, pointBackgroundColor: W.map((w) => (w ? COL[bandOf(w)] : "transparent")), pointBorderColor: W.map((w) => (w ? (w.future ? "#16202a" : COL[bandOf(w)]) : "transparent")), clip: false },
+    { label: "Same as the newest week", data: W.map((w, i) => (i >= iNow ? newest.pos : null)), borderColor: "#1f6fb2", borderWidth: 2, borderDash: [4, 3], pointRadius: 0 },
+    { label: "Model projection", data: ahead("model"), borderColor: "#7b2cbf", borderWidth: 2.5, pointRadius: W.map((w, i) => (i > iNow ? 3 : 0)), pointBackgroundColor: "#7b2cbf" },
+    { label: "Usual range, upper", data: ahead("hi"), borderColor: "transparent", backgroundColor: "rgba(123,44,191,.15)", pointRadius: 0, fill: "+1" },
+    { label: "Usual range, lower", data: ahead("lo"), borderColor: "transparent", pointRadius: 0 } ] },
+    plugins: [{ id: "ahead", beforeDatasetsDraw(ch) { const x = ch.scales.x, a = ch.chartArea, g = ch.ctx, x0 = x.getPixelForValue(iNow), txt = `Next 4 weeks: ${STEP[nowBand].name}`;
+      g.save(); g.globalAlpha = 0.35; g.fillStyle = COL[nowBand]; g.fillRect(x0, a.top, a.right - x0, a.bottom - a.top); g.globalAlpha = 1;
+      g.strokeStyle = "#16202a"; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x0, a.top); g.lineTo(x0, a.bottom); g.stroke();
+      g.fillStyle = "#16202a"; g.font = "600 12px system-ui, sans-serif"; g.textAlign = "right"; g.textBaseline = "top"; g.fillText(txt, x0 - 6, a.top + 4); g.restore(); } }],
+    options: { maintainAspectRatio: false, animation: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (t) => { const w = W[t.dataIndex]; if (!w || t.datasetIndex > 3) return ""; if (t.datasetIndex === 2) return `Simple baseline: ${newest.pos} positives, the same as the newest week`;
+        if (t.datasetIndex === 3) return w.future ? `Model projection: about ${w.model} positives (usual range ${w.lo} to ${w.hi})` : "";
+        if (w.future) return `Classifier band for the four weeks ahead: ${STEP[nowBand].name} (a band, not a count)`;
+        if (w.pending) return t.datasetIndex ? `Band: ${STEP[bandOf(w)].name}; its four weeks ahead are not over yet` : `${w.positives} positives`;
+        return w ? (t.datasetIndex ? `Band: ${STEP[bandOf(w)].name}${w.rise_follows ? "; a rapid rise followed within four weeks" : "; no rapid rise followed"}` : `${w.positives} positives${w.rise_now ? " (rapid rise under way)" : ""}`) : ""; } } } },
+      scales: { y: { beginAtZero: true, grace: "12%", title: { display: true, text: "Weekly influenza positives" } }, x: { ticks: { maxTicksLimit: 12, callback: function (v) { const l = this.getLabelForValue(v); return l ? l.slice(0, 7) : ""; } } } } } });
 }
 
 // ---------- track record: what the system said before the figures were published ----------

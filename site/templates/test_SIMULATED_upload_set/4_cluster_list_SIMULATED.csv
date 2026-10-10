@@ -1,0 +1,16 @@
+name,district,cases,setting,lat,lon
+Test cluster 01,Petaling,11,Primary school,3.06684,101.56645
+Test cluster 02,Petaling,42,Private home,3.10782,101.62248
+Test cluster 03,Petaling,19,Primary school,3.00612,101.54801
+Test cluster 04,Hulu Langat,6,Primary school,2.97772,101.78774
+Test cluster 05,Hulu Langat,42,Private home,3.11871,101.7517
+Test cluster 06,Klang,27,Private home,3.05343,101.45231
+Test cluster 07,Klang,14,Secondary school,3.01429,101.3964
+Test cluster 08,Gombak,42,Primary school,3.23369,101.63933
+Test cluster 09,Gombak,6,Private home,3.30425,101.58948
+Test cluster 10,Sepang,8,Secondary school,2.92245,101.66417
+Test cluster 11,Kuala Langat,11,Secondary school,2.81143,101.48688
+Test cluster 12,Kuala Selangor,6,Private home,3.33118,101.25541
+Test cluster 13,Hulu Selangor,14,School hostel,3.55897,101.6627
+Test cluster 14,Petaling,9,Private home,,
+Test cluster 15,Sabak Bernam,5,Primary school,,
