@@ -191,7 +191,9 @@
   $("rpLeave").onclick = () => { location.href = "dashboard.html#/now"; };
   // "Why?" opens the sheet at the reasons; "See the plan" opens the same sheet at the actions and the plan
   const openSheet = (sel) => { const sh = $("sheet"); sh.hidden = false; sh.scrollTop = 0; const el = sel && sh.querySelector(sel); if (el) sh.scrollTop = Math.max(0, el.getBoundingClientRect().top - sh.getBoundingClientRect().top - 54); $("sheetX").focus({ preventScroll: true }); };
-  $("whyBtn").onclick = () => openSheet(); $("planBtn").onclick = () => openSheet(".planbox");   // "Full plan" lands on the task list: what, who, by when $("sheetX").onclick = () => { $("sheet").hidden = true; };
+  $("whyBtn").onclick = () => openSheet(); $("planBtn").onclick = () => openSheet(".planbox");   // "Full plan" lands on the task list: what, who, by when
+  $("sheetX").onclick = () => { $("sheet").hidden = true; };
+  document.addEventListener("pointerdown", (e) => { if (!$("sheet").hidden && !e.target.closest("#sheet, #whyBtn, #planBtn, dialog")) $("sheet").hidden = true; });
   $("rpLink").onclick = () => $("rpGo").onclick(); $("addBtn").onclick = () => { const u = $("uploadBtn"); if (u) u.click(); };
   addEventListener("keydown", (e) => { if (e.key === "Escape") $("sheet").hidden = true; if (e.key === "ArrowRight" && !e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && REPLAY && root.dataset.page === "now" && $("sheet").hidden && !document.querySelector("dialog[open]") && !e.target.closest("input,select,textarea")) $("rpGo").click(); });
 

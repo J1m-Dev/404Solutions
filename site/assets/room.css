@@ -399,3 +399,8 @@ a.tile:hover{transform:translateY(-3px);background:rgba(8,20,58,.58)}a.tile:acti
 @media (max-width:760px){#p-now.on,[data-nav=rail] #p-now.on{padding:calc(var(--top) + 108px) 14px 36px}.read.bento{grid-template-columns:1fr 1fr;gap:10px}.tile{border-radius:20px;padding:15px}.tile.play{grid-column:1 / -1}}
 @media (max-height:640px){.tile.status .gauge{width:min(100%,400px)}}
 .tile.status .big{font-size:clamp(46px,min(10.5vh,6.4vw),88px);bottom:-2%}
+
+/* the sheet's close button never scrolls away and never sits under the scrollbar; a click outside the sheet closes it too */
+.sheet .x{position:fixed;top:24px;right:34px;float:none;margin:0;width:40px;height:40px;z-index:25;background:#fff;box-shadow:0 4px 14px rgba(2,8,40,.18)}
+.sheet{padding-top:30px}.sheet>.x{animation:none}
+@media (max-width:760px){.sheet .x{right:18px;top:22px}}
