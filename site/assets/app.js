@@ -417,9 +417,11 @@ function renderPlan(c) {
   const est = c.lag === 0 ? a.pLast : a.fc[c.lag].model;
   const mult = Math.min(4, Math.max(0.3, est / c.th.median));
   const up = Object.fromEntries(STATE.beds.map((r) => [r.hospital, r.beds]));
-  const uploaded = STATE.beds.length > 0, M = HOSPMETA || { counts: { ministry: 0, lookup: 0, estimated: 0 }, occupancy_reported: [], bed_file_updated: "" }, n = M.counts, short = (nm) => nm.replace("Hospital ", "");
+  const uploaded = STATE.beds.length > 0, M = HOSPMETA || { counts: { estimated: 0 }, occupancy_reported: [], note: "" }, n = M.counts, allOcc = HOSP.every((h) => h.occ != null), short = (nm) => nm.replace("Hospital ", "");
   $("bedChip").className = "chip " + (uploaded ? "unv" : "est");
-  $("bedChip").textContent = uploaded ? "Beds uploaded, not verified" : n.estimated ? `Bed totals: ${n.ministry + n.lookup} real, ${n.estimated} estimated` : "Real bed totals, occupancy mostly assumed";
+  $("bedChip").className = "chip " + (uploaded ? "unv" : n.estimated || !allOcc ? "est" : "real");
+  $("bedChip").textContent = uploaded ? "Beds uploaded, not verified" : n.estimated ? `Bed totals: ${HOSP.length - n.estimated} real, ${n.estimated} estimated` : allOcc ? "Real beds, 2024 occupancy" : "Real bed totals, occupancy partly assumed";
+  $("occRow").hidden = allOcc; // the slider only matters for hospitals with no reported occupancy
   // Room for flu = total beds x (1 - occupancy) x share. Occupancy is the reported figure where the Ministry file has one, else the slider.
   // An uploaded figure is taken as the number of beds available and replaces the calculation for that hospital.
   const cap = HOSP.map((h) => { const occ = h.occ != null ? Math.min(100, h.occ) / 100 : occA, room = up[h.name] ?? Math.floor(Math.round(h.beds * (1 - occ)) * share);
@@ -433,18 +435,14 @@ function renderPlan(c) {
     unmet += need;
     return `<tr><td>${d.name}</td><td class="num">${d.need}</td><td>${got.join(", ") || "none"}</td><td class="num">${need || ""}</td></tr>`; });
   cap.forEach((h) => { if (naive[h.name] > h.room) overflowNearest++; });
-  const rep = M.occupancy_reported.map(short);
-  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${f1(mult)} (today's positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), split by population. Room for flu at each hospital = total beds × (1 − occupancy) × the share usable for flu. ` +
-    `Bed totals come from the Ministry of Health bed file (last updated ${M.bed_file_updated}) for ${n.ministry} hospitals` + (n.lookup ? `, from official pages for ${n.lookup}` : "") + (n.estimated ? `, and are estimated for ${n.estimated}` : "") + `. ` +
-    (rep.length ? `Occupancy is the reported figure for ${rep.join(" and ")}; the others have none in the file (several show 0%, which we treat as not reported), so they use the slider. ` : "") +
-    `Assumes admissions scale with positivity. This is an illustration, not a recommended allocation. Distances are straight-line.`;
-  const from = (h) => (h.beds_src === "ministry" ? "Ministry bed file" : h.beds_src === "lookup" ? (h.src_url ? `<a href="${h.src_url}" target="_blank" rel="noopener">${h.src}</a>` : h.src) : `<span class="fail">Estimated</span>`);
+  $("planNote").innerHTML = `Demand = ${adm} baseline admissions × ${f1(mult)} (today's positivity ${f1(est)}% ÷ usual ${f1(c.th.median)}%), split by population. Room for flu at each hospital = beds × (1 − occupancy) × the share usable for flu. ${M.note}Assumes admissions scale with positivity. This is an illustration, not a recommended allocation. Distances are straight-line.`;
+  const from = (h) => (h.beds_src === "estimated" ? `<span class="fail">Estimated</span>` : h.src_url ? `<a href="${h.src_url}" target="_blank" rel="noopener">${h.src}</a>` : h.src);
   $("plan").innerHTML = `<table><tr><th>District</th><th class="num">Need</th><th>Nearest hospitals with room under this scenario</th><th class="num">Unmet</th></tr>${rows.join("")}</table>
     <p class="note"><b>${unmet}</b> admissions unplaced under this scenario. If every district simply used its nearest hospital, <b>${overflowNearest}</b> hospital(s) would be over the room worked out for them.</p>
     <h3>Hospitals in this scenario</h3>
-    <table><tr><th>Hospital</th><th class="num">Total beds</th><th>Bed total from</th><th class="num">Occupancy</th><th class="num">Room for flu</th><th class="num">Used</th></tr>
-    ${cap.map((h) => `<tr><td>${short(h.name)}</td><td class="num">${h.beds.toLocaleString()}</td><td>${from(h)}</td><td class="num">${Math.round(h.occUsed * 100)}% ${h.occ != null ? "reported" : "assumed"}</td><td class="num">${h.room}${up[h.name] != null ? " (uploaded)" : ""}</td><td class="num">${h.room - h.left}</td></tr>`).join("")}</table>
-    <p class="note">"Estimated" totals are the middle value for a hospital of the same type in the Ministry file, used where no published figure was found. Upload today's free beds (Upload newest data, Hospital beds) to replace the calculation for any hospital.</p>`;
+    <table><tr><th>Hospital</th><th class="num">Beds</th><th>Beds from</th><th class="num">Occupancy</th><th class="num">Room for flu</th><th class="num">Used</th></tr>
+    ${cap.map((h) => `<tr><td>${short(h.name)}</td><td class="num">${h.beds.toLocaleString()}</td><td>${from(h)}</td><td class="num">${Math.round(h.occ != null ? h.occ : h.occUsed * 100)}% ${h.occ != null ? "reported" : "assumed"}</td><td class="num">${h.room}${up[h.name] != null ? " (uploaded)" : ""}</td><td class="num">${h.room - h.left}</td></tr>`).join("")}</table>
+    <p class="note">${n.estimated ? `"Estimated" totals are the middle value for a hospital of the same type in the Ministry file, used where no published figure was found. ` : ""}Occupancy above 100% means the hospital ran over its beds in operation, so it has no room here. Upload today's free beds (Upload newest data, Hospital beds) to replace the calculation for any hospital.</p>`;
 }
 
 function renderProof() {

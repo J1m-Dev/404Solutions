@@ -3,13 +3,25 @@
   "bed_file": "Ministry of Health Malaysia, bedutil_facility.csv (github.com/MoH-Malaysia/data-resources-public)",
   "bed_file_updated": "3 September 2024",
   "counts": {
-   "ministry": 5,
+   "assembly": 12,
+   "ministry": 0,
    "lookup": 0,
-   "estimated": 7
+   "estimated": 0
   },
+  "note": "Bed totals: beds in operation from a Selangor State Assembly written answer (sitting of 18 February to 3 March 2025) for 12 hospitals. Occupancy is each hospital's 2024 average from the same answer, not today's figure. ",
   "occupancy_reported": [
+   "Hospital Tengku Ampuan Rahimah",
+   "Hospital Selayang",
    "Hospital Sungai Buloh",
-   "Hospital Kajang"
+   "Hospital Sultan Idris Shah Serdang",
+   "Hospital Ampang",
+   "Hospital Shah Alam",
+   "Hospital Kajang",
+   "Hospital Banting",
+   "Hospital Kuala Kubu Bharu",
+   "Hospital Tanjong Karang",
+   "Hospital Tengku Ampuan Jemaah",
+   "Hospital Cyberjaya"
   ]
  },
  "rows": [
@@ -19,12 +31,14 @@
    "lon": 101.43986,
    "district": "Klang",
    "type": "State hospital",
-   "occ": null,
+   "occ": 88.1,
    "icu": null,
    "vent": null,
-   "beds": 1072,
-   "beds_src": "estimated",
-   "src": "estimated: the middle value for a state hospital in the Ministry bed file"
+   "beds": 1261,
+   "beds_official": 1261,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Selayang",
@@ -32,12 +46,14 @@
    "lon": 101.6472,
    "district": "Gombak",
    "type": "Major specialist hospital",
-   "occ": null,
+   "occ": 71.1,
    "icu": 29,
    "vent": 97,
-   "beds": 1018,
-   "beds_src": "ministry",
-   "src": "Ministry of Health bed file, 3 September 2024"
+   "beds": 966,
+   "beds_official": 1047,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Sungai Buloh",
@@ -45,12 +61,14 @@
    "lon": 101.58303,
    "district": "Gombak",
    "type": "Major specialist hospital",
-   "occ": 85.9,
+   "occ": 67.3,
    "icu": 42,
    "vent": 121,
-   "beds": 626,
-   "beds_src": "ministry",
-   "src": "Ministry of Health bed file, 3 September 2024"
+   "beds": 1053,
+   "beds_official": 1129,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Sultan Idris Shah Serdang",
@@ -58,12 +76,14 @@
    "lon": 101.72019,
    "district": "Sepang",
    "type": "Major specialist hospital",
-   "occ": null,
+   "occ": 92.8,
    "icu": null,
    "vent": null,
-   "beds": 502,
-   "beds_src": "estimated",
-   "src": "estimated: the middle value for a major specialist hospital in the Ministry bed file"
+   "beds": 1063,
+   "beds_official": 1100,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Ampang",
@@ -71,12 +91,14 @@
    "lon": 101.76338,
    "district": "Hulu Langat",
    "type": "Major specialist hospital",
-   "occ": null,
+   "occ": 76.4,
    "icu": 15,
    "vent": 74,
-   "beds": 676,
-   "beds_src": "ministry",
-   "src": "Ministry of Health bed file, 3 September 2024"
+   "beds": 703,
+   "beds_official": 713,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Shah Alam",
@@ -84,12 +106,14 @@
    "lon": 101.49076,
    "district": "Petaling",
    "type": "Major specialist hospital",
-   "occ": null,
+   "occ": 94.8,
    "icu": 13,
    "vent": 42,
-   "beds": 472,
-   "beds_src": "ministry",
-   "src": "Ministry of Health bed file, 3 September 2024"
+   "beds": 490,
+   "beds_official": 490,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Kajang",
@@ -97,12 +121,14 @@
    "lon": 101.79273,
    "district": "Hulu Langat",
    "type": "Major specialist hospital",
-   "occ": 77.8,
+   "occ": 63.7,
    "icu": 8,
    "vent": 32,
-   "beds": 378,
-   "beds_src": "ministry",
-   "src": "Ministry of Health bed file, 3 September 2024"
+   "beds": 438,
+   "beds_official": 658,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Banting",
@@ -110,12 +136,14 @@
    "lon": 101.49389,
    "district": "Kuala Langat",
    "type": "Minor specialist hospital",
-   "occ": null,
+   "occ": 87.1,
    "icu": null,
    "vent": null,
-   "beds": 157,
-   "beds_src": "estimated",
-   "src": "estimated: the middle value for a minor specialist hospital in the Ministry bed file"
+   "beds": 195,
+   "beds_official": 212,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Kuala Kubu Bharu",
@@ -123,12 +151,14 @@
    "lon": 101.65283,
    "district": "Hulu Selangor",
    "type": "District hospital without specialists",
-   "occ": null,
+   "occ": 54.2,
    "icu": null,
    "vent": null,
-   "beds": 80,
-   "beds_src": "estimated",
-   "src": "estimated: the middle value for a district hospital without specialists in the Ministry bed file"
+   "beds": 128,
+   "beds_official": 128,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Tanjong Karang",
@@ -136,12 +166,14 @@
    "lon": 101.17911,
    "district": "Kuala Selangor",
    "type": "District hospital without specialists",
-   "occ": null,
+   "occ": 105.5,
    "icu": null,
    "vent": null,
-   "beds": 80,
-   "beds_src": "estimated",
-   "src": "estimated: the middle value for a district hospital without specialists in the Ministry bed file"
+   "beds": 146,
+   "beds_official": 288,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Tengku Ampuan Jemaah",
@@ -149,12 +181,14 @@
    "lon": 100.98907,
    "district": "Sabak Bernam",
    "type": "District hospital without specialists",
-   "occ": null,
+   "occ": 46.1,
    "icu": null,
    "vent": null,
-   "beds": 80,
-   "beds_src": "estimated",
-   "src": "estimated: the middle value for a district hospital without specialists in the Ministry bed file"
+   "beds": 93,
+   "beds_official": 93,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   },
   {
    "name": "Hospital Cyberjaya",
@@ -162,12 +196,14 @@
    "lon": 101.63129,
    "district": "Sepang",
    "type": "Major specialist hospital",
-   "occ": null,
+   "occ": 61.6,
    "icu": null,
    "vent": null,
-   "beds": 502,
-   "beds_src": "estimated",
-   "src": "estimated: the middle value for a major specialist hospital in the Ministry bed file"
+   "beds": 288,
+   "beds_official": 288,
+   "beds_src": "assembly",
+   "src": "Selangor State Assembly answer, 2025",
+   "src_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
   }
  ]
 }

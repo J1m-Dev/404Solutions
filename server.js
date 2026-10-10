@@ -6,7 +6,7 @@ const path = require("path");
 
 const ROOT = __dirname;
 const SITE = path.join(ROOT, "site");
-const STORE = path.join(ROOT, "data", "store.json");
+const STORE = process.env.STORE_PATH || path.join(ROOT, "data", "store.json"); // tests point this at a temporary file
 const PORT = process.env.PORT || 5173;
 
 // .env.local holds the passcodes and GEMINI_API_KEY (never committed, never sent to the browser)

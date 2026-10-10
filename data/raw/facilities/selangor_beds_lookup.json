@@ -1,0 +1,79 @@
+[
+  {
+    "hospital": "Hospital Tengku Ampuan Rahimah",
+    "beds": 1261,
+    "kind": "official beds (katil rasmi); the same page also describes the 1,261 as beds in operation (katil operasi)",
+    "year": 2025,
+    "tier": "hospital site",
+    "source_url": "https://htar.jknselangor.moh.gov.my/index.php/ms",
+    "quote": "jumlah katil operasi sebanyak 1,261 katil",
+    "retrieved": "2026-10-11",
+    "note": "Hospital home page, section 'Statistik Tahunan HTAR', citing the hospital's Medical Records Department statistics for 2025. The sentence says 'katil operasi'; the counter tile beside it is labelled 'Jumlah katil rasmi 2025' and holds 1261 as text in the page HTML (data-digit attribute, not an image). No disagreement: the Selangor State Assembly written answer of Feb-Mar 2025 lists 1261 official and 1261 operating beds (https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/). An earlier State Assembly answer (Nov 2024) listed 1253 operating beds. The hospital's 'Mengenai Kami' page only says 'lebih 1000 katil'."
+  },
+  {
+    "hospital": "Hospital Sultan Idris Shah Serdang",
+    "beds": 1100,
+    "kind": "official beds (katil rasmi)",
+    "year": 2025,
+    "tier": "ministry",
+    "source_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/",
+    "quote": "Hospital Sultan Idris Shah (HSIS), Serdang 1100 1063 92.8",
+    "retrieved": "2026-10-11",
+    "note": "Quote is a table row; columns are Bilangan Katil Rasmi (1100), Bilangan Katil Operasi (1063), BOR 2024 %. Source is a written answer in the Selangor State Legislative Assembly (sitting 18 Feb-3 Mar 2025) carrying JKN Selangor / KKM data, classed here as 'ministry' tier; it is not a Ministry publication. Year is the date of the answer; the bed columns are not separately dated. DISAGREEMENT: the hospital's own Pengenalan page (undated) says 'mempunyai 1063 katil' (https://jknselangor.moh.gov.my/hsis/index.php/ms/profil-hospital/pengenalan), which equals the beds-in-operation figure, not the official count. Use 1063 if you want beds in operation. Corroboration for 1100: JKN Selangor list 'Senarai Hospital Kerajaan Berserta Bilangan Katil di Selangor Tahun 2023', column 'Jumlah Katil Rasmi' (original jknselangor.moh.gov.my URL no longer served; Wayback copy of 15 Jul 2025: https://web.archive.org/web/20250715201018/https://jknselangor.moh.gov.my/htar/images/jumlahKatil/Senarai_Hospital_Kerajaan_Berserta_Bilangan_Katil_di_Selangor_Tahun_2023xlsx_-_Hospital_Selangor.pdf). Older figures: 919 operating beds (State Assembly answer, Nov 2024); an out-of-date nursing-unit page on the hospital site still says 644 total / 557 operating."
+  },
+  {
+    "hospital": "Hospital Banting",
+    "beds": 212,
+    "kind": "official beds (katil rasmi)",
+    "year": 2023,
+    "tier": "hospital site",
+    "source_url": "https://jknselangor.moh.gov.my/hbanting/phocadownload/LAPORAN_TAHUNAN/e-BULETIN%20HOSPITAL%20BANTING%20EDISI%201.0%20Tahun%202023-1-compressed.pdf",
+    "quote": "Jumlah Katil Rasmi 180 189 196 212",
+    "retrieved": "2026-10-11",
+    "note": "Quote is a table row from 'Rumusan Perkhidmatan Klinikal' (page 9) of the hospital's e-Buletin Hospital Banting Januari-Disember 2023, a text PDF on the hospital's own site; the columns are 2020, 2021, 2022, 2023, so 212 is the 2023 value. Same table for 2023: beds in operation (katil operasi) 195, physical beds (katil fizikal) 246. No disagreement: still 212 official / 195 operating in the Selangor State Assembly written answer of Feb-Mar 2025 (https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/). The hospital's 'Latar Belakang' web page is an image, so no number was taken from it. A new 280-bed block is planned (State Assembly answer, July 2025) but not built."
+  },
+  {
+    "hospital": "Hospital Kuala Kubu Bharu",
+    "beds": 128,
+    "kind": "official beds (katil rasmi)",
+    "year": 2025,
+    "tier": "ministry",
+    "source_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/",
+    "quote": "Hospital Kuala Kubu Bharu 128 128 54.2",
+    "retrieved": "2026-10-11",
+    "note": "Quote is a table row; columns are Bilangan Katil Rasmi (128), Bilangan Katil Operasi (128), BOR 2024 %. Source is a Selangor State Legislative Assembly written answer (sitting 18 Feb-3 Mar 2025) carrying JKN Selangor / KKM data, classed here as 'ministry' tier. Year is the date of the answer. DISAGREEMENT with the hospital's own material: the Malay 'Pengenalan' page says 'kapasiti katil sebanyak 120' (undated, written after 2020; https://jknselangor.moh.gov.my/hkkb/profil-jabatan/pengenalan); the hospital's Laporan Tahunan 2023 and 2024 both say 'Dengan 120 katil'; the English introduction page says '150 beds in seven wards' (undated, older). However the ward list in the same Laporan Tahunan 2024 (Wad 1: 24, Wad 2: 24, Wad 3: 18, Wad 5: 20, Wad 7: 24, Wad 8: 18) adds up to 128 (my addition, not a stated total). 128 is also given by the JKN Selangor list 'Tahun 2023' (Wayback copy, see Serdang note) and by the Nov 2024 State Assembly answer (128 operating beds)."
+  },
+  {
+    "hospital": "Hospital Cyberjaya",
+    "beds": 288,
+    "kind": "not stated on the hospital page (total beds); equals official beds (katil rasmi) in the 2025 State Assembly answer",
+    "year": null,
+    "tier": "hospital site",
+    "source_url": "https://jknselangor.moh.gov.my/hcj/index.php/utama/mengenai-kami/pengenalan",
+    "quote": "HCJ mempunyai sebanyak 288 katil",
+    "retrieved": "2026-10-11",
+    "note": "The page is undated, so year is null. Per the same sentence the 288 includes 22 ICU/CCU/HDW, 30 NICU/SCN and 20 first-class beds. The hospital's 'Latar Belakang' page also says 'kapasiti 288 katil' (hospital opened 11 Nov 2022). No disagreement: the Selangor State Assembly written answer of Feb-Mar 2025 lists 288 official and 288 operating beds (https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/)."
+  },
+  {
+    "hospital": "Hospital Tanjong Karang",
+    "beds": 288,
+    "kind": "official beds (katil rasmi); only 146 beds in operation (katil operasi)",
+    "year": 2025,
+    "tier": "ministry",
+    "source_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/",
+    "quote": "Hospital Tanjong Karang 288 146 105.5",
+    "retrieved": "2026-10-11",
+    "note": "CAUTION, sources disagree widely. Quote is a table row; columns are Bilangan Katil Rasmi (288), Bilangan Katil Operasi (146), BOR 2024 % (105.5). Chosen because it is the most recent official per-hospital figure: Selangor State Legislative Assembly written answer (sitting 18 Feb-3 Mar 2025) carrying JKN Selangor / KKM data, classed here as 'ministry' tier; year is the date of the answer. For usable capacity the realistic figure is 146, not 288. Other figures: 144 operating beds (State Assembly answer, Nov 2024); 270 official beds (JKN Selangor list 'Tahun 2023', Wayback copy, see Serdang note); 150 beds (Health Minister at the handover, Bernama via NST, 26 Sep 2022, news tier). The hospital's own 'Latar Belakang' page (https://jknselangor.moh.gov.my/htgkarang/index.php/profil-hospital/sejarah) still says 114 beds, which describes the old 1966 building that was replaced by the new hospital at Sungai Terap in Oct 2022, so it was not used."
+  },
+  {
+    "hospital": "Hospital Tengku Ampuan Jemaah",
+    "beds": 93,
+    "kind": "official beds (katil rasmi)",
+    "year": 2025,
+    "tier": "ministry",
+    "source_url": "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/",
+    "quote": "Hospital Tengku Ampuan Jemaah (HTAJ), Sabak Bernam 93 93 46.1",
+    "retrieved": "2026-10-11",
+    "note": "Quote is a table row; columns are Bilangan Katil Rasmi (93), Bilangan Katil Operasi (93), BOR 2024 %. Source is a Selangor State Legislative Assembly written answer (sitting 18 Feb-3 Mar 2025) carrying JKN Selangor / KKM data, classed here as 'ministry' tier; year is the date of the answer. No disagreement: the hospital's own pages give the same number, but only as the capacity when it opened in 1994 ('mula beroperasi sejak tahun 1994 dengan kapasiti 93 buah katil', https://jknselangor.moh.gov.my/htaj/index.php/mengenai-kami/perutusan-pengarah), which is why the dated official table is cited instead. To cite the hospital page, use that URL with tier 'hospital site' and year 1994. Also 93 in the JKN Selangor list 'Tahun 2023' (Wayback copy, see Serdang note) and in the Nov 2024 State Assembly answer (93 operating beds)."
+  }
+]

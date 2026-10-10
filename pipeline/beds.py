@@ -5,9 +5,14 @@ Source 1  Ministry of Health, bedutil_facility.csv (github.com/MoH-Malaysia/data
           hospitals. 40 rows have no bed figure. Utilisation is patchy: several large hospitals report exactly
           0% and one is negative. A reported 0% or a negative figure is treated as "not reported"; figures a
           little over 100% are kept, because wards do run over their official beds.
-Source 2  selangor_beds_lookup.json: bed counts for the Selangor hospitals missing from source 1, each with
-          the official page it was read from.
-Source 3  Neither of the above: the median for hospitals of the same type in source 1, marked "estimated".
+Source 2  Selangor State Legislative Assembly, written answer "Fasiliti kesihatan di Selangor" (sitting of
+          18 February to 3 March 2025, dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/): official
+          beds, beds in operation and the 2024 bed occupancy rate for every Ministry hospital in Selangor. Saved
+          as selangor_assembly_beds_2025.csv. This is the first choice for the capacity table: it is newer and
+          complete, and its occupancy column has no gaps. The capacity table uses beds in operation.
+Source 3  selangor_beds_lookup.json: the same hospitals looked up one by one on their own pages, kept as a
+          cross-check with the page each figure was read from.
+Source 4  None of the above: the median for hospitals of the same type in source 1, marked "estimated".
 
     py -3.13 moh_facilities.py   # attaches source 1 to the hospitals on the map
     py -3.13 beds.py             # then writes site/data/hospitals.json and the beds upload template
@@ -22,6 +27,11 @@ import core as c
 RAW = c.ROOT / "data/raw/facilities"
 BEDFILE = RAW / "bedutil_facility.csv"
 LOOKUP = RAW / "selangor_beds_lookup.json"
+ASSEMBLY = RAW / "selangor_assembly_beds_2025.csv"
+ASSEMBLY_URL = "https://dewan.selangor.gov.my/question/fasiliti-kesihatan-di-selangor/"
+# Names in the Assembly table that differ from the names used on the site.
+ASSEMBLY_NAME = {"Hospital Tengku Ampuan Rahimah (HTAR), Klang": "Hospital Tengku Ampuan Rahimah", "Hospital Sultan Idris Shah (HSIS), Serdang": "Hospital Sultan Idris Shah Serdang",
+                 "Hospital Sungai Buloh (termasuk Pusat Kawalan Kusta Negara)": "Hospital Sungai Buloh", "Hospital Tengku Ampuan Jemaah (HTAJ), Sabak Bernam": "Hospital Tengku Ampuan Jemaah"}
 UPDATED = "3 September 2024"  # date of the last change to the bed file in the Ministry's repository
 STATE = {"W.P. Kuala Lumpur": "Kuala Lumpur", "W.P. Labuan": "Labuan", "W.P. Putrajaya": "Putrajaya"}
 SPELL = {"buloh": "buluh", "tanjung": "tanjong", "baru": "bharu", "bahru": "bharu", "hj": "haji", "ulu": "hulu"}
@@ -87,11 +97,16 @@ def planner():
         if r["kind"] == "government" and "beds" in r:
             by_type.setdefault(r["type"], []).append(r["beds"])
     look = {x["hospital"]: x for x in json.load(open(LOOKUP, encoding="utf-8"))} if LOOKUP.exists() else {}
+    asm = {ASSEMBLY_NAME.get(x["hospital"], x["hospital"]): x for x in csv.DictReader(open(ASSEMBLY, encoding="utf-8"))} if ASSEMBLY.exists() else {}
     rows = []
     for name, reg in PLANNER.items():
         r, lk = pub[reg], look.get(name) or {}
         h = {"name": name, "lat": r["lat"], "lon": r["lon"], "district": r["district"], "type": r["type"], "occ": r.get("occ"), "icu": r.get("icu"), "vent": r.get("vent")}
-        if "beds" in r:
+        if name in asm:
+            a = asm[name]
+            h.update(beds=int(a["beds_operating"]), beds_official=int(a["beds_official"]), occ=float(a["occupancy_2024_percent"]), beds_src="assembly",
+                     src="Selangor State Assembly answer, 2025", src_url=ASSEMBLY_URL)
+        elif "beds" in r:
             h.update(beds=r["beds"], beds_src="ministry", src=f"Ministry of Health bed file, {UPDATED}")
         elif lk.get("beds"):
             tier = {"hospital site": "the hospital's own page", "ministry": "a Ministry of Health publication", "news": "a news report quoting the Ministry"}.get(lk.get("tier"), "a published source")
@@ -99,8 +114,21 @@ def planner():
         else:
             h.update(beds=int(statistics.median(by_type[r["type"]])), beds_src="estimated", src=f"estimated: the middle value for a {r['type'].lower()} in the Ministry bed file")
         rows.append(h)
-    counts = {k: sum(1 for h in rows if h["beds_src"] == k) for k in ("ministry", "lookup", "estimated")}
-    meta = {"bed_file": "Ministry of Health Malaysia, bedutil_facility.csv (github.com/MoH-Malaysia/data-resources-public)", "bed_file_updated": UPDATED, "counts": counts,
+    counts = {k: sum(1 for h in rows if h["beds_src"] == k) for k in ("assembly", "ministry", "lookup", "estimated")}
+    part = {"assembly": "beds in operation from a Selangor State Assembly written answer (sitting of 18 February to 3 March 2025)", "ministry": f"the Ministry of Health bed file (last updated {UPDATED})",
+            "lookup": "the hospital's own page", "estimated": "an estimate (the middle value for a hospital of the same type)"}
+    note = "Bed totals: " + "; ".join(f"{part[k]} for {n} hospital{'s' if n != 1 else ''}" for k, n in counts.items() if n) + ". "
+    n_occ = sum(1 for h in rows if h["occ"] is not None)
+    note += ("Occupancy is each hospital's 2024 average from the same answer, not today's figure. " if n_occ == len(rows) and counts["assembly"] == len(rows)
+             else f"Occupancy is a reported figure for {n_occ} of {len(rows)} hospitals; the others use the slider. ")
+    # cross-check against the one-by-one look-up and the Ministry bed file
+    for h in rows:
+        lk, mo = look.get(h["name"]) or {}, pub[PLANNER[h["name"]]].get("beds")
+        if h["beds_src"] == "assembly" and lk.get("beds") and int(lk["beds"]) != h["beds_official"]:
+            print(f"  note: {h['name']}: Assembly official beds {h['beds_official']} vs looked-up {lk['beds']}")
+        if h["beds_src"] == "assembly" and mo:
+            print(f"  cross-check {h['name']}: in operation {h['beds']} (Assembly, 2025) vs non-ICU beds {mo} (Ministry bed file, 2024)")
+    meta = {"bed_file": "Ministry of Health Malaysia, bedutil_facility.csv (github.com/MoH-Malaysia/data-resources-public)", "bed_file_updated": UPDATED, "counts": counts, "note": note,
             "occupancy_reported": [h["name"] for h in rows if h["occ"] is not None]}
     (c.ROOT / "site/data/hospitals.json").write_text(json.dumps({"meta": meta, "rows": rows}, indent=1), encoding="utf-8")
     # Upload template: one row per hospital. The example figure is 5% of its beds; a planner replaces it with the real number free today.
