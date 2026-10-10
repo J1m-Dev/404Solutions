@@ -160,7 +160,7 @@ html = f'''<!doctype html>
 </section>
 {page("track", "Track record", "written down before the figures were published", track)}
 {page("stakes", "Who it is for", "the user, the decision, what is at stake", hero + chr(10) + stakes)}
-{page("more", "More underneath", "full results, dengue, state trends, the drill, uploads, sources", more, '<button id="uploadBtn" class="quiet">Upload newest data</button>')}
+{page("more", "More underneath", "full results, state trends, the drill, uploads, sources", more, '<button id="uploadBtn" class="quiet">Upload newest data</button>')}
 <section class="page" id="p-ask" data-page="ask">
   <header class="phead"><p class="when"><b>Ask DOM</b> · <span id="w-ask">from these pages only</span></p></header>
   <div id="askRoot"></div>

@@ -109,3 +109,10 @@
     ["proofBody", "dengueBody", "stBody"].forEach((id) => watch($(id), fold));
   });
 })();
+// Jim, 07:05: "Second disease: dengue" lives on the Signal page, under "What each line is" (it was a row under More).
+// It is moved whole, after More has arranged it, so its chart plate and inner rows come with it.
+(function () {
+  const d = $("dengue"), card = $("forecast"); if (!d || !card) return;
+  const rows = document.createElement("div"); rows.className = "rows"; rows.append(d); card.append(rows);
+  d.addEventListener("toggle", Room.resize);
+})();

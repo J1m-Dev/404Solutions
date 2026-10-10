@@ -1,4 +1,4 @@
-/* DOM control room · lane: rest. The plan panel (#sheet), Who for (#p-stakes) and More (#p-more).
+/* DOM control room · lane: rest. The plan panel (#sheet), Who for (#p-stakes) and More (:is(#p-more,#p-forecast)).
    Loaded after assets/room.css. Uses the kit at the end of room.css (.phead .board .tile .plate .rows .stack); adds no new sizes, radii or colours. */
 
 /* ================= 1. THE PLAN PANEL: a tall tile over the Now page =================
@@ -82,7 +82,7 @@
 
 /* ================= 2. WHO FOR: the headline on one wide tile, the 2025 surge on the plate beside three facts, the full text in rows ================= */
 #p-stakes>#hero,#p-stakes>#stakes{display:none}   /* their words now sit in the board and the rows below it; the empty sections keep their ids */
-#p-stakes .chip,#p-more .chip{margin-left:2px;font-size:12px}
+#p-stakes .chip,:is(#p-more,#p-forecast) .chip{margin-left:2px;font-size:12px}
 #b-stakes .say{gap:clamp(12px,2.2vh,20px)}
 #b-stakes .say h1{flex:1 1 auto;min-width:0;font-size:clamp(24px,2.7vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.1;color:#fff}   /* the kit's value size: no inner page has larger type */
 #b-stakes .say .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
@@ -109,29 +109,29 @@
 @media (max-width:900px){#b-stakes>.plate,#b-stakes>.fact{grid-column:1 / -1;grid-row:auto}}
 
 /* ================= 3. MORE: six rows on one block; nothing is open on arrival ================= */
-#p-more .rows details.fold{width:auto;margin:0}
-#p-more details.fold>summary{position:relative;flex-wrap:nowrap;align-items:baseline;gap:12px;padding-right:34px}
-#p-more details.fold>summary h2{flex:none;max-width:100%;margin:0;font-size:15.5px;font-weight:600;letter-spacing:0;color:#fff}
-#p-more details.fold>summary .note{flex:0 1 auto;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;font-weight:400;color:rgba(255,255,255,.78)}
-#p-more details.fold>summary::before{content:"+";position:absolute;right:0;top:50%;width:auto;transform:translateY(-50%);font-size:24px;font-weight:400;line-height:1;color:rgba(255,255,255,.7);transition:transform .3s var(--ease)}
-#p-more details.fold[open]>summary::before{content:"+";transform:translateY(-50%) rotate(45deg)}
-#p-more details.fold[open]>summary{margin-bottom:0;border-bottom:0}#p-more details.fold[open]{padding-bottom:18px}
-#p-more details.fold>:not(summary){margin-left:0;margin-right:0}
+:is(#p-more,#p-forecast) .rows details.fold{width:auto;margin:0}
+:is(#p-more,#p-forecast) details.fold>summary{position:relative;flex-wrap:nowrap;align-items:baseline;gap:12px;padding-right:34px}
+:is(#p-more,#p-forecast) details.fold>summary h2{flex:none;max-width:100%;margin:0;font-size:15.5px;font-weight:600;letter-spacing:0;color:#fff}
+:is(#p-more,#p-forecast) details.fold>summary .note{flex:0 1 auto;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;font-weight:400;color:rgba(255,255,255,.78)}
+:is(#p-more,#p-forecast) details.fold>summary::before{content:"+";position:absolute;right:0;top:50%;width:auto;transform:translateY(-50%);font-size:24px;font-weight:400;line-height:1;color:rgba(255,255,255,.7);transition:transform .3s var(--ease)}
+:is(#p-more,#p-forecast) details.fold[open]>summary::before{content:"+";transform:translateY(-50%) rotate(45deg)}
+:is(#p-more,#p-forecast) details.fold[open]>summary{margin-bottom:0;border-bottom:0}:is(#p-more,#p-forecast) details.fold[open]{padding-bottom:18px}
+:is(#p-more,#p-forecast) details.fold>:not(summary){margin-left:0;margin-right:0}
 /* inside an open row: the team's notes, tables, forms and charts on the row's glass; each chart on a light plate */
-#p-more .rows h3{margin:16px 0 6px;font-size:15.5px;font-weight:600}
-#p-more details.drawer>summary{padding:12px 0;font-size:14.5px}
-#p-more .plate{margin:10px 0 14px}#p-more .plate .chartbox{overflow:hidden}   /* a chart drawn at an older window width never widens its plate */
-#p-more .plate label,#p-more .plate .tog{color:var(--ink)}#p-more .plate .histctl,#p-more .plate .toggles{margin:6px 0 4px}
-#p-more .kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 18px;margin:12px 0 14px}#p-more .kpi{padding:0}
-#p-more .kpi b{font-size:15.5px;font-weight:600;letter-spacing:0;line-height:1.3}#p-more .kpi span{display:block;margin-top:2px;font-size:13.5px;line-height:1.4}
-#p-more .rows table{margin:6px 0 10px}#p-more .rows td{font-size:13.5px}
-#p-more code{font:13px ui-monospace,Menlo,monospace}
-#p-more .rows input[type=range],#p-more .rows input[type=checkbox]{accent-color:#fff}
-#p-more .simtab tr.cur td{background:rgba(255,255,255,.16)}
-#p-more .err{color:var(--red)}#p-more .histctl{margin:8px 0 10px}#p-more #byIn{width:min(320px,100%)}
-@media (max-width:900px){#p-more .rows table{display:block;overflow-x:auto}}
+:is(#p-more,#p-forecast) .rows h3{margin:16px 0 6px;font-size:15.5px;font-weight:600}
+:is(#p-more,#p-forecast) details.drawer>summary{padding:12px 0;font-size:14.5px}
+:is(#p-more,#p-forecast) .plate{margin:10px 0 14px}:is(#p-more,#p-forecast) .plate .chartbox{overflow:hidden}   /* a chart drawn at an older window width never widens its plate */
+:is(#p-more,#p-forecast) .plate label,:is(#p-more,#p-forecast) .plate .tog{color:var(--ink)}:is(#p-more,#p-forecast) .plate .histctl,:is(#p-more,#p-forecast) .plate .toggles{margin:6px 0 4px}
+:is(#p-more,#p-forecast) .kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 18px;margin:12px 0 14px}:is(#p-more,#p-forecast) .kpi{padding:0}
+:is(#p-more,#p-forecast) .kpi b{font-size:15.5px;font-weight:600;letter-spacing:0;line-height:1.3}:is(#p-more,#p-forecast) .kpi span{display:block;margin-top:2px;font-size:13.5px;line-height:1.4}
+:is(#p-more,#p-forecast) .rows table{margin:6px 0 10px}:is(#p-more,#p-forecast) .rows td{font-size:13.5px}
+:is(#p-more,#p-forecast) code{font:13px ui-monospace,Menlo,monospace}
+:is(#p-more,#p-forecast) .rows input[type=range],:is(#p-more,#p-forecast) .rows input[type=checkbox]{accent-color:#fff}
+:is(#p-more,#p-forecast) .simtab tr.cur td{background:rgba(255,255,255,.16)}
+:is(#p-more,#p-forecast) .err{color:var(--red)}:is(#p-more,#p-forecast) .histctl{margin:8px 0 10px}:is(#p-more,#p-forecast) #byIn{width:min(320px,100%)}
+@media (max-width:900px){:is(#p-more,#p-forecast) .rows table{display:block;overflow-x:auto}}
 @media (max-width:760px){
-  #p-more details.fold>summary{flex-wrap:wrap;gap:2px 12px}#p-more details.fold>summary .note{white-space:normal}
-  #p-more details.fold>summary::before{top:13px;transform:none}#p-more details.fold[open]>summary::before{transform:rotate(45deg)}
-  #p-more .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  :is(#p-more,#p-forecast) details.fold>summary{flex-wrap:wrap;gap:2px 12px}:is(#p-more,#p-forecast) details.fold>summary .note{white-space:normal}
+  :is(#p-more,#p-forecast) details.fold>summary::before{top:13px;transform:none}:is(#p-more,#p-forecast) details.fold[open]>summary::before{transform:rotate(45deg)}
+  :is(#p-more,#p-forecast) .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 }

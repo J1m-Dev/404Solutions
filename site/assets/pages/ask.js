@@ -105,7 +105,7 @@
     // ---- More: every result, dengue, the facilities guide, the footer ----
     { const box = $id("proofBody"); if (box) { put("results", "more", "Every result: the headline counts", [...box.querySelectorAll(":scope > .kpis .kpi")].map((k) => sents(tidy([...k.children].map((c) => c.textContent).join(" ")))), "", "#proof");
         many("proof", "more", "Every result, pass or fail", parts(kids(box), ".kpis"), "#proof"); } }
-    many("dengue", "more", "Second disease: dengue", parts(kids($id("dengue")), "#dengue > summary"), "#dengue");
+    many("dengue", "forecast", "Second disease: dengue", parts(kids($id("dengue")), "#dengue > summary"), "#dengue");
     many("guide", "more", "Facilities: sources", parts(kids($id("guide")), "#guide > summary"), "#guide");
     { const f = document.querySelector("main > footer") || document.querySelector("footer"); if (f) put("about", "more", "About this project", [sents(tidy(f.textContent))]); }
 
