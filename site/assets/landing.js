@@ -1,25 +1,23 @@
-// DOM landing page: a short opening, one Earth that the camera follows across four screens, and the real October 2025 replay.
+// DOM landing page: the opening, and one Earth that the camera follows across three screens.
 // No libraries. The Earth is a lit sphere of beads projected in code (data/dots.json, written by pipeline/landing_dots.py).
-// Every number on the page is read from data/site.json and run through the same model code the app uses (assets/model.js).
+// The flu reading on the last screen comes from data/site.json through the same model code the app uses (assets/model.js).
 (function () {
   const $ = (id) => document.getElementById(id);
   const cv = $("earth"), cx = cv.getContext("2d"), tag = $("tag"), hud = $("hud"), introO = document.querySelector(".intro-logo i"), root = document.documentElement;
   const STILL = matchMedia("(prefers-reduced-motion:reduce)").matches;
   const RAD = Math.PI / 180, MARK = { lon: 102.2, lat: 3.9 }, LIGHT = [-0.42, 0.56, 0.71];
-  const CALM = [214, 238, 255], WATCH = [255, 212, 90], FLAG = [255, 170, 80], SURGE = [255, 84, 64];
-  // Where the camera is on each screen, and the colour Malaysia takes there: today, the October 2025 surge, the day of the flag, today.
+  const ORANGE = [255, 122, 61];
+  // Where the camera is on each screen: the whole Earth, close on Malaysia, the whole Earth again.
   const KEYS = [
-    { el: $("k1"), lon: 108, lat: 7, dim: 1, fit: true, col: CALM },
-    { el: $("k2"), lon: 110, lat: 4, dim: 0.3, col: SURGE },
-    { el: $("k3"), lon: 107, lat: 5, dim: 0.3, col: FLAG },
-    { el: $("k4"), lon: 108, lat: 7, dim: 1, col: CALM },
+    { el: $("k1"), lon: 108, lat: 7, dim: 1, fit: true, col: ORANGE },
+    { el: $("k2"), lon: 109, lat: 4, dim: 0.5, col: ORANGE },
+    { el: $("k3"), lon: 108, lat: 7, dim: 1, col: ORANGE },
   ];
-  const T_LOGO = 750, T_FLY = 800, T_ASM = 900;
+  const T_LOAD = 700, T_LOGO = 750, T_FLY = 850, T_ASM = 950;
+  const STATES = ["Johor", "Kedah", "Kelantan", "Melaka", "Negeri Sembilan", "Pahang", "Perak", "Perlis", "Pulau Pinang", "Sabah", "Sarawak", "Selangor", "Terengganu", "Kuala Lumpur", "Labuan", "Putrajaya"];
   const SHADE = [0, 1, 2, 3, 4, 5].map((i) => `rgb(${[58, 68, 88].map((c) => Math.round(c + (255 - c) * (i / 5))).join(",")})`);
-  const FONT = '-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif';
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
-  let W = 0, H = 0, DPR = 1, land = [], mys = [], mark = null, scat = null, buf = [], cnt = [0, 0, 0, 0, 0, 0], lines = [], net = [], snow = [], story = null;
+  let W = 0, H = 0, DPR = 1, land = [], mys = [], mark = null, scat = null, buf = [], cnt = [0, 0, 0, 0, 0, 0], lines = [], net = [], snow = [], flat = [];
   let pointer = { x: -9999, y: -9999, nx: 0, ny: 0 }, drag = null, off = { lon: 0, lat: 0 }, tilt = { x: 0, y: 0 }, lastDrag = 0, view = { x: 0, y: 0, R: 1 };
   let t0 = performance.now(), introStart = 0, introDone = STILL, diveStart = 0, diveTo = "index.html", todayP = 0;
 
@@ -28,7 +26,6 @@
   const smooth = (k) => k * k * (3 - 2 * k);
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, k) => a + (b - a) * k;
-  const dayMonth = (iso) => { const d = new Date(iso + "T00:00:00Z"); return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()]; };
 
   function size() {
     DPR = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight;
@@ -45,7 +42,7 @@
     const sh = KEYS[0].el.closest("section").offsetHeight || H, idx = clamp(scrollY / sh, 0, KEYS.length - 1);
     const i = Math.min(Math.floor(idx), KEYS.length - 2), t = smooth(idx - i), a = keyAt(i), b = keyAt(i + 1);
     let x = lerp(a.x, b.x, t), y = lerp(a.y, b.y, t), R = Math.exp(lerp(Math.log(a.R), Math.log(b.R), t)), d = 0;
-    if (!introDone) { const o = introO.getBoundingClientRect(), k = ease(clamp((now - introStart - T_LOGO) / T_FLY, 0, 1));
+    if (!introDone) { const o = introO.getBoundingClientRect(), k = ease(clamp((now - introStart - T_LOAD - T_LOGO) / T_FLY, 0, 1));
       x = lerp(o.left + o.width / 2, x, k); y = lerp(o.top + o.height / 2, y, k); R = lerp(o.width / 2.2, R, k); }
     if (diveStart) { d = clamp((now - diveStart) / 1300, 0, 1); x = lerp(x, W / 2, d); y = lerp(y, H / 2, d); R *= 1 + (R > W ? 2.5 : 11) * d * d * d; }
     return { x, y, R, d, idx, lon: lerp(a.lon, b.lon, t), lat: lerp(a.lat, b.lat, t), dim: lerp(a.dim, b.dim, t), col: a.col.map((c, j) => Math.round(lerp(c, b.col[j], t))) };
@@ -68,7 +65,7 @@
 
   function draw(now) {
     const f = frame(now), { x, y, R, d, idx } = f, t = now - introStart;
-    const asm = introDone ? 1 : clamp((t - T_LOGO * 0.7) / T_ASM, 0, 1), body = ease(asm);
+    const loadK = introDone ? 1 : clamp(t / T_LOAD, 0, 1), asm = introDone ? 1 : clamp((t - T_LOAD - T_LOGO * 0.6) / T_ASM, 0, 1), body = ease(asm);
     const hero = clamp(1 - idx, 0, 1), whole = Math.max(hero, clamp(idx - (KEYS.length - 2), 0, 1));
     tilt.x += (pointer.nx * 6 - tilt.x) * 0.06; tilt.y += (-pointer.ny * 5 - tilt.y) * 0.06;
     if (!drag && now - lastDrag > 1200) { off.lon *= 0.94; off.lat *= 0.94; }
@@ -83,7 +80,13 @@
     for (const s of snow) { const sx = (((s.x * W + (STILL ? 0 : (now - t0) * 0.006 * s.z) - pointer.nx * 30 * s.z) % W) + W) % W, sy = (((s.y * H + (STILL ? 0 : (now - t0) * 0.004 * s.z) - pointer.ny * 20 * s.z) % H) + H) % H;
       cx.globalAlpha = 0.14 + 0.4 * s.z; cx.fillRect(sx, sy, 1 + s.z * 1.2, 1 + s.z * 1.2); }
     cx.globalAlpha = 1;
-    drawNet(now, introDone ? 1 : clamp(t / 450, 0, 1), introDone ? 0 : lerp(0.5, 0, clamp((t - T_LOGO) / 600, 0, 1)));
+    drawNet(now, loadK, introDone ? 0 : lerp(0.5, 0, clamp((t - T_LOAD - T_LOGO) / 700, 0, 1)));
+
+    // a large, faint map of Malaysia behind the Earth; it shifts less than the Earth does, which gives the scene depth
+    if (whole > 0.02 && body > 0.02 && !diveStart) { const mw = Math.min(W * 0.94, Math.max(R * 5.2, 320)), u = mw / 20, bx = x - pointer.nx * 20, by = y + R * 0.05 - pointer.ny * 12, q = Math.max(2, u * 0.36 * 0.58);
+      cx.fillStyle = "#fff"; cx.globalAlpha = 0.13 * whole * body;
+      cx.beginPath(); for (const [lo, la] of flat) { const px = bx + (lo - 109.5) * u, py = by - (la - 4.2) * u; cx.moveTo(px + q / 2, py); cx.arc(px, py, q / 2, 0, 7); } cx.fill();
+      cx.globalAlpha = 1; }
 
     // light behind the Earth, a soft shadow beneath it, then the lit body
     let g = cx.createRadialGradient(x, y, R * 0.9, x, y, R * 1.5 + 40);
@@ -105,7 +108,8 @@
 
     // the wire globe: bright while loading, a faint grid afterwards
     cx.strokeStyle = `rgba(255,255,255,${introDone ? 0.1 : lerp(0.95, 0.1, body)})`; cx.lineWidth = introDone ? 1 : 1.2; cx.beginPath();
-    for (const ln of lines) { let pen = false; for (const v of ln) { const p = project(v); if (p[2] > 0) { const px = x + p[0] * R, py = y - p[1] * R; pen ? cx.lineTo(px, py) : cx.moveTo(px, py); pen = true; } else pen = false; } }
+    const nLines = Math.ceil(lines.length * ease(loadK));
+    for (let li = 0; li < nLines; li++) { const ln = lines[li]; let pen = false; for (const v of ln) { const p = project(v); if (p[2] > 0) { const px = x + p[0] * R, py = y - p[1] * R; pen ? cx.lineTo(px, py) : cx.moveTo(px, py); pen = true; } else pen = false; } }
     cx.stroke();
 
     // land beads: lit from the upper left, lifted near the pointer; on load they fly in and settle
@@ -159,67 +163,22 @@
       hud.style.transform = `translate(${Math.round(Math.min(pointer.x + 16, W - 150))}px,${Math.round(pointer.y + 14)}px)`;
     } else hud.hidden = true;
 
-    // the two charts draw themselves as their screen scrolls in
-    if (story) { if (idx > 0.2 && idx < 1.9) chart($("chartA"), "A", clamp((idx - 0.45) / 0.5, 0, 1)); if (idx > 1.2 && idx < 2.9) chart($("chartB"), "B", clamp((idx - 1.45) / 0.5, 0, 1)); }
-
     tickIntro(now);
     if (diveStart && d >= 1) return;
     if (!STILL) requestAnimationFrame(draw);
   }
   const redraw = () => { if (STILL) requestAnimationFrame(draw); };
 
-  // ---- the October 2025 chart. Mode A: what happened. Mode B: the day the model raised its flag. ----
-  function chart(el, mode, prog) {
-    const w = el.clientWidth, h = el.clientHeight; if (w < 40 || h < 40) return;
-    if (el.width !== Math.round(w * DPR) || el.height !== Math.round(h * DPR)) { el.width = Math.round(w * DPR); el.height = Math.round(h * DPR); }
-    const g = el.getContext("2d"); g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, w, h);
-    const P = story.pts, n = P.length, small = w < 520, fs = small ? 12 : 14, L = 10, Rt = 10, top = small ? 44 : 54, bot = small ? 44 : 50;
-    const X = (i) => L + (i * (w - L - Rt)) / (n - 1), Y = (p) => top + (1 - p / story.ymax) * (h - top - bot);
-    const at = (u) => { const i = Math.min(n - 2, Math.floor(u)), k = u - i; return [lerp(X(i), X(i + 1), k), lerp(Y(P[i].p), Y(P[i + 1].p), k)]; };
-    const path = (from, to) => { g.beginPath(); g.moveTo(...at(from)); for (let i = Math.floor(from) + 1; i < to; i++) g.lineTo(X(i), Y(P[i].p)); g.lineTo(...at(to)); };
-    const text = (s, x, y, o = {}) => { g.font = `${o.w || 500} ${o.s || fs}px ${FONT}`; g.textAlign = o.a || "center"; g.fillStyle = o.c || "#fff"; g.globalAlpha = o.o == null ? 1 : o.o; g.fillText(s, x, y); g.globalAlpha = 1; };
-    const fi = story.flag, ci = story.cross, show = (from) => clamp((prog - from) / 0.15, 0, 1);
-
-    g.lineCap = g.lineJoin = "round";
-    g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 1; g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(w - Rt, Y(0)); g.stroke();
-    g.setLineDash([6, 6]); g.strokeStyle = "rgba(255,255,255,.75)"; g.beginPath(); g.moveTo(L, Y(story.line)); g.lineTo(w - Rt, Y(story.line)); g.stroke(); g.setLineDash([]);
-    text("Surge line", L, Y(story.line) - 8, { a: "left", s: fs - 1, o: 0.9 });
-    if (!(small && mode === "B")) text("Share of flu tests that came back positive", L, 16, { a: "left", s: fs - 1, o: 0.85 });
-
-    if (mode === "A") {
-      const end = prog * (n - 1);
-      if (end > 0.01) { g.strokeStyle = "#fff"; g.lineWidth = 3; path(0, end); g.stroke(); }
-      if (end > fi) { g.strokeStyle = "rgb(255,84,64)"; g.lineWidth = 5; path(fi, Math.min(end, ci)); g.stroke(); }
-      if (end >= fi) { g.fillStyle = "#fff"; g.beginPath(); g.arc(X(fi), Y(P[fi].p), 6, 0, 7); g.fill(); text(P[fi].p.toFixed(1) + "%", X(fi) - 12, Y(P[fi].p) - 14, { a: "right", w: 700, s: fs + 4 }); text(P[fi].d, X(fi), Y(0) + 22, { o: 0.9 }); }
-      if (end >= ci) { g.fillStyle = "rgb(255,84,64)"; g.beginPath(); g.arc(X(ci), Y(P[ci].p), 7, 0, 7); g.fill(); text(Math.round(P[ci].p) + "%", X(ci) - 14, Y(P[ci].p) - 12, { a: "right", w: 700, s: fs + (small ? 10 : 18) }); text(P[ci].d, X(ci), Y(0) + 22, { o: 0.9 }); }
-    } else {
-      const solid = clamp(prog / 0.45, 0, 1) * fi, after = clamp((prog - 0.6) / 0.4, 0, 1);
-      if (solid > 0.01) { g.strokeStyle = "#fff"; g.lineWidth = 3; path(0, solid); g.stroke(); }
-      if (after > 0) { g.setLineDash([3, 7]); g.strokeStyle = "rgba(255,255,255,.6)"; g.lineWidth = 2.5; path(fi, fi + after * (n - 1 - fi)); g.stroke(); g.setLineDash([]); }
-      const a1 = show(0.45);
-      if (a1 > 0) { const fx = X(fi), label = `${P[fi].d}: flag raised`, sub = `${story.flagPct}% chance of a rapid rise`;
-        g.globalAlpha = a1; g.strokeStyle = "rgb(255,170,80)"; g.lineWidth = 2; g.beginPath(); g.moveTo(fx, Y(0)); g.lineTo(fx, top - 6); g.stroke();
-        g.font = `700 ${fs}px ${FONT}`; const pw = g.measureText(label).width + 24, px = clamp(fx - pw / 2, 0, w - pw);
-        g.fillStyle = "rgb(255,170,80)"; g.beginPath(); g.roundRect ? g.roundRect(px, top - 34, pw, 28, 14) : g.rect(px, top - 34, pw, 28); g.fill();
-        g.globalAlpha = 1; text(label, px + pw / 2, top - 15, { w: 700, c: "#18212e", o: a1 }); text(sub, fx + 12, top + 16, { a: "left", s: fs - 1, o: 0.95 * a1 });
-        g.fillStyle = "#fff"; g.globalAlpha = a1; g.beginPath(); g.arc(fx, Y(P[fi].p), 6, 0, 7); g.fill(); g.globalAlpha = 1; }
-      const a2 = show(0.85);
-      if (a2 > 0) { const cxp = X(ci), by = Y(0) + 14;
-        g.globalAlpha = a2; g.fillStyle = "rgb(255,84,64)"; g.beginPath(); g.arc(cxp, Y(P[ci].p), 7, 0, 7); g.fill();
-        g.strokeStyle = "#fff"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(fi), by - 5); g.lineTo(X(fi), by + 5); g.moveTo(X(fi), by); g.lineTo(cxp, by); g.moveTo(cxp, by - 5); g.lineTo(cxp, by + 5); g.stroke(); g.globalAlpha = 1;
-        text("4 weeks", (X(fi) + cxp) / 2, by + 22, { w: 700, s: fs + 2, o: a2 }); text(`${P[ci].d}: surge line crossed`, cxp + 14, Y(P[ci].p) + 5, { a: small ? "right" : "left", s: fs - 1, o: a2 * (small ? 0 : 1) }); }
-    }
-  }
-
-  // ---- opening: the logo with the wire Earth as its O, then the Earth settles and flies to its place ----
+  // ---- opening: wire lines and a counter, then the logo with the wire Earth as its O, then the Earth settles and flies to its place ----
   function tickIntro(now) {
     if (introDone) return;
     const t = now - introStart, b = document.body.classList;
-    b.toggle("p-logo", t < T_LOGO);
-    if (t > T_LOGO + 220 && !b.contains("ready")) { b.add("ready"); b.remove("loading"); }
-    if (t > T_LOGO + Math.max(T_FLY, T_ASM)) { introDone = true; $("intro").remove(); try { sessionStorage.setItem("dom-seen", "1"); } catch (e) {} }
+    $("loadN").textContent = String(Math.round(clamp(t / T_LOAD, 0, 1) * 100)).padStart(3, "0");
+    b.toggle("p-load", t < T_LOAD); b.toggle("p-logo", t >= T_LOAD && t < T_LOAD + T_LOGO);
+    if (t > T_LOAD + T_LOGO + 250 && !b.contains("ready")) { b.add("ready"); b.remove("loading"); }
+    if (t > T_LOAD + T_LOGO + Math.max(T_FLY, T_ASM)) { introDone = true; $("intro").remove(); }
   }
-  const skipIntro = () => { if (!introDone && performance.now() - introStart < T_LOGO) introStart = performance.now() - T_LOGO; };
+  const skipIntro = () => { if (!introDone && performance.now() - introStart < T_LOAD + T_LOGO) introStart = performance.now() - T_LOAD - T_LOGO; };
 
   // ---- the logo's O: the same Earth, small ----
   function navLogo() {
@@ -231,19 +190,11 @@
     g.globalAlpha = 1; const q = pr(mark); g.fillStyle = "#ff6a3d"; g.beginPath(); g.arc(o + q[0] * R, o - q[1] * R, 4.2, 0, 7); g.fill();
   }
 
-  // ---- real numbers: today's reading, the October 2025 replay and the test result, all from the app's own data and model ----
+  // ---- today's reading, from the app's own data and model ----
   function readData(D) {
-    const pct = (s) => (100 * s.pos) / s.n, S = D.series, cut = D.replay_cut_index, M = window.FluModel;
-    const now = M.riseSignal(S, D.rise.current), then = M.riseSignal(S.slice(0, cut + 1), D.rise.replay), T = D.rise.test.models.gradient_boosted;
-    const pts = S.slice(cut - 4, cut + 7).map((s) => ({ p: pct(s), d: dayMonth(s.start) }));
-    let cross = pts.findIndex((q, i) => i > 4 && q.p > D.thresholds.orange); if (cross < 0) cross = pts.length - 1;
-    story = { pts, flag: 4, cross, line: D.thresholds.orange, ymax: Math.ceil((Math.max(...pts.map((q) => q.p)) + 5) / 5) * 5, flagPct: Math.round(then.prob * 100) };
+    const now = window.FluModel.riseSignal(D.series, D.rise.current);
     todayP = now.prob;
-    const word = now.prob >= 0.5 ? "Rise likely" : now.prob >= 0.25 ? "Watch" : "Calm", col = now.prob >= 0.5 ? FLAG : now.prob >= 0.25 ? WATCH : CALM;
-    KEYS[0].col = KEYS[3].col = col;
-    $("nowPct").textContent = Math.round(now.prob * 100); $("nowWord").textContent = word; $("tagWord").textContent = word.toLowerCase() + " today";
-    const last = S[S.length - 1], y = new Date(last.start + "T00:00:00Z").getUTCFullYear();
-    $("nowProof").textContent = `Tested on ${D.rise.test.n_test} unseen weeks: it caught ${T.tp} of ${T.tp + T.fn} rises, with ${T.fp} false alarms. Newest public data: week of ${dayMonth(last.start)} ${y}.`;
+    $("nowPct").textContent = Math.round(now.prob * 100); $("nowWord").textContent = now.prob >= 0.5 ? "rise likely" : now.prob >= 0.25 ? "watch" : "calm";
   }
 
   // ---- pointer: the Earth leans toward it, beads lift under it, the fog shifts; dragging turns the Earth on the first screen ----
@@ -285,13 +236,14 @@
     net.push({ x: Math.random(), y: Math.random(), z: 0.3 + Math.random() * 0.7, p, n: String(20 + Math.floor(Math.random() * 79)), delay: Math.random() * 0.7, ph: Math.random() * 6 }); }
   for (let i = 0; i < 60; i++) snow.push({ x: Math.random(), y: Math.random(), z: Math.random() });
 
-  let seen = false; try { seen = sessionStorage.getItem("dom-seen") === "1"; } catch (e) {}
+  const names = (list) => list.concat(list).map((n) => `<div>${n}</div>`).join("");
+  $("namesL").innerHTML = names(STATES); $("namesR").innerHTML = names(STATES.slice(8).concat(STATES.slice(0, 8)));
   Promise.all([fetch("data/dots.json").then((r) => r.json()), fetch("data/site.json").then((r) => r.json()), document.fonts ? document.fonts.ready : 0]).then(([d, D]) => {
-    land = d.land.map(vec); mys = d.malaysia.map(vec); navLogo(); readData(D);
+    land = d.land.map(vec); mys = d.malaysia.map(vec); flat = d.malaysia; navLogo(); readData(D);
     scat = new Float32Array(land.length * 3);
     for (let i = 0; i < land.length; i++) { const a = Math.random() * 6.283, q = 0.5 + Math.random() * 1.6; scat[i * 3] = Math.cos(a) * q; scat[i * 3 + 1] = Math.sin(a) * q; scat[i * 3 + 2] = Math.random() * 0.55; }
     buf = [0, 1, 2, 3, 4, 5].map(() => new Float32Array(land.length * 3));
-    if (STILL || seen) { introDone = true; $("intro").remove(); document.body.classList.add("ready"); document.body.classList.remove("loading"); }
+    if (STILL) { introDone = true; $("intro").remove(); document.body.classList.add("ready"); document.body.classList.remove("loading"); }
     introStart = performance.now(); requestAnimationFrame(draw);
   });
 })();

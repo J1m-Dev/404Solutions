@@ -18,6 +18,7 @@
 <div id="intro" aria-hidden="true">
   <div class="intro-logo"><span>D</span><i></i><span>M</span></div>
   <div class="intro-tag">Disease No More</div>
+  <div class="intro-load mono">Loading <b id="loadN">000</b>%</div>
 </div>
 
 <header class="bar">
@@ -37,37 +38,27 @@
   </section>
 
   <section class="s s2">
+    <div class="names left" aria-hidden="true"><div id="namesL"></div></div>
+    <div class="names right" aria-hidden="true"><div id="namesR"></div></div>
     <div class="copy">
-      <h2>October 2025.<br>Flu nearly tripled in four weeks.</h2>
-      <p>Klang Valley pharmacies ran out of flu medicine.</p>
+      <h2>One country,<br>watched closely.</h2>
+      <p class="small">One national forecast today. State by state next.</p>
     </div>
-    <canvas class="chart" id="chartA" role="img" aria-label="Share of flu tests that were positive in Malaysia, August to October 2025, rising from 13.5 percent to 37 percent in four weeks"></canvas>
     <div id="k2" class="slot" aria-hidden="true"></div>
-    <div class="source mono">Real data · WHO FluNet · New Straits Times, 22 Oct 2025</div>
   </section>
 
   <section class="s s3">
-    <div class="copy">
-      <h2>Our model flagged it<br>on 8 September.</h2>
-      <p>Four weeks before the surge line was crossed.</p>
-    </div>
-    <canvas class="chart" id="chartB" role="img" aria-label="The same chart, with the model's flag on 8 September 2025, four weeks before the surge line was crossed on 6 October"></canvas>
     <div id="k3" class="slot" aria-hidden="true"></div>
-    <div class="source mono">Replay · model trained only on earlier weeks · needs that week's numbers</div>
-  </section>
-
-  <section class="s s4">
-    <div id="k4" class="slot" aria-hidden="true"></div>
     <div class="copy">
-      <h2 class="huge">Today: <span id="nowPct">–</span>%. <span id="nowWord">Calm</span>.</h2>
-      <p>Chance that flu cases rise by half in the next four weeks.</p>
+      <h2 class="huge">Disease no more.</h2>
+      <p>Flu risk today: <b><span id="nowPct">–</span>%</b>, <span id="nowWord">calm</span>.</p>
       <button class="btn" data-enter><span class="arr" aria-hidden="true">→</span><span class="lab">Open the control room</span><span class="dot" aria-hidden="true"></span></button>
-      <p class="fine"><span id="nowProof"></span> Independent student project for Dormathon 2026. Not affiliated with the Ministry of Health Malaysia.</p>
+      <p class="fine">Student project for Dormathon 2026. Not affiliated with the Ministry of Health Malaysia.</p>
     </div>
   </section>
 </main>
 
-<div id="tag" class="tag mono" hidden>Malaysia · <span id="tagWord">calm today</span></div>
+<div id="tag" class="tag mono" hidden>Malaysia · watching</div>
 <div id="hud" class="hud mono" hidden></div>
 
 <script src="assets/model.js"></script>
