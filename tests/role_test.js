@@ -5,8 +5,10 @@ const path = require("path");
 
 const root = process.argv[2];
 const UP = crypto.randomBytes(8).toString("hex"), AD = crypto.randomBytes(8).toString("hex");
-const srv = spawn("node", [path.join(root, "server.js")], { env: { ...process.env, PORT: "5199", UPLOAD_PASSCODE: UP, ADMIN_PASSCODE: AD }, stdio: "ignore" });
-const B = "http://localhost:5199/api";
+// Its own port and its own empty store file, so it never touches the real upload history and two runs cannot collide.
+const PORT = String(5200 + crypto.randomInt(700)), STORE_PATH = path.join(require("os").tmpdir(), `flusentinel-test-store-${crypto.randomBytes(4).toString("hex")}.json`);
+const srv = spawn("node", [path.join(root, "server.js")], { env: { ...process.env, PORT, STORE_PATH, UPLOAD_PASSCODE: UP, ADMIN_PASSCODE: AD }, stdio: "ignore" });
+const B = `http://localhost:${PORT}/api`;
 const call = async (method, url, pass, body) => {
   const r = await fetch(B + url, { method, headers: { "Content-Type": "application/json", ...(pass ? { "x-passcode": pass } : {}) }, body: body ? JSON.stringify(body) : undefined });
   let d = null; try { d = await r.json(); } catch {}
@@ -37,7 +39,7 @@ const check = (name, got, want) => results.push(`${got === want ? "PASS" : "FAIL
   check("replay mode is separate", (await call("GET", "/state?mode=replay")).d.log.length, 0);
   for (let i = 0; i < 10; i++) await call("POST", "/state?mode=live", "bad" + i, row);
   check("locked out after 10 wrong passcodes", (await call("POST", "/state?mode=live", UP, row)).s, 429);
-  srv.kill();
+  srv.kill(); try { require("fs").unlinkSync(STORE_PATH); } catch {}
   console.log(results.join("\n"));
   console.log(results.every((x) => x.startsWith("PASS")) ? "ALL PASSED" : "SOME FAILED");
 })().catch((e) => { srv.kill(); console.error("test crashed", e); });

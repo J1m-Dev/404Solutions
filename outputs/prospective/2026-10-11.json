@@ -1,0 +1,44 @@
+{
+ "made_on": "2026-10-11",
+ "data_file": "flunet_mys_2026-10-10.csv",
+ "newest_published_week": "2026-W37",
+ "newest_positivity_percent": 20.0,
+ "today_week_estimate": "2026-W41",
+ "alert_level_for_today": "green",
+ "alert_line_percent": 27.7,
+ "claim_alert": "Positivity in 2026-W41 will be at or below the alert line of 27.7%.",
+ "rapid_rise_probability": 0.166,
+ "rapid_rise_call": false,
+ "claim_rise": "Weekly positives will not reach 1.5 times their level four weeks earlier in any of 2026-W38 to 2026-W41.",
+ "event": "v1",
+ "tiers": {
+  "event": "v1",
+  "warning": 0.5,
+  "watch": 0.4,
+  "frozen": "2026-10-11"
+ },
+ "rapid_rise_band": "clear",
+ "claim_band": "Clear: no rapid rise in the next four weeks, 2026-W38 to 2026-W41.",
+ "candidate": {
+  "name": "Without seasonal inputs",
+  "note": "Scored in shadow. It is trained in Python only and the site never uses it.",
+  "probability": 0.162,
+  "band": "clear",
+  "tiers": {
+   "event": "v1",
+   "warning": 0.5,
+   "watch": 0.35,
+   "frozen": "2026-10-11"
+  },
+  "claim_band": "Clear: no rapid rise in the next four weeks, 2026-W38 to 2026-W41."
+ },
+ "same_weeks_as": [
+  "2026-10-10"
+ ],
+ "data_sha256": "8d85e744357804f93ac4bfa82833209fd6d3b5c51beea7daa162174fd1f04764",
+ "classifier_sha256": "fd2b8253bc6e083c52292a6b51265c8dacb0a493f4842923a91487fbda01ddaf",
+ "git_commit": "5e1197a",
+ "git_dirty": true,
+ "policy": "No claim is made from a single scored record. Results are reported once at least eight records have been scored.",
+ "status": "awaiting data"
+}

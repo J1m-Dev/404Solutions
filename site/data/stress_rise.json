@@ -1,0 +1,57 @@
+{
+ "note": "Bands on damaged counts against bands on clean counts, same models. Run after the cut-offs were frozen.",
+ "weeks": 282,
+ "rise_weeks": 120,
+ "clean": {
+  "clear": 95,
+  "watch": 54,
+  "warning": 133,
+  "rise_weeks_flagged": 109
+ },
+ "cutoffs": {
+  "watch": 0.4,
+  "warning": 0.5
+ },
+ "tests": [
+  {
+   "test": "Half the samples, counts scaled back up",
+   "runs": 20,
+   "band_unchanged": 0.829,
+   "band_unchanged_worst": 0.762,
+   "warning_still_watch_or_higher": 0.979,
+   "clear_still_clear": 0.848,
+   "rise_weeks_flagged_mean": 109.3,
+   "rise_weeks_flagged_worst": 104
+  },
+  {
+   "test": "Noise of 20% on every weekly count",
+   "runs": 20,
+   "band_unchanged": 0.833,
+   "band_unchanged_worst": 0.805,
+   "warning_still_watch_or_higher": 0.967,
+   "clear_still_clear": 0.863,
+   "rise_weeks_flagged_mean": 106.7,
+   "rise_weeks_flagged_worst": 100
+  },
+  {
+   "test": "One week in ten missing, filled with the week before",
+   "runs": 20,
+   "band_unchanged": 0.952,
+   "band_unchanged_worst": 0.911,
+   "warning_still_watch_or_higher": 0.988,
+   "clear_still_clear": 0.973,
+   "rise_weeks_flagged_mean": 107.7,
+   "rise_weeks_flagged_worst": 105
+  },
+  {
+   "test": "All three together",
+   "runs": 20,
+   "band_unchanged": 0.77,
+   "band_unchanged_worst": 0.72,
+   "warning_still_watch_or_higher": 0.95,
+   "clear_still_clear": 0.776,
+   "rise_weeks_flagged_mean": 106.2,
+   "rise_weeks_flagged_worst": 99
+  }
+ ]
+}

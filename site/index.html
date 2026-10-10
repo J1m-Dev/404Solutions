@@ -11,7 +11,7 @@
 <body>
 <header class="top">
   <div class="brand">FluSentinel <span>influenza early warning for Selangor planners</span></div>
-  <nav><a href="#stakes">Why</a><a href="#now">Now</a><a href="#history">History</a><a href="#sim">What-if</a><a href="#forecast">Forecast</a><a href="#atlas">Map</a><a href="#dengue">Dengue</a><a href="#proof">Proof</a></nav>
+  <nav><a href="#now">Now</a><a href="#forecast">Signal</a><a href="#trust">Why trust it</a><a href="#atlas">Where</a><a href="#track">Track record</a><a href="#stakes">Who it is for</a><a href="#more">More</a></nav>
   <button id="uploadBtn" class="primary">Upload newest data</button>
 </header>
 <div id="stamp" class="stamp"></div>
@@ -19,60 +19,33 @@
 
 <main>
 <section class="card hero" id="hero">
-  <h1>Know an influenza surge has started in the week it starts, not four weeks later.</h1>
-  <p>Public influenza figures for Malaysia run about four weeks behind. FluSentinel takes a planner's own newer lab figures and returns an alert level, the kind of wave, a proposed action and the reason for it. A machine-learning classifier adds the chance of a rapid rise in the next four weeks. Every test result is shown, including the ones that failed.</p>
-  <p><a class="btn" href="?replay=1">Run the October 2025 replay</a> <a class="btn ghost" href="#proof">See the proof</a></p>
+  <h1>See an influenza surge in the week your lab figures show it, not four weeks later.</h1>
+  <p>The only public weekly lab series for Malaysia, WHO FluNet, was about four weeks behind when we checked on 10 October 2026. FluSentinel takes a planner's own newer lab figures and returns an alert level, the kind of wave, a proposed action and the reason for it. A machine-learning classifier, reading the national series, sorts each week into Clear, Watch or Warning for a rapid rise, and the page shows how often each of those was right over six past years. The results we rely on are shown in full, and so are the ones that failed.</p>
+  <p><a class="btn" href="?replay=1">Run the October 2025 replay</a> <a class="btn ghost" href="#trust">Why trust it</a></p>
 </section>
 <section id="now" class="grid2">
   <div class="card" id="alertCard"></div>
   <div class="card">
     <h3>Summary <span class="chip ai" id="sumChip">Template</span></h3>
-    <label class="tog"><input type="checkbox" id="aiOn"><span class="sw"></span><span>AI wording (experimental)</span></label> <span class="note" id="aiNote">Off: the text below is a fixed template. On: an AI service rewords the same figures; its text is rejected if it contains any number not in them.</span>
+    <label class="tog"><input type="checkbox" id="aiOn"><span class="sw"></span><span>AI wording (experimental)</span></label> <span class="note" id="aiNote">Off: the text below is a fixed template. On: an AI service rewords the English summary from the same figures; its text is rejected if it contains any number not in them. The Malay text is always a shorter fixed template.</span>
     <p id="sumEn" class="summary"></p>
     <p id="sumBm" class="summary bm"></p>
     <h3>Proposed action <span class="chip exp">Proposal</span></h3>
     <div id="action"></div>
-  </div>
-</section>
-
-<section id="history" class="card">
-  <h2>Upload history <span class="chip ai" id="roleChip"></span></h2>
-  <p class="note" id="histNote"></p>
-  <div class="histctl">
-    <label>Your name or role, shown beside your uploads <input type="text" id="byIn" maxlength="60" placeholder="for example: District officer, Klang"></label>
-    <label id="passRow" hidden>Passcode <input type="password" id="passIn" autocomplete="off"> <button type="button" id="passBtn">Use passcode</button></label>
-  </div>
-  <div id="histBody"></div>
-  <p class="err" id="histMsg"></p>
-</section>
-
-<section id="sim" class="card">
-  <h2>What-if simulator <span class="chip sim">Simulated</span></h2>
-  <p class="note">Draw a possible outbreak and watch the alert, the classifier, the proposed action and the hospital plan respond. The factor effects are our own assumptions for illustration. They are not estimated from Malaysian data and this is not a forecast.</p>
-  <div class="grid2">
-    <div>
-      <label class="row"><input type="checkbox" id="simOn"> <b>Simulation on</b></label>
-      <label>Weeks from now: <b id="simWeekV"></b><input type="range" id="simWeek" min="0" max="11" step="1" value="0"></label>
-      <h3>Outbreak shape</h3>
-      <label>Base weekly growth: <b id="simBaseV"></b><input type="range" id="simBase" min="0" max="60" step="1" value="15"></label>
-      <label>Weeks of growth: <b id="simWeeksV"></b><input type="range" id="simWeeks" min="1" max="8" step="1" value="5"></label>
-      <h3>Factors <span class="chip exp">Assumed effects</span></h3>
-      <label class="row"><input type="checkbox" id="simSchool" checked> Schools in session</label>
-      <label>New strain meeting low immunity (0 to 100): <b id="simStrainV"></b><input type="range" id="simStrain" min="0" max="100" step="5" value="50"></label>
-      <label>Vaccination coverage: <b id="simVaxV"></b><input type="range" id="simVax" min="0" max="60" step="5" value="10"></label>
-      <label class="row"><input type="checkbox" id="simTravel"> Festive travel or mass gathering</label>
-      <label class="row"><input type="checkbox" id="simRain"> Rainy, humid season</label>
-      <p class="note" id="simGrowth"></p>
-    </div>
-    <div id="simOut"></div>
+    <div id="planBox"></div>
   </div>
 </section>
 
 <section id="forecast" class="card">
-  <h2>Sentinel influenza positivity <span class="chip real">Real data</span> <span class="chip est">Estimated</span></h2>
-  <p class="note">Share of sentinel lab samples that tested positive for influenza, Malaysia. This is not a count of cases.</p>
+  <h2>The signal: sentinel influenza positivity <span class="chip real">Real data</span></h2>
+  <p class="note">Share of sentinel lab samples that tested positive for influenza, Malaysia. Sentinel means a fixed set of clinics and labs that report every week. This is not a count of cases. FluNet labels the rows from 2024 onward as sentinel; the 2022 and 2023 rows carry no origin label and are treated as the same series.</p>
   <div class="chartbox"><canvas id="chart"></canvas></div>
   <div id="signals" class="signals"></div>
+</section>
+
+<section id="trust" class="card">
+  <h2>Why trust it <span class="chip est">Back-tested on six years; Watch cut-off chosen on them</span></h2>
+  <div id="trustBody"></div>
 </section>
 
 <section id="atlas" class="card">
@@ -111,7 +84,7 @@
       <h3>Exploratory capacity heuristic <span class="chip est" id="bedChip"></span></h3>
       <label>Baseline weekly respiratory admissions, Selangor (assumption): <b id="admV"></b>
         <input type="range" id="adm" min="50" max="600" step="10" value="200"></label>
-      <label>Occupancy assumed where none is reported: <b id="occV"></b>
+      <label id="occRow">Occupancy assumed where none is reported: <b id="occV"></b>
         <input type="range" id="occ" min="40" max="95" step="5" value="70"></label>
       <label>Share of free beds usable for flu (assumption): <b id="shareV"></b>
         <input type="range" id="share" min="5" max="100" step="5" value="25"></label>
@@ -119,16 +92,11 @@
       <div id="plan"></div>
     </div>
   </div>
-  <div id="trendBox">
-    <h3>Trend by state <span class="chip est">Projections estimated</span></h3>
-    <p class="note" id="stNote"></p>
-    <div class="histctl">
-      <label id="stViewRow">View <select id="stView"><option value="weekly">Weekly by state, 2010 to 2015 and 2020 to 2024</option><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 1999 to 2023</option></select></label>
-    </div>
-    <div class="toggles" id="stToggles"></div>
-    <div class="chartbox"><canvas id="stChart"></canvas></div>
-    <div id="stBody"></div>
-  </div>
+</section>
+
+<section id="track" class="card">
+  <h2>Track record: to be scored when these weeks are published <span class="chip real">Real, awaiting data</span></h2>
+  <div id="trackBody"></div>
 </section>
 
 <section id="stakes" class="card">
@@ -137,7 +105,7 @@
     <div>
       <h3>The user <span class="chip exp">Hypothesis</span></h3>
       <p>A planner who must act on influenza but does not see the Ministry of Health's internal figures: for example the infection-control lead of a private hospital group, or a state-government public-health planner.</p>
-      <p><b>The decision:</b> when to start school-cluster response and vaccination outreach, and which hospitals to put on standby.</p>
+      <p><b>The decision:</b> when to do the free checks, when to prepare, and when to start the costly response (school-cluster response, vaccination outreach, hospitals on standby). The ladder at the top maps one to each step. Actions are written for the public-health side; a hospital group would map each line to its own roles.</p>
       <p class="note">Not yet tested with a person in this role. The tested alert thresholds come from the national sentinel series; a planner's own series would need its own thresholds.</p>
       <h3>Published costs <span class="chip real">Published figures</span></h3>
       <ul class="why">
@@ -152,7 +120,7 @@
         <tr><th>When</th><th>What happened</th><th>Source</th></tr>
         <tr><td>Week ending 27 Sep</td><td>Selangor's surge period begins (week 39)</td><td>Selangor State Assembly answer, Nov 2025</td></tr>
         <tr><td>9 Oct</td><td>Ministry reports clusters up from 14 to 97 in one week; 43 are in Selangor</td><td>Ministry of Health statement, reported by Bernama</td></tr>
-        <tr><td>5 to 11 Oct</td><td>National sentinel positivity reaches 37%, above our alert line</td><td>WHO FluNet</td></tr>
+        <tr><td>Week 41 (6 to 12 Oct)</td><td>National sentinel positivity reaches 37%, above our alert line</td><td>WHO FluNet</td></tr>
         <tr><td>25 Oct</td><td>Selangor total reaches 3,239 cases in 268 clusters; 81% of clusters are in institutions</td><td>Selangor State Assembly answer</td></tr>
         <tr><td>10 Nov</td><td>Selangor's school vaccination programme starts in four districts</td><td>Selangor State Assembly answer</td></tr>
       </table>
@@ -161,8 +129,62 @@
   </div>
 </section>
 
-<section id="guide" class="card">
-  <h2>Facilities on the map</h2>
+<h2 class="morehead" id="more">More: full results, experiments and admin</h2>
+<details id="proof" class="card fold">
+  <summary><h2>Every result, pass or fail</h2><span class="note">the alert rule, the classifier, the forecast that did not work, the stress test</span></summary>
+  <div id="proofBody"></div>
+</details>
+<details id="dengue" class="card fold">
+  <summary><h2>Second disease: dengue</h2><span class="note">the same method on weekly dengue counts, rebuilt to August 2026</span></summary>
+  <p class="note" id="dengueNote"></p>
+  <div class="chartbox"><canvas id="dengueChart"></canvas></div>
+  <div id="dengueBody"></div>
+</details>
+<details id="trendFold" class="card fold">
+  <summary><h2>Trends by state</h2><span class="note">dengue by state with a line per state; influenza clusters by state</span></summary>
+  <div id="trendBox">
+    <p class="note" id="stNote"></p>
+    <div class="histctl">
+      <label id="stViewRow">View <select id="stView"><option value="weekly">Weekly by state, 2010 to 2015 and 2020 to 2024</option><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 1999 to 2023</option></select></label>
+    </div>
+    <div class="toggles" id="stToggles"></div>
+    <div class="chartbox"><canvas id="stChart"></canvas></div>
+    <div id="stBody"></div>
+  </div>
+</details>
+<details id="sim" class="card fold">
+  <summary><h2>Drill: a what-if scenario</h2><span class="note">invented weeks with assumed effects, to rehearse how the page responds</span></summary>
+  <p class="note">Draw a possible outbreak and watch the alert, the classifier, the proposed action and the hospital plan respond. The factor effects are our own assumptions for illustration. They are not estimated from Malaysian data and this is not a forecast.</p>
+  <div class="grid2">
+    <div>
+      <label class="row"><input type="checkbox" id="simOn"> <b>Simulation on</b></label>
+      <label>Weeks from now: <b id="simWeekV"></b><input type="range" id="simWeek" min="0" max="11" step="1" value="0"></label>
+      <h3>Outbreak shape</h3>
+      <label>Base weekly growth: <b id="simBaseV"></b><input type="range" id="simBase" min="0" max="60" step="1" value="15"></label>
+      <label>Weeks of growth: <b id="simWeeksV"></b><input type="range" id="simWeeks" min="1" max="8" step="1" value="5"></label>
+      <h3>Factors <span class="chip exp">Assumed effects</span></h3>
+      <label class="row"><input type="checkbox" id="simSchool" checked> Schools in session</label>
+      <label>New strain meeting low immunity (0 to 100): <b id="simStrainV"></b><input type="range" id="simStrain" min="0" max="100" step="5" value="50"></label>
+      <label>Vaccination coverage: <b id="simVaxV"></b><input type="range" id="simVax" min="0" max="60" step="5" value="10"></label>
+      <label class="row"><input type="checkbox" id="simTravel"> Festive travel or mass gathering</label>
+      <label class="row"><input type="checkbox" id="simRain"> Rainy, humid season</label>
+      <p class="note" id="simGrowth"></p>
+    </div>
+    <div id="simOut"></div>
+  </div>
+</details>
+<details id="history" class="card fold">
+  <summary><h2>Uploads, roles and history <span class="chip ai" id="roleChip"></span></h2><span class="note">who uploaded what, undo and restore</span></summary>
+  <p class="note" id="histNote"></p>
+  <div class="histctl">
+    <label>Your name or role, shown beside your uploads <input type="text" id="byIn" maxlength="60" placeholder="for example: District officer, Klang"></label>
+    <label id="passRow" hidden>Passcode <input type="password" id="passIn" autocomplete="off"> <button type="button" id="passBtn">Use passcode</button></label>
+  </div>
+  <div id="histBody"></div>
+  <p class="err" id="histMsg"></p>
+</details>
+<details id="guide" class="card fold">
+  <summary><h2>Facilities: sources and how to verify a clinic</h2><span class="note">where the hospital and clinic lists come from</span></summary>
   <p class="note" id="facNote"></p>
   <h3>How to verify registered private GP clinics (klinik swasta)</h3>
   <p class="note">Under Malaysian law (Act 586), private clinics and doctors must be registered with CKAPS, the Private Medical Practice Control Section of the Ministry of Health. Private GP clinics are not plotted here; to check one:</p>
@@ -171,19 +193,7 @@
     <li><b>Malaysian Medical Council:</b> mmc.gov.my, to check that a practitioner is licensed.</li>
     <li><b>data.gov.my:</b> the Ministry of Health facilities dataset, filtered by Selangor postcodes.</li>
   </ul>
-</section>
-
-<section id="dengue" class="card">
-  <h2>Dengue: second-disease experiment, rebuilt to August 2026 <span class="chip real">Real data</span> <span class="chip est">Some weeks estimated</span></h2>
-  <p class="note" id="dengueNote"></p>
-  <div class="chartbox"><canvas id="dengueChart"></canvas></div>
-  <div id="dengueBody"></div>
-</section>
-
-<section id="proof" class="card">
-  <h2>Does it work? Every result, pass or fail</h2>
-  <div id="proofBody"></div>
-</section>
+</details>
 </main>
 
 <footer>Independent student project. Not affiliated with the Ministry of Health Malaysia. Decision support for planners, not medical advice. Data: WHO FluNet, WHO dengue situation updates, Ministry of Health Malaysia open data and facility registry, OpenDengue, OpenDOSM, geoBoundaries, OpenStreetMap contributors.</footer>
@@ -194,7 +204,7 @@
     <p class="note" id="upNote"></p>
     <label>Data type
       <select id="utype">
-        <option value="lab">Weekly lab counts (updates the forecast and alert)</option>
+        <option value="lab">Weekly lab counts (updates the alert)</option>
         <option value="ili">Weekly ILI clinic rate (supporting signal)</option>
         <option value="clusters">Cluster counts by district (map)</option>
         <option value="clusterlist">Cluster list with sizes and locations (map hotspots)</option>

@@ -221,5 +221,203 @@
   }
  },
  "n_test": 282,
- "rises": 120
+ "rises": 120,
+ "evidence": {
+  "protocol": "Each test year was scored by a model trained only on earlier years; Warning uses a cut-off of 0.5, and the Watch cut-off for each year is the highest one from 0.50 down to 0.10, in steps of 0.05, that caught at least 90% of the rises in the last 30% of those earlier weeks when the model was fitted on the first 70%. These figures were worked out after earlier results on the same weeks were known, so they are development evidence, not a pre-registered test.",
+  "weeks": 282,
+  "rises": 120,
+  "picks_by_year": {
+   "2019": 0.4,
+   "2022": 0.4,
+   "2023": 0.45,
+   "2024": 0.4,
+   "2025": 0.3,
+   "2026": 0.3
+  },
+  "tiers": {
+   "watch": {
+    "tp": 113,
+    "fp": 85,
+    "tn": 77,
+    "fn": 7,
+    "on_weeks": 198,
+    "periods": 22,
+    "periods_without_rise": 6
+   },
+   "warning": {
+    "tp": 91,
+    "fp": 42,
+    "tn": 120,
+    "fn": 29,
+    "on_weeks": 133,
+    "periods": 30,
+    "periods_without_rise": 8
+   }
+  },
+  "bands": [
+   {
+    "band": "clear",
+    "weeks": 84,
+    "rises": 7
+   },
+   {
+    "band": "watch",
+    "weeks": 65,
+    "rises": 22
+   },
+   {
+    "band": "warning",
+    "weeks": 133,
+    "rises": 91
+   }
+  ],
+  "onset": {
+   "weeks": 165,
+   "onsets": 44,
+   "watch": {
+    "tp": 43,
+    "fp": 60,
+    "tn": 61,
+    "fn": 1
+   },
+   "warning": {
+    "tp": 31,
+    "fp": 30,
+    "tn": 91,
+    "fn": 13
+   }
+  },
+  "skill": {
+   "auc": 0.816,
+   "average_precision": 0.719,
+   "base_rate": 0.426
+  },
+  "baselines": [
+   {
+    "name": "Always warn",
+    "tp": 120,
+    "fp": 162,
+    "tn": 0,
+    "fn": 0
+   },
+   {
+    "name": "Seasonal inputs only",
+    "auc": 0.576,
+    "note": "The same model given only the time of year."
+   },
+   {
+    "name": "Three-week growth alone",
+    "auc": 0.753,
+    "note": "Weeks ranked by how much positives grew over the last three weeks."
+   },
+   {
+    "name": "Simple rule: already rising",
+    "tp": 46,
+    "fp": 13,
+    "tn": 149,
+    "fn": 74,
+    "note": "Says yes when this week's positives are already at least 1.5 times those of four weeks earlier."
+   }
+  ],
+  "calibration": [
+   {
+    "from": 0,
+    "to": 0.2,
+    "weeks": 12,
+    "rises": 0
+   },
+   {
+    "from": 0.2,
+    "to": 0.35,
+    "weeks": 65,
+    "rises": 5
+   },
+   {
+    "from": 0.35,
+    "to": 0.5,
+    "weeks": 72,
+    "rises": 24
+   },
+   {
+    "from": 0.5,
+    "to": 0.65,
+    "weeks": 67,
+    "rises": 38
+   },
+   {
+    "from": 0.65,
+    "to": 0.8,
+    "weeks": 52,
+    "rises": 43
+   },
+   {
+    "from": 0.8,
+    "to": 1,
+    "weeks": 14,
+    "rises": 10
+   }
+  ],
+  "scale_test": {
+   "weeks": 85,
+   "changed_at_a_tenth": 41
+  },
+  "candidate": {
+   "name": "Without seasonal inputs",
+   "auc": 0.867,
+   "average_precision": 0.811,
+   "warning": {
+    "tp": 90,
+    "fp": 30,
+    "tn": 132,
+    "fn": 30
+   },
+   "watch": {
+    "tp": 111,
+    "fp": 94,
+    "tn": 68,
+    "fn": 9
+   },
+   "onset": {
+    "weeks": 165,
+    "onsets": 44,
+    "watch": {
+     "tp": 39,
+     "fp": 63,
+     "tn": 58,
+     "fn": 5
+    },
+    "warning": {
+     "tp": 27,
+     "fp": 12,
+     "tn": 109,
+     "fn": 17
+    }
+   },
+   "picks_by_year": {
+    "2019": 0.5,
+    "2022": 0.5,
+    "2023": 0.3,
+    "2024": 0.3,
+    "2025": 0.25,
+    "2026": 0.3
+   }
+  },
+  "live_tiers": {
+   "event": "v1",
+   "warning": 0.5,
+   "watch": 0.4,
+   "frozen": "2026-10-11"
+  },
+  "replay_tiers": {
+   "event": "v1",
+   "warning": 0.5,
+   "watch": 0.3
+  },
+  "candidate_tiers": {
+   "event": "v1",
+   "warning": 0.5,
+   "watch": 0.35,
+   "frozen": "2026-10-11"
+  }
+ }
 }
