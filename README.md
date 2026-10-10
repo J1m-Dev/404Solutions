@@ -55,3 +55,4 @@ Real data / Estimated / Exploratory / Simulated / Uploaded, not verified. Bed nu
 - **Schools layer**: government schools and pupils per district (Ministry of Education records via OpenDOSM, 30 June 2025) as a second map view.
 - **All states chart** (`pipeline/states.py`): dengue by state, monthly 1993-2010 and yearly 2009-2023, with a switch per state and a national layer, plus the model comparison per state. Influenza has no state series; the chart shows the national line and the published state snapshots.
 - **Data request draft**: `docs/PILOT_REQUEST.md`, for the Selangor State Health Department. Not sent.
+- **Heat maps**: the "All states" section has a map shading every state by dengue cases or cases per 100,000 people, with a year slider (2009-2018 and 2023) and a play button; for influenza it shows the week-40 2025 snapshot. On the Selangor map, an uploaded cluster list is drawn as a heat layer (`site/vendor/leaflet-heat.js`) with its own switch.

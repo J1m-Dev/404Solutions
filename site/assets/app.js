@@ -50,7 +50,8 @@ function simRows(real) {
   return rows;
 }
 // Which map layers are switched on (the switches sit above the map).
-const LAYERS = { shade: true, hot: true, government: true, private: true, clinic: true };
+const LAYERS = { shade: true, heat: true, hot: true, government: true, private: true, clinic: true };
+let heatLayer;
 const FACG = {};
 let SERVER = true; // false on static hosting: uploads then stay in this browser only
 
@@ -256,7 +257,7 @@ function hotspotData() {
     STATE.clusterlist.forEach((r) => { const d = by[r.district]; d.value++; d.cases += r.cases; });
     ds.forEach((d) => { d.has = true; d.rate = rate(d); });
     return { kind: "list", unit: "clusters", chip: ["unv", "Uploaded, not verified"], ds, points: STATE.clusterlist,
-      note: "Each circle is one uploaded cluster, sized by its cases. Shading is clusters per 100,000 people in the district." };
+      note: "The heat layer glows where uploaded clusters are large and close together. Each circle is one cluster, sized by its cases; the largest is labelled. District shading is clusters per 100,000 people." };
   }
   if (STATE.clusters.length) {
     const lw = STATE.clusters[STATE.clusters.length - 1];
@@ -272,7 +273,7 @@ function hotspotData() {
 function renderMap(c) {
   if (!map) { map = L.map("map", { scrollWheelZoom: false }).setView([3.2, 101.45], 9);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap contributors" }).addTo(map); }
-  if (geoLayer) geoLayer.remove(); if (hospLayer) hospLayer.remove();
+  if (geoLayer) geoLayer.remove(); if (hospLayer) hospLayer.remove(); if (heatLayer) { heatLayer.remove(); heatLayer = null; }
   const hot = $("mapMode").value === "hot", H = hotspotData(), ds = H.ds;
   const near3 = (d) => HOSP.map((h) => ({ h, km: hav(d.c, [h.lat, h.lon]) })).sort((a, b) => a.km - b.km).slice(0, 3).map((x) => `${x.h.name}: ${Math.round(x.km)} km`).join("<br>");
   const school = (d) => `Government schools: ${d.schools}; pupils: ${d.pupils.toLocaleString()} <i>Real data, 2025</i>`;
@@ -293,24 +294,28 @@ function renderMap(c) {
   $("mapChip").className = "chip " + H.chip[0]; $("mapChip").textContent = H.chip[1]; $("mapNote").textContent = H.note;
   geoLayer = L.geoJSON(GEO, { style: (f) => { const d = ds.find((x) => x.name === f.properties.name);
       if (!LAYERS.shade) return { color: "#555", weight: 1, fillOpacity: 0 };
-      return d.has ? { color: "#555", weight: 1, fillColor: "#c0282d", fillOpacity: 0.06 + 0.6 * (d.rate / mxRate) } : { color: "#777", weight: 1, dashArray: "4", fillColor: "#9aa7b3", fillOpacity: 0.25 }; },
+      return d.has ? { color: "#555", weight: 1, fillColor: "#c0282d", fillOpacity: (0.06 + 0.6 * (d.rate / mxRate)) * (H.kind === "list" && LAYERS.heat ? 0.4 : 1) } : { color: "#777", weight: 1, dashArray: "4", fillColor: "#9aa7b3", fillOpacity: 0.25 }; },
     onEachFeature: (f, layer) => { const d = ds.find((x) => x.name === f.properties.name);
       layer.bindPopup(`<b>${d.name}</b><br>Population ${Math.round(d.pop)} thousand<br>${school(d)}<br>` + (d.has ? `${d.value} ${H.unit}${H.kind === "list" ? `, ${d.cases} cases` : ""}; <b>${f1(d.rate)} per 100,000 people</b>` : "No figure published for this district") + `<br><b>Nearest hospitals</b> <i>(straight-line, approximate)</i><br>${near3(d)}`); } }).addTo(map);
   const marks = [], pts = H.points.filter((r) => r.lat != null && r.lon != null).sort((a, b) => b.cases - a.cases);
   if (H.kind === "list") {
-    pts.forEach((r, i) => { const m = L.circleMarker([r.lat, r.lon], { radius: 4 + 2.2 * Math.sqrt(r.cases), color: i === 0 ? "#111" : "#8f1d21", weight: i === 0 ? 3 : 1, fillColor: "#e0393f", fillOpacity: 0.55 })
+    pts.forEach((r, i) => { const m = L.circleMarker([r.lat, r.lon], { radius: 4 + 2.2 * Math.sqrt(r.cases), color: i === 0 ? "#111" : "#8f1d21", weight: i === 0 ? 3 : 1, fillColor: "#e0393f", fillOpacity: LAYERS.heat ? 0.1 : 0.55 })
       .bindPopup(`<b>${r.name}</b><br>${r.district}${r.setting ? ", " + r.setting : ""}<br><b>${r.cases} cases</b><br><i>Uploaded, not verified</i>`);
       if (i === 0) m.bindTooltip(`Largest: ${r.name} (${r.cases})`, { permanent: true, direction: "top" }); marks.push(m); });
   } else {
     have.forEach((d) => marks.push(L.circleMarker(d.c, { radius: 6 + 26 * Math.sqrt(d.value / mxVal), color: "#8f1d21", weight: 1, fillColor: "#e0393f", fillOpacity: 0.5 })
       .bindTooltip(`${d.name}: ${d.value}`, { permanent: true, direction: "center", className: "hotlabel" })));
   }
+  // Heat layer: glows where clusters are large and close together. Only drawn from real cluster positions.
+  if (H.kind === "list" && pts.length && LAYERS.heat) { const top = Math.max(...pts.map((r) => r.cases));
+    heatLayer = L.heatLayer(pts.map((r) => [r.lat, r.lon, Math.max(0.2, r.cases / top)]), { radius: 34, blur: 26, minOpacity: 0.35, maxZoom: 11, gradient: { 0.3: "#ffe08a", 0.55: "#fd8d3c", 0.8: "#e31a1c", 1: "#7a0010" } }).addTo(map); }
   hospLayer = L.layerGroup(marks); if (LAYERS.hot) hospLayer.addTo(map);
   const byRate = [...have].sort((a, b) => b.rate - a.rate), byVal = [...have].sort((a, b) => b.value - a.value);
   const noCoord = H.points.length - pts.length;
   $("hotRank").innerHTML = (have.length ? `<p><b>Most ${H.unit}:</b> ${byVal[0].name} (${byVal[0].value}). <b>Highest density:</b> ${byRate[0].name} (${f1(byRate[0].rate)} per 100,000 people).</p>` : "") +
     (H.kind === "list" && pts.length ? `<h3>Largest clusters <span class="chip unv">Uploaded</span></h3><table><tr><th>Cluster</th><th>District</th><th>Setting</th><th class="num">Cases</th></tr>${[...H.points].sort((a, b) => b.cases - a.cases).slice(0, 5).map((r) => `<tr><td>${r.name}</td><td>${r.district}</td><td>${r.setting || ""}</td><td class="num">${r.cases}</td></tr>`).join("")}</table>` : "") +
     `<h3>Districts by density <span class="chip ${H.chip[0]}">${H.chip[1]}</span></h3><table><tr><th>District</th><th class="num">${H.unit === "cases" ? "Cases" : "Clusters"}</th>${H.kind === "list" ? '<th class="num">Cases</th>' : ""}<th class="num">Per 100,000 people</th></tr>${byRate.map((d) => `<tr><td>${d.name}</td><td class="num">${d.value}</td>${H.kind === "list" ? `<td class="num">${d.cases}</td>` : ""}<td class="num">${f1(d.rate)}</td></tr>`).join("")}${ds.filter((d) => !d.has).map((d) => `<tr><td>${d.name}</td><td class="num" colspan="2">not published</td></tr>`).join("")}</table>` +
+    (H.kind !== "list" ? `<p class="note">The heat layer needs individual cluster positions. Upload a cluster list to see it; <a href="templates/demo_SIMULATED_cluster_list.csv" download>a simulated example</a> is provided.</p>` : "") +
     (noCoord ? `<p class="note">${noCoord} listed cluster(s) had no coordinates, so they count toward their district but are not drawn.</p>` : "");
   facilityLayers();
 }
@@ -416,7 +421,51 @@ function renderProof() {
 }
 
 // ---------- all states: one switchable line per state, plus a national layer ----------
-const ST = { disease: "dengue", view: "monthly", on: {}, national: true };
+const ST = { disease: "dengue", view: "monthly", on: {}, national: true, year: null, measure: "rate", playing: null };
+const HEATSTEPS = ["#fff5eb", "#fee6ce", "#fdd0a2", "#fdae6b", "#fd8d3c", "#f16913", "#d94801", "#8c2d04"];
+let stMap, stGeoLayer, STGEO;
+// One value per state for the chosen disease, year and measure; null means no published figure.
+function stateValues() {
+  const out = {};
+  if (ST.disease === "flu") { const k = ST.measure === "ili" ? "ili_rate_percent_week_40_2025" : "clusters_week_40_2025";
+    STATES.flu.snapshots.forEach((r) => r.state.split(" and ").forEach((nm) => (out[nm] = r[k])));
+    return { out, max: Math.max(...Object.values(out).filter((v) => v != null), 1), unit: ST.measure === "ili" ? "% ILI consultation rate" : "clusters", when: "week 40 of 2025" }; }
+  const Y = STATES.dengue.yearly, val = (nm, i) => { const cs = Y.states[nm][i], pp = Y.population_thousand[nm][i]; return cs == null ? null : ST.measure === "cases" ? cs : pp ? (cs / (pp * 1000)) * 1e5 : null; };
+  let max = 1; for (const nm in Y.states) Y.labels.forEach((_, i) => { const v = val(nm, i); if (v != null && v > max) max = v; });
+  for (const nm in Y.states) out[nm] = val(nm, ST.year);
+  return { out, max, unit: ST.measure === "cases" ? "cases" : "cases per 100,000 people", when: String(Y.labels[ST.year]) };
+}
+function renderStateMap() {
+  if (!STGEO || !STATES) return;
+  const flu = ST.disease === "flu", Y = STATES.dengue.yearly;
+  if (ST.year == null) ST.year = Y.labels.length - 1;
+  if (!stMap) { stMap = L.map("stMap", { scrollWheelZoom: false, zoomSnap: 0.25, attributionControl: true }); stMap.attributionControl.setPrefix(""); stMap.attributionControl.addAttribution("Boundaries: geoBoundaries");
+    stMap.fitBounds(L.geoJSON(STGEO).getBounds(), { padding: [6, 6] }); }
+  $("stYearRow").hidden = flu; $("stPlay").hidden = flu;
+  $("stYear").max = Y.labels.length - 1; $("stYear").value = ST.year; $("stYearV").textContent = Y.labels[ST.year];
+  const V = stateValues(), fmt = (v) => (v >= 100 ? Math.round(v).toLocaleString() : Number.isInteger(v) ? String(v) : f1(v));
+  const colour = (v) => (v == null ? "#d5dbe1" : HEATSTEPS[Math.min(HEATSTEPS.length - 1, Math.floor(Math.sqrt(Math.max(0, v) / V.max) * HEATSTEPS.length))]);
+  if (stGeoLayer) stGeoLayer.remove();
+  stGeoLayer = L.geoJSON(STGEO, { style: (f) => ({ color: "#555", weight: 1, fillColor: colour(V.out[f.properties.name]), fillOpacity: 0.92 }),
+    onEachFeature: (f, layer) => { const v = V.out[f.properties.name];
+      layer.bindTooltip(`<b>${f.properties.name}</b><br>${v == null ? "No figure published" : fmt(v) + " " + V.unit}<br>${V.when}`, { sticky: true }); } }).addTo(stMap);
+  const ranked = Object.entries(V.out).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]);
+  $("stLegend").innerHTML = `<span class="lgbar">${HEATSTEPS.map((c) => `<i style="background:${c}"></i>`).join("")}</span> <span>0 to ${fmt(V.max)} ${V.unit}</span> <span class="lgna"><i></i> no figure published</span>` +
+    (ranked.length ? `<br><b>Highest in ${V.when}:</b> ${ranked.slice(0, 3).map(([nm, v]) => `${nm} (${fmt(v)})`).join(", ")}. <b>Lowest:</b> ${ranked[ranked.length - 1][0]} (${fmt(ranked[ranked.length - 1][1])}).` : "") +
+    (flu ? "" : ` <span class="note">Colours use one fixed scale across all years, so years can be compared. State figures for 2019 to 2022 are not in the source.</span>`);
+}
+function setupStateMap() {
+  const stop = () => { clearInterval(ST.playing); ST.playing = null; $("stPlay").textContent = "Play years"; };
+  $("stYear").oninput = (e) => { ST.year = +e.target.value; renderStateMap(); };
+  $("stMeasure").onchange = (e) => { ST.measure = e.target.value; renderStateMap(); };
+  $("stPlay").onclick = () => { if (ST.playing) return stop(); const n = STATES.dengue.yearly.labels.length; if (ST.year >= n - 1) ST.year = -1;
+    $("stPlay").textContent = "Pause"; ST.playing = setInterval(() => { ST.year++; renderStateMap(); if (ST.year >= n - 1) stop(); }, 900); };
+}
+function stMeasureOptions() {
+  $("stMeasure").innerHTML = ST.disease === "flu" ? '<option value="clusters">Clusters in week 40 of 2025</option><option value="ili">ILI consultation rate, week 40 of 2025</option>'
+    : '<option value="rate">Cases per 100,000 people</option><option value="cases">Total cases</option>';
+  ST.measure = $("stMeasure").value;
+}
 const ST_COL = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#393b79", "#ad494a", "#637939", "#7b4173", "#3182bd", "#e6550d"];
 let stChart;
 function renderStates() {
@@ -457,7 +506,7 @@ function renderStates() {
     <p class="note">A model beat "same as last month" in ${wins(0)} of ${tot} states one month ahead, ${wins(1)} of ${tot} two months ahead and ${wins(2)} of ${tot} three months ahead. Selangor is the exception at every horizon. Three states with monthly data (Kelantan, Sabah, Sarawak) have gaps in their series and were not modelled. This data ends in 2010, so it shows the method working on other states, not anything about dengue today.</p>`;
 }
 function setupStates() {
-  $("stDisease").onchange = (e) => { ST.disease = e.target.value; renderStates(); };
+  $("stDisease").onchange = (e) => { ST.disease = e.target.value; clearInterval(ST.playing); ST.playing = null; $("stPlay").textContent = "Play years"; stMeasureOptions(); renderStates(); renderStateMap(); };
   $("stView").onchange = (e) => { ST.view = e.target.value; ST.on = {}; renderStates(); };
   $("stToggles").onchange = (e) => { const k = e.target.dataset.st; if (!k) return; if (k === "__nat") ST.national = e.target.checked; else ST.on[k] = e.target.checked; renderStates(); };
   $("stToggles").onclick = (e) => { const b = e.target.closest("button[data-all]"); if (!b) return; for (const k in ST.on) ST.on[k] = b.dataset.all === "1"; renderStates(); };
@@ -628,7 +677,8 @@ function setupUpload() {
   FAC = await fetch("data/facilities.json").then((r) => r.json()).catch(() => HOSP.map((h) => ({ ...h, kind: "government" })));
   DENGUE = await fetch("data/dengue.json").then((r) => r.json()).catch(() => null);
   STATES = await fetch("data/states.json").then((r) => r.json()).catch(() => null);
-  await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupStates(); renderStates(); renderProof(); renderDengue();
+  STGEO = await fetch("data/states_map.geojson").then((r) => r.json()).catch(() => null);
+  await loadState(); setupUpload(); setupSim(); setupLayers(); setupHistory(); setupStates(); renderStates(); if (STATES && STGEO) { stMeasureOptions(); setupStateMap(); renderStateMap(); } renderProof(); renderDengue();
   $("adm").oninput = $("share").oninput = () => renderPlan(context());
   $("mapMode").onchange = () => renderMap(context());
   $("aiOn").disabled = !SERVER; $("aiOn").onchange = () => renderSummary(context());

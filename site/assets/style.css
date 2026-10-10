@@ -79,3 +79,7 @@ label.row { display:flex; align-items:center; gap:8px; }
 tr.undone td { color:var(--mute); text-decoration:line-through; } tr.undone td:last-child, tr.undone td:nth-last-child(2) { text-decoration:none; }
 #histBody button { padding:2px 10px; font-size:12px; }
 #stDisease, #stView { font:inherit; padding:4px 6px; }
+#stMap { height:340px; border-radius:8px; border:1px solid var(--line); background:#eef3f7; }
+#stMeasure { font:inherit; padding:4px 6px; } #stYear { width:220px; vertical-align:middle; }
+.legend { font-size:13px; margin:6px 0 14px; } .lgbar { display:inline-flex; vertical-align:middle; border:1px solid var(--line); }
+.lgbar i { width:22px; height:12px; display:inline-block; } .lgna { margin-left:14px; } .lgna i { display:inline-block; width:14px; height:12px; background:#d5dbe1; border:1px solid var(--line); vertical-align:middle; }

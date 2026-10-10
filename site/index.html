@@ -83,6 +83,7 @@
       <label>Map shows <select id="mapMode"><option value="hot">Hotspots: where cases and clusters are</option><option value="pop">Population (exposure proxy)</option><option value="pupils">School pupils (exposure proxy)</option></select></label>
       <div class="toggles" id="layerToggles">
         <label class="tog"><input type="checkbox" id="ly_shade" checked><span class="sw"></span>District shading</label>
+        <label class="tog"><input type="checkbox" id="ly_heat" checked><span class="sw"></span><i class="dot" style="background:linear-gradient(90deg,#ffe08a,#e31a1c)"></i>Cluster heat</label>
         <label class="tog"><input type="checkbox" id="ly_hot" checked><span class="sw"></span><i class="dot" style="background:#e0393f"></i>Hotspot circles</label>
         <label class="tog"><input type="checkbox" id="ly_government" checked><span class="sw"></span><i class="dot" style="background:#0b6e6e"></i><span>Government hospitals (<span id="n_government"></span>)</span></label>
         <label class="tog"><input type="checkbox" id="ly_private" checked><span class="sw"></span><i class="dot" style="background:#b5179e"></i><span>Private hospitals (<span id="n_private"></span>)</span></label>
@@ -153,6 +154,15 @@
     <label>Disease <select id="stDisease"><option value="dengue">Dengue</option><option value="flu">Influenza</option></select></label>
     <label id="stViewRow">View <select id="stView"><option value="monthly">Monthly by state, 1993 to 2010</option><option value="yearly">Yearly by state, 2009 to 2023</option></select></label>
   </div>
+  <h3>Heat map by state</h3>
+  <div id="stMap"></div>
+  <div class="histctl">
+    <label id="stYearRow">Year: <b id="stYearV"></b> <input type="range" id="stYear" min="0" max="10" step="1" value="10"></label>
+    <button type="button" id="stPlay">Play years</button>
+    <label>Shade by <select id="stMeasure"></select></label>
+  </div>
+  <p class="legend" id="stLegend"></p>
+  <h3>Trend by state</h3>
   <div class="toggles" id="stToggles"></div>
   <div class="chartbox"><canvas id="stChart"></canvas></div>
   <div id="stBody"></div>
@@ -208,6 +218,7 @@
 
 <script src="vendor/chart.umd.min.js"></script>
 <script src="vendor/leaflet.min.js"></script>
+<script src="vendor/leaflet-heat.js"></script>
 <script src="vendor/xlsx.full.min.js"></script>
 <script src="assets/model.js"></script>
 <script src="assets/app.js"></script>

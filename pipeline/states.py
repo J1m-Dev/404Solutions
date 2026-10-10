@@ -112,6 +112,25 @@ def main():
     years = sorted({k for v in yearly.values() for k in v})
     y_states = {s: [v.get(k) for k in years] for s, v in sorted(yearly.items())}
 
+    # state population by year (OpenDOSM), for cases per 100,000 people on the state map
+    pop_name = {"W.P. Kuala Lumpur": "Kuala Lumpur", "W.P. Labuan": "Labuan", "W.P. Putrajaya": "Putrajaya"}
+    pop = {}
+    for r in csv.DictReader(open(c.ROOT / "data/raw/population_state_overall.csv", encoding="utf-8")):
+        pop.setdefault(pop_name.get(r["state"], r["state"]), {})[int(r["year"])] = float(r["population_thousand"])
+    y_pop = {s: [pop.get(s, {}).get(k) for k in years] for s in y_states}
+
+    # state outlines for the map (geoBoundaries), renamed to match the data
+    geo_name = {"Malacca": "Melaka", "Penang": "Pulau Pinang"}
+    g = json.load(open(c.ROOT / "data/raw/mys_adm1.geojson", encoding="utf-8"))
+    for f in g["features"]:
+        f["properties"] = {"name": geo_name.get(f["properties"]["shapeName"], f["properties"]["shapeName"])}
+    def rnd(x):
+        return [rnd(v) for v in x] if isinstance(x, list) else round(x, 3)
+    for f in g["features"]:
+        f["geometry"]["coordinates"] = rnd(f["geometry"]["coordinates"])
+    (c.ROOT / "site" / "data" / "states_map.geojson").write_text(json.dumps(g, separators=(",", ":")), encoding="utf-8")
+    print("map states without yearly dengue figures:", sorted({f["properties"]["name"] for f in g["features"]} - set(y_states)))
+
     models = []
     for s, v in sorted(monthly.items()):
         ks = sorted(v)
@@ -130,7 +149,7 @@ def main():
             "monthly": {"labels": labels, "states": m_states, "national": m_total, "states_reporting": m_count,
                         "national_label": "Sum of the states that reported that month",
                         "note": "Monthly state figures exist for ten states and end in December 2010. The other states have no monthly series in this source."},
-            "yearly": {"labels": years, "states": y_states, "national": [nat.get(k) for k in years], "national_label": "Malaysia (national total)",
+            "yearly": {"labels": years, "states": y_states, "population_thousand": y_pop, "national": [nat.get(k) for k in years], "national_label": "Malaysia (national total)",
                        "note": "Yearly state figures cover 2009 to 2018 and 2023; 2019 to 2022 are missing by state in this source. Selangor's 2017 and 2018 values are identical in the source, which may be an error there."},
             "models": models,
         },

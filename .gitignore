@@ -7,3 +7,6 @@ data/store.json
 data/raw/opendengue/Temporal_extract_V1_3.csv
 data/raw/opendengue/*.zip
 !.env.example
+data/raw/population_state.csv
+data/raw/who_dengue/*.pdf
+data/raw/who_dengue/*.html
