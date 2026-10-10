@@ -182,7 +182,8 @@
   $("rpLeave").onclick = () => { location.href = "dashboard.html#/now"; };
   // "Why?" opens the sheet at the reasons; "See the plan" opens the same sheet at the actions and the plan
   const openSheet = (sel) => { const sh = $("sheet"); sh.hidden = false; sh.scrollTop = 0; const el = sel && sh.querySelector(sel); if (el) sh.scrollTop = Math.max(0, el.getBoundingClientRect().top - sh.getBoundingClientRect().top - 54); $("sheetX").focus({ preventScroll: true }); };
-  $("whyBtn").onclick = () => { openSheet(); setTimeout(() => { const h = [...document.querySelectorAll("#sheet h3")].find((x) => x.offsetParent); if (h) h.scrollIntoView({ block: "start", behavior: "smooth" }); }, 250); };   // "Why?" lands on the reasons, "Full plan" on the task list $("planBtn").onclick = () => openSheet(".planbox");   // "Full plan" lands on the task list: what, who, by when
+  $("whyBtn").onclick = () => { openSheet(); setTimeout(() => { const h = [...document.querySelectorAll("#sheet h3")].find((x) => x.offsetParent); if (h) h.scrollIntoView({ block: "start", behavior: "smooth" }); }, 250); };   // "Why?" lands on the reasons
+  $("planBtn").onclick = () => openSheet(".planbox");   // "Full plan" lands on the task list: what, who, by when
   $("sheetX").onclick = () => { $("sheet").hidden = true; };
   // the Telegram alert is one press from the first screen: it opens the plan at the send line
   if ($("tgBtn")) $("tgBtn").onclick = () => { $("planBtn").click(); setTimeout(() => { const el = document.querySelector("#sheet .tg, #sheet [class*=tg]"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" }); }, 250); };

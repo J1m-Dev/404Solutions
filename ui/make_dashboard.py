@@ -45,11 +45,11 @@ html = f'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DOM · Control room</title>
-<meta name="description" content="Flu early warning for Malaysia: the step today, what to do first, and how often that warning has been right.">
+<meta name="description" content="Disease early warning for Malaysia: the step today, what to do first, and how often that warning has been right.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="DOM">
 <meta property="og:title" content="DOM · Disease No More">
-<meta property="og:description" content="Flu early warning for Malaysia. See the outbreak before it spreads.">
+<meta property="og:description" content="Disease early warning for Malaysia. See the outbreak before it spreads.">
 <meta property="og:image" content="https://dom-control-room.vercel.app/assets/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
