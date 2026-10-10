@@ -114,7 +114,7 @@
       th: { yellow: c.th.yellow, orange: c.th.orange }, fresh: grew, names: STEPS.map((k) => STEP[k].name), says: STEPS.map((k) => STEP[k].say),
       records: STEPS.map((k) => (ES && ES.bands[k] ? `In six past years a rapid rise followed ${ES.bands[k].rises} of ${ES.bands[k].weeks} ${STEP[k].name} weeks.` : "")) } }));
     // the data-status line matters on the first screen only when something unusual is on (uploads or a simulation)
-    $("stamp").classList.toggle("quiet", !(c.sim || (typeof barMsg !== "undefined" && barMsg)));
+    $("stamp").classList.toggle("hush", !(c.sim || (typeof barMsg !== "undefined" && barMsg)));
   }
 
   // ---------- long explanations become drawers: each heading with what follows it; nothing is removed ----------
@@ -126,7 +126,23 @@
       else if (cur) cur.lastChild.appendChild(el);
     }
   }
-  for (const id of ["proofBody"]) { const box = $(id); new MutationObserver(() => fold(box)).observe(box, { childList: true }); fold(box); }
+  // ---------- the inner pages: one picture first, the long reading one click down (nothing is removed) ----------
+  // Why trust it: the app's four counts are shares, so each is drawn as a ring; the chart stays open, every later section is a drawer.
+  function rings() { document.querySelectorAll("#trustBody .kpi").forEach((k) => { const b = k.querySelector("b"); if (!b || k._r === b.textContent) return; k._r = b.textContent;
+    const m = b.textContent.match(/(\d+)\s+of\s+(\d+)/), pc = b.textContent.match(/(\d+)\s*%/), v = m ? (100 * +m[1]) / +m[2] : pc ? +pc[1] : null; if (v == null) return; k.classList.add("ring"); k.style.setProperty("--p", v.toFixed(1)); }); }
+  // Track record: each record reads as one row (the date, what the system said, the result); the rest opens on a click.
+  function trackRows() { const t = document.querySelector("#trackBody table"); if (!t || t.classList.contains("rows")) return; const heads = [...t.querySelectorAll("th")].map((x) => x.textContent);
+    t.querySelectorAll("tr").forEach((tr) => [...tr.children].forEach((td, i) => { td.dataset.l = heads[i] || ""; })); t.classList.add("rows"); }
+  const tidy = { proofBody: (b) => fold(b), trustBody: (b) => { fold(b); const d = b.querySelector("details.drawer"); if (d && !b._opened) { b._opened = true; d.open = true; } rings(); }, trackBody: () => trackRows() };
+  for (const id in tidy) { const box = $(id); if (!box) continue; new MutationObserver(() => tidy[id](box)).observe(box, { childList: true }); tidy[id](box); }
+  document.querySelectorAll("#stakes .grid2 > div").forEach(fold);
+  // Where: the map comes first; its sources, shading choices and layer switches sit together under one drawer
+  (function atlas() { const card = $("atlas"), map = $("map"); if (!card || !map) return; const h2 = card.querySelector("h2"), d = document.createElement("details"); d.className = "drawer"; d.innerHTML = "<summary>Map layers, shading and sources</summary><div class=\"drawerbody\"></div>";
+    const view = $("mapModeRow") && $("mapModeRow").parentElement; h2.after(map); map.after($("stLegend"), $("mapHint")); if (view) $("mapHint").after(view); card.append(d);
+    ["stSrc", "mapNote", "stCtl", "layerToggles"].forEach((id) => { const el = $(id); if (el) d.lastChild.append(el); }); d.addEventListener("toggle", resize); })();
+  // long notes show two lines; a click opens them. Rows of the track record open the same way.
+  document.addEventListener("click", (e) => { if (e.target.closest("a,button,input,select,label,summary")) return;
+    const n = e.target.closest(".page .card p.note, #trustBody > p, #trackBody > p"); if (n) n.classList.toggle("open"); const r = e.target.closest("table.rows tr"); if (r) r.classList.toggle("open"); });
 
   // In the replay: the data week each step of the app's own ladder was first reached (same rule as stepOf, same frozen cut-offs).
   function milestones() {
